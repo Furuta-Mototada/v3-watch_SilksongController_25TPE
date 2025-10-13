@@ -68,9 +68,42 @@ Welcome to the Silksong Motion Controller v3 development guide! This document wi
 
 ### Key Technologies
 
-- **Android**: Kotlin, Wear OS SDK, Sensor APIs
-- **Python**: pynput (keyboard control), socket (UDP)
+- **Android**: Kotlin, Wear OS SDK, Sensor APIs, NSD (Network Service Discovery)
+- **Python**: pynput (keyboard control), socket (UDP), zeroconf (service advertisement)
 - **Network**: UDP for low-latency sensor streaming
+- **Discovery**: Automatic service discovery using mDNS/Bonjour protocol
+
+### Automatic Service Discovery
+
+The Silksong Controller features a "magic link" that enables seamless connection between the Wear OS device and the host computer without manual IP configuration.
+
+**How it works:**
+
+1. **Python Host (Server)**:
+   - The `udp_listener.py` script automatically advertises itself on the local network using the `zeroconf` library
+   - Service type: `_silksong._udp.local.`
+   - Service name: `SilksongController._silksong._udp.local.`
+   - Broadcasts IP address and port (12345) to the network
+
+2. **Android Client (Watch)**:
+   - Uses Android's `NsdManager` for service discovery
+   - Automatically discovers the advertised service on the same network
+   - Resolves the service to obtain the server's IP address and port
+   - Updates the UI to show connection status:
+     - "Searching..." (orange) - actively discovering services
+     - "Connected!" (green) - service found and resolved
+     - "Connection Lost" (red) - service unavailable
+
+3. **User Experience**:
+   - No manual IP address entry required
+   - Automatic connection within seconds of starting the Python server
+   - Manual IP entry still available as fallback option
+   - Connection status clearly displayed at the top of the watch app
+
+**Network Requirements:**
+- Both devices must be on the same local network
+- mDNS/Bonjour protocol must be allowed by the network (most home networks support this)
+- Multicast traffic must not be blocked by firewall
 
 ## Development Workflow
 
