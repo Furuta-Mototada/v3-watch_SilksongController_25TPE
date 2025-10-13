@@ -1,4 +1,4 @@
-package com.example.silksongmotioncontroller
+package com.cvk.silksongcontroller
 
 import android.Manifest // NEW: Import for permissions
 import android.content.Context

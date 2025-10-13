@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Silksong Motion Controller"
+rootProject.name = "Silksong Controller v3"
 include(":app")

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.silksongmotioncontroller"
+    namespace = "com.cvk.silksongcontroller"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.silksongmotioncontroller"
+        applicationId = "com.cvk.silksongcontroller"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
