@@ -44,6 +44,3 @@ Thumbs.db
 tmp/
 *.tmp
 *.bak
-
-# Data collection output
-data_collection/
