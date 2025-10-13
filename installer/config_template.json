@@ -1,0 +1,19 @@
+{
+    "network": {
+        "listen_ip": "0.0.0.0",
+        "listen_port": 12345
+    },
+    "thresholds": {
+        "fuel_added_per_step_sec": 0.8,
+        "max_fuel_sec": 1.6,
+        "punch_threshold_xy_accel": 25.0,
+        "jump_threshold_z_accel": 20.0,
+        "turn_threshold_degrees": 90.0
+    },
+    "keyboard_mappings": {
+        "left": "Key.left",
+        "right": "Key.right",
+        "jump": "z",
+        "attack": "x"
+    }
+}
