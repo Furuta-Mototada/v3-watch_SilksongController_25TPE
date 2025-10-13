@@ -2,5 +2,8 @@
 # Core library for keyboard control
 pynput>=1.7.0
 
+# Network service discovery for automatic connection
+zeroconf>=0.131.0
+
 # Note: On Windows, you may also need:
 # windows-curses  # Uncomment this line if you're on Windows

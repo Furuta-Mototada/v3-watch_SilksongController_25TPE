@@ -8,6 +8,7 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
 
 - **Motion-based game control**: Walk, jump, attack, and turn using natural body movements
 - **Pixel Watch integration**: Wear OS app captures sensor data from your smartwatch
+- **Automatic device discovery**: "Magic link" feature - no manual IP configuration needed! 🎯
 - **Real-time UDP streaming**: Low-latency sensor data transmission
 - **Configurable thresholds**: Calibrate sensitivity for different play styles
 - **Cross-platform Python backend**: Works on Windows, macOS, and Linux
@@ -64,7 +65,7 @@ v3-watch_SilksongController_25TPE/
 3. **Build and install the Android app**
    - Open `Android/` folder in Android Studio
    - Build and deploy to your Pixel Watch
-   - Update the IP address in the app to match your computer's local IP
+   - ✨ The app will automatically discover your computer on the network!
 
 4. **Run calibration**
 
@@ -79,6 +80,18 @@ v3-watch_SilksongController_25TPE/
    ```
 
 See `installer/INSTALLATION_GUIDE.md` for detailed setup instructions.
+
+## 🌟 Automatic Connection
+
+The controller features **automatic device discovery** using Network Service Discovery (NSD):
+
+1. **Start the Python controller** - it automatically advertises itself on your local network
+2. **Launch the watch app** - watch the connection status at the top:
+   - 🟠 "Searching..." - discovering services
+   - 🟢 "Connected!" - server found and ready
+3. **Start playing!** - no manual IP configuration needed
+
+The watch app will automatically find your computer if both devices are on the same WiFi network. Manual IP entry is still available as a fallback option.
 
 ## ⚙️ Configuration
 

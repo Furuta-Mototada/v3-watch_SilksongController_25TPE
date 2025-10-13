@@ -6,6 +6,7 @@ import threading
 from collections import deque
 from pynput.keyboard import Controller, Key
 import network_utils
+from zeroconf import ServiceInfo, Zeroconf
 
 # --- Global State ---
 keyboard = Controller()
@@ -163,6 +164,26 @@ def quaternion_to_euler(q):
 # --- Main Listener Logic ---
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((LISTEN_IP, LISTEN_PORT))
+
+# --- Network Service Discovery Setup ---
+print("🔗 Registering service for automatic discovery...")
+zeroconf = Zeroconf()
+service_type = "_silksong._udp.local."
+service_name = f"SilksongController.{service_type}"
+
+# Convert IP address to bytes for ServiceInfo
+ip_bytes = socket.inet_aton(LISTEN_IP)
+
+service_info = ServiceInfo(
+    service_type,
+    service_name,
+    addresses=[ip_bytes],
+    port=LISTEN_PORT,
+    properties={"version": "1.0"},
+)
+
+zeroconf.register_service(service_info)
+print(f"✓ Service registered as '{service_name}'")
 
 print("--- Silksong Controller v1.0 (Final) ---")
 print(f"Listening on {LISTEN_IP}:{LISTEN_PORT}")
@@ -370,4 +391,7 @@ finally:
     if is_walking and walking_thread is not None:
         stop_walking_event.set()
         walking_thread.join()
+    print("🔗 Unregistering service...")
+    zeroconf.unregister_service(service_info)
+    zeroconf.close()
     sock.close()
