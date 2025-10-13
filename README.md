@@ -12,6 +12,7 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
 - **Real-time UDP streaming**: Low-latency sensor data transmission
 - **Configurable thresholds**: Calibrate sensitivity for different play styles
 - **Cross-platform Python backend**: Works on Windows, macOS, and Linux
+- **Data collection tool**: Guided procedure for collecting high-quality IMU gesture datasets
 
 ## 📁 Project Structure
 
@@ -27,11 +28,13 @@ v3-watch_SilksongController_25TPE/
 ├── src/                       # Python source code
 │   ├── udp_listener.py       # Main controller logic
 │   ├── network_utils.py      # UDP network handling
-│   └── calibrate.py          # Calibration tool
+│   ├── calibrate.py          # Calibration tool
+│   └── data_collector.py    # Data collection tool (Phase II)
 ├── installer/                # Installation scripts and templates
 │   ├── INSTALLATION_GUIDE.md
 │   ├── run_controller.sh/bat
-│   └── run_calibration.sh/bat
+│   ├── run_calibration.sh/bat
+│   └── run_data_collector.sh/bat
 ├── docs/                     # Documentation and development notes
 ├── config.json              # Runtime configuration
 └── requirements.txt         # Python dependencies
@@ -92,6 +95,29 @@ The controller features **automatic device discovery** using Network Service Dis
 3. **Start playing!** - no manual IP configuration needed
 
 The watch app will automatically find your computer if both devices are on the same WiFi network. Manual IP entry is still available as a fallback option.
+
+## 📊 Data Collection (Phase II)
+
+For researchers and developers who want to collect IMU gesture data:
+
+```bash
+# Run the guided data collection tool
+python src/data_collector.py
+
+# Or use the installer script
+cd installer
+./run_data_collector.sh  # Unix/Mac
+run_data_collector.bat   # Windows
+```
+
+This tool provides a comprehensive, guided procedure for collecting high-quality IMU gesture datasets. See `docs/DATA_COLLECTION_GUIDE.md` for detailed instructions on:
+
+- Three user stances (Combat, Neutral, Travel)
+- 10 different gesture types across all stances
+- Automated data organization and labeling
+- Best practices for data quality
+
+Perfect for training gesture recognition models or analyzing motion patterns!
 
 ## ⚙️ Configuration
 
