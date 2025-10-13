@@ -36,7 +36,8 @@ v3-watch_SilksongController_25TPE/
 ├── src/                       # Python source code
 │   ├── udp_listener.py       # Main controller logic
 │   ├── network_utils.py      # UDP network handling
-│   └── calibrate.py          # Calibration tool
+│   ├── calibrate.py          # Calibration tool
+│   └── data_collector.py     # Phase II: ML training data collection
 ├── installer/                # Installation scripts and templates
 │   ├── INSTALLATION_GUIDE.md
 │   ├── run_controller.sh/bat
@@ -109,6 +110,29 @@ Edit `config.json` to adjust:
 - **Network settings**: IP address and port
 - **Thresholds**: Sensitivity for gestures (punch, jump, turn, walk)
 - **Keyboard mappings**: Custom key bindings
+
+## 📊 Phase II: Machine Learning Data Collection
+
+In addition to real-time gesture control, this project includes a guided data collection system for training ML models:
+
+```bash
+python src/data_collector.py
+```
+
+This tool:
+- Guides you through structured gesture recording sessions
+- Defines clear physical stances (Combat, Neutral, Travel)
+- Records labeled IMU sensor data for 8 different gestures
+- Exports training data in ML-ready CSV format
+- Takes ~20-30 minutes for a complete session
+
+**Use Cases**:
+- Train personalized gesture recognition models
+- Build more robust classifiers than threshold-based detection
+- Research and experimentation with IMU gesture recognition
+- Create custom gesture sets
+
+See `docs/Phase_II/DATA_COLLECTION_GUIDE.md` for full documentation.
 
 ## 🔧 Development
 
