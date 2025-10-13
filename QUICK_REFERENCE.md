@@ -11,10 +11,15 @@ python src/udp_listener.py
 # Run calibration
 python src/calibrate.py
 
+# Run data collection (Phase II)
+python src/data_collector.py
+
 # Or use installer scripts
 cd installer
-./run_controller.sh      # Unix/Mac
-run_controller.bat       # Windows
+./run_controller.sh         # Unix/Mac
+./run_data_collector.sh     # Unix/Mac
+run_controller.bat          # Windows
+run_data_collector.bat      # Windows
 ```
 
 ### Android Development
@@ -45,6 +50,8 @@ adb logcat | grep MainActivity
 |-----------|----------|
 | Android Main Activity | `Android/app/src/main/java/com/cvk/silksongcontroller/MainActivity.kt` |
 | Python Controller | `src/udp_listener.py` |
+| Calibration Tool | `src/calibrate.py` |
+| Data Collector | `src/data_collector.py` |
 | Configuration | `config.json` |
 | Documentation | `docs/` |
 | Installation Scripts | `installer/` |
@@ -76,6 +83,7 @@ cd Android
 - **User Guide**: `README.md`
 - **Developer Guide**: `docs/DEVELOPER_GUIDE.md`
 - **Project Structure**: `docs/PROJECT_STRUCTURE.md`
+- **Data Collection Guide**: `docs/DATA_COLLECTION_GUIDE.md`
 - **Changes**: `CHANGELOG.md`
 - **Migration Info**: `MIGRATION_SUMMARY.md`
 
