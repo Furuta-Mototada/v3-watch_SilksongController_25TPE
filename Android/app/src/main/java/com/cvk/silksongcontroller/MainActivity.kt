@@ -8,6 +8,8 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.net.nsd.NsdManager
+import android.net.nsd.NsdServiceInfo
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var ipAddressEditText: EditText
     private lateinit var saveIpButton: Button
     private lateinit var ipStatusTextView: TextView
+    private lateinit var connectionStatusTextView: TextView
     private lateinit var sharedPreferences: SharedPreferences
     private var currentServerIP = "192.168.10.234" // Default IP
 
@@ -56,6 +59,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     // --- NEW: Constant for the permission request ---
     private val ACTIVITY_RECOGNITION_REQUEST_CODE = 100
+
+    // --- NSD (Network Service Discovery) ---
+    private lateinit var nsdManager: NsdManager
+    private var discoveryListener: NsdManager.DiscoveryListener? = null
+    private var resolveListener: NsdManager.ResolveListener? = null
+    private val SERVICE_TYPE = "_silksong._udp."
+    private var isDiscovering = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +85,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         ipAddressEditText = findViewById(R.id.et_ip_address)
         saveIpButton = findViewById(R.id.btn_save_ip)
         ipStatusTextView = findViewById(R.id.tv_ip_status)
+        connectionStatusTextView = findViewById(R.id.tv_connection_status)
 
         // Load saved IP address or use default
         loadSavedIpAddress()
@@ -83,6 +94,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         saveIpButton.setOnClickListener {
             saveIpAddress()
         }
+
+        // Initialize NSD Manager
+        nsdManager = getSystemService(Context.NSD_SERVICE) as NsdManager
+        
+        // Start service discovery
+        startServiceDiscovery()
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
@@ -260,8 +277,121 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    private fun startServiceDiscovery() {
+        if (isDiscovering) {
+            return
+        }
+
+        discoveryListener = object : NsdManager.DiscoveryListener {
+            override fun onDiscoveryStarted(serviceType: String) {
+                Log.d("NSD", "Service discovery started")
+                isDiscovering = true
+                runOnUiThread {
+                    connectionStatusTextView.text = "Searching..."
+                    connectionStatusTextView.setTextColor(getColor(android.R.color.holo_orange_light))
+                }
+            }
+
+            override fun onServiceFound(serviceInfo: NsdServiceInfo) {
+                Log.d("NSD", "Service found: ${serviceInfo.serviceName}")
+                if (serviceInfo.serviceType == SERVICE_TYPE && 
+                    serviceInfo.serviceName.contains("SilksongController")) {
+                    // Resolve the service to get IP and port
+                    resolveService(serviceInfo)
+                }
+            }
+
+            override fun onServiceLost(serviceInfo: NsdServiceInfo) {
+                Log.d("NSD", "Service lost: ${serviceInfo.serviceName}")
+                runOnUiThread {
+                    connectionStatusTextView.text = "Connection Lost"
+                    connectionStatusTextView.setTextColor(getColor(android.R.color.holo_red_light))
+                }
+            }
+
+            override fun onDiscoveryStopped(serviceType: String) {
+                Log.d("NSD", "Discovery stopped")
+                isDiscovering = false
+            }
+
+            override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
+                Log.e("NSD", "Discovery failed: Error code: $errorCode")
+                nsdManager.stopServiceDiscovery(this)
+                isDiscovering = false
+            }
+
+            override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
+                Log.e("NSD", "Stop discovery failed: Error code: $errorCode")
+                nsdManager.stopServiceDiscovery(this)
+                isDiscovering = false
+            }
+        }
+
+        try {
+            nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
+        } catch (e: Exception) {
+            Log.e("NSD", "Failed to start discovery", e)
+            Toast.makeText(this, "Failed to start service discovery", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun resolveService(serviceInfo: NsdServiceInfo) {
+        resolveListener = object : NsdManager.ResolveListener {
+            override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
+                Log.e("NSD", "Resolve failed: $errorCode")
+            }
+
+            override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
+                Log.d("NSD", "Service resolved: ${serviceInfo.serviceName}")
+                
+                val host = serviceInfo.host
+                val port = serviceInfo.port
+                
+                // Update IP address
+                currentServerIP = host.hostAddress ?: currentServerIP
+                
+                runOnUiThread {
+                    // Update UI
+                    connectionStatusTextView.text = "Connected!"
+                    connectionStatusTextView.setTextColor(getColor(android.R.color.holo_green_light))
+                    ipAddressEditText.setText(currentServerIP)
+                    updateIpStatusDisplay()
+                    
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Found server at $currentServerIP:$port",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    
+                    Log.d("NSD", "Server IP: $currentServerIP, Port: $port")
+                }
+            }
+        }
+
+        try {
+            nsdManager.resolveService(serviceInfo, resolveListener)
+        } catch (e: Exception) {
+            Log.e("NSD", "Failed to resolve service", e)
+        }
+    }
+
+    private fun stopServiceDiscovery() {
+        if (isDiscovering && discoveryListener != null) {
+            try {
+                nsdManager.stopServiceDiscovery(discoveryListener!!)
+            } catch (e: Exception) {
+                Log.e("NSD", "Failed to stop discovery", e)
+            }
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         stopStreaming()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopServiceDiscovery()
     }
 }

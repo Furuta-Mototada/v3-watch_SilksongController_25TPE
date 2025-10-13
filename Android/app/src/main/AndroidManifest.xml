@@ -6,6 +6,10 @@
     <!-- [Citation: https://developer.android.com/training/basics/network-ops/connecting] -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Required for Network Service Discovery (NSD) -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+
     <!-- [Citation: https://developer.android.com/guide/topics/permissions/overview#normal-dangerous] -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
