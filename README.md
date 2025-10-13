@@ -4,6 +4,15 @@ Control Hollow Knight: Silksong using motion gestures from a Pixel Watch! This p
 
 Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController_25TPE)
 
+<div>
+    <a href="https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf">
+      <p>1 - Watch Data Transmitted! - Watch Video</p>
+    </a>
+    <a href="https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/175721940a354cb98fe0ec2a13e2bddf-3d20da5d3c764dc4-full-play.gif">
+    </a>
+  </div>
+
 ## 🎮 Features
 
 - **Motion-based game control**: Walk, jump, attack, and turn using natural body movements
