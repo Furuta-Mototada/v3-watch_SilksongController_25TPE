@@ -13,6 +13,10 @@
     <!-- [Citation: https://developer.android.com/guide/topics/permissions/overview#normal-dangerous] -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -24,13 +28,23 @@
         android:theme="@style/Theme.SilksongMotionController">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Wear OS standalone app declaration -->
+            <meta-data
+                android:name="com.google.android.wearable.standalone"
+                android:value="true" />
         </activity>
+
+        <!-- Declare this is a standalone Wear OS app -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
     </application>
 
 </manifest>

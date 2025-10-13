@@ -1,6 +1,6 @@
 {
     "network": {
-        "listen_ip": "192.168.10.229",
+        "listen_ip": "192.168.1.113",
         "listen_port": 12345
     },
     "thresholds": {

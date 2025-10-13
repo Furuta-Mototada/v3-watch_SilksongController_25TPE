@@ -42,6 +42,12 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Wear OS dependencies
+    implementation("androidx.wear:wear:1.3.0")
+    implementation("com.google.android.support:wearable:2.9.0")
+    compileOnly("com.google.android.wearable:wearable:2.9.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
