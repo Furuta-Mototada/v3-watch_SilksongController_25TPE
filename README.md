@@ -9,11 +9,15 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
       <p>1 - Watch Data Transmitted! - Watch Video</p>
     </a>
     <a href="https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/175721940a354cb98fe0ec2a13e2bddf-3d20da5d3c764dc4-full-play.gif">
+      <img style="max-width:100vw;" src="https://cdn.loom.com/sessions/thumbnails/175721940a354cb98fe0ec2a13e2bddf-3d20da5d3c764dc4-full-play.gif">
     </a>
   </div>
 
+![data collection complete oct 14 2025](telegram-cloud-photo-size-5-6300675731876416733-y-1.jpg)
+
 ## 🎮 Features
+
+![Hornet from Hollowknight: Silksong Colors](distribution.png)
 
 - **Motion-based game control**: Walk, jump, attack, and turn using natural body movements
 - **Pixel Watch integration**: Wear OS app captures sensor data from your smartwatch
@@ -128,6 +132,7 @@ python src/data_collector.py
 ```
 
 This tool:
+
 - Guides you through structured gesture recording sessions
 - Defines clear physical stances (Combat, Neutral, Travel)
 - Records labeled IMU sensor data for 8 different gestures
@@ -135,6 +140,7 @@ This tool:
 - Takes ~20-30 minutes for a complete session
 
 **Use Cases**:
+
 - Train personalized gesture recognition models
 - Build more robust classifiers than threshold-based detection
 - Research and experimentation with IMU gesture recognition
@@ -155,6 +161,7 @@ jupyter notebook CS156_Silksong_Watch.ipynb
 ```
 
 **The notebook includes:**
+
 - ✅ Data loading and exploration
 - ✅ Feature engineering (~60+ features from time-series data)
 - ✅ Model training (SVM with RBF kernel + Random Forest)
@@ -163,12 +170,14 @@ jupyter notebook CS156_Silksong_Watch.ipynb
 - ✅ Model serialization for deployment
 
 **Output Models:**
+
 - `models/gesture_classifier.pkl` - Trained SVM classifier
 - `models/feature_scaler.pkl` - Feature normalization scaler
 - `models/feature_names.pkl` - Feature reference list
 - `models/model_metadata.json` - Performance metrics
 
 **Performance Targets:**
+
 - Test accuracy: >85%
 - Real-time latency: <100ms
 - Confidence threshold: 0.7 (70%)
