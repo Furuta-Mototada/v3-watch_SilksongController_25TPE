@@ -7,6 +7,11 @@ from collections import deque
 from pynput.keyboard import Controller, Key
 import network_utils
 from zeroconf import ServiceInfo, Zeroconf
+import joblib
+import pandas as pd
+import numpy as np
+from scipy import stats
+from scipy.fft import fft
 
 # --- Global State ---
 keyboard = Controller()
@@ -112,6 +117,122 @@ KEY_MAP = {
 }
 
 
+# --- ML Model Loading ---
+def load_ml_models():
+    """Load trained ML models for gesture recognition."""
+    try:
+        model = joblib.load("models/gesture_classifier.pkl")
+        scaler = joblib.load("models/feature_scaler.pkl")
+        feature_names = joblib.load("models/feature_names.pkl")
+        print("✓ ML models loaded successfully")
+        return model, scaler, feature_names
+    except FileNotFoundError as e:
+        print(f"⚠️  ML model files not found: {e}")
+        print("   Running in threshold-based mode (legacy)")
+        return None, None, None
+
+
+def extract_window_features(window_df):
+    """Extract comprehensive features from a time window of sensor data.
+
+    This is the same function used during training.
+    """
+    features = {}
+
+    # Separate by sensor type
+    accel = window_df[window_df["sensor"] == "linear_acceleration"]
+    gyro = window_df[window_df["sensor"] == "gyroscope"]
+    rot = window_df[window_df["sensor"] == "rotation_vector"]
+
+    # ========== ACCELERATION FEATURES ==========
+    if len(accel) > 0:
+        for axis in ["accel_x", "accel_y", "accel_z"]:
+            values = accel[axis].dropna()
+
+            if len(values) > 0:
+                features[f"{axis}_mean"] = values.mean()
+                features[f"{axis}_std"] = values.std()
+                features[f"{axis}_max"] = values.max()
+                features[f"{axis}_min"] = values.min()
+                features[f"{axis}_range"] = values.max() - values.min()
+                features[f"{axis}_median"] = values.median()
+                features[f"{axis}_skew"] = stats.skew(values)
+                features[f"{axis}_kurtosis"] = stats.kurtosis(values)
+
+                threshold = values.mean() + 2 * values.std()
+                features[f"{axis}_peak_count"] = len(values[values > threshold])
+
+                if len(values) > 2:
+                    fft_vals = np.abs(fft(values))[: len(values) // 2]
+                    if len(fft_vals) > 0:
+                        features[f"{axis}_fft_max"] = fft_vals.max()
+                        features[f"{axis}_dominant_freq"] = fft_vals.argmax()
+                        features[f"{axis}_fft_mean"] = fft_vals.mean()
+
+    # ========== GYROSCOPE FEATURES ==========
+    if len(gyro) > 0:
+        for axis in ["gyro_x", "gyro_y", "gyro_z"]:
+            values = gyro[axis].dropna()
+
+            if len(values) > 0:
+                features[f"{axis}_mean"] = values.mean()
+                features[f"{axis}_std"] = values.std()
+                features[f"{axis}_max_abs"] = values.abs().max()
+                features[f"{axis}_range"] = values.max() - values.min()
+                features[f"{axis}_skew"] = stats.skew(values)
+                features[f"{axis}_kurtosis"] = stats.kurtosis(values)
+                features[f"{axis}_rms"] = np.sqrt(np.mean(values**2))
+
+                if len(values) > 2:
+                    fft_vals = np.abs(fft(values))[: len(values) // 2]
+                    if len(fft_vals) > 0:
+                        features[f"{axis}_fft_max"] = fft_vals.max()
+
+    # ========== ROTATION FEATURES ==========
+    if len(rot) > 0:
+        for axis in ["rot_x", "rot_y", "rot_z", "rot_w"]:
+            values = rot[axis].dropna()
+
+            if len(values) > 0:
+                features[f"{axis}_mean"] = values.mean()
+                features[f"{axis}_std"] = values.std()
+                features[f"{axis}_range"] = values.max() - values.min()
+
+    # ========== CROSS-SENSOR FEATURES ==========
+    if len(accel) > 0:
+        accel_mag = np.sqrt(
+            accel["accel_x"].fillna(0) ** 2
+            + accel["accel_y"].fillna(0) ** 2
+            + accel["accel_z"].fillna(0) ** 2
+        )
+        features["accel_magnitude_mean"] = accel_mag.mean()
+        features["accel_magnitude_max"] = accel_mag.max()
+        features["accel_magnitude_std"] = accel_mag.std()
+
+    if len(gyro) > 0:
+        gyro_mag = np.sqrt(
+            gyro["gyro_x"].fillna(0) ** 2
+            + gyro["gyro_y"].fillna(0) ** 2
+            + gyro["gyro_z"].fillna(0) ** 2
+        )
+        features["gyro_magnitude_mean"] = gyro_mag.mean()
+        features["gyro_magnitude_max"] = gyro_mag.max()
+        features["gyro_magnitude_std"] = gyro_mag.std()
+
+    return features
+
+
+# Load ML models
+ml_model, ml_scaler, ml_feature_names = load_ml_models()
+ML_ENABLED = ml_model is not None
+
+# Create sensor data buffer for ML predictions (~2.5 seconds at 50Hz)
+sensor_buffer = deque(maxlen=125)
+ML_CONFIDENCE_THRESHOLD = 0.7
+last_prediction_time = 0
+PREDICTION_INTERVAL = 0.5  # Run prediction every 0.5 seconds
+
+
 # --- Walker Thread ---
 def walker_thread_func():
     global is_walking
@@ -185,8 +306,13 @@ service_info = ServiceInfo(
 zeroconf.register_service(service_info)
 print(f"✓ Service registered as '{service_name}'")
 
-print("--- Silksong Controller v1.0 (Final) ---")
+ml_mode = "ML-POWERED" if ML_ENABLED else "THRESHOLD-BASED"
+print(f"--- Silksong Controller v2.0 ({ml_mode}) ---")
 print(f"Listening on {LISTEN_IP}:{LISTEN_PORT}")
+if ML_ENABLED:
+    print(f"✓ Machine Learning Model Active")
+    print(f"  Confidence Threshold: {ML_CONFIDENCE_THRESHOLD:.0%}")
+    print(f"  Prediction Interval: {PREDICTION_INTERVAL}s")
 print("Official Hollow Knight/Silksong key mappings:")
 print(
     f"  Movement: {config['keyboard_mappings']['left']}/{config['keyboard_mappings']['right']} (direction-based)"
@@ -235,6 +361,101 @@ try:
         try:
             parsed_json = json.loads(data.decode())
             sensor_type = parsed_json.get("sensor")
+
+            # --- ML PREDICTION LOGIC ---
+            if ML_ENABLED:
+                # Add sensor reading to buffer
+                sensor_reading = {
+                    "timestamp": current_time,
+                    "sensor": sensor_type,
+                    "gesture": "unknown",
+                    "stance": "neutral",
+                    "sample": 1,
+                }
+
+                # Add sensor-specific values
+                if sensor_type == "linear_acceleration":
+                    vals = parsed_json.get("values", {})
+                    sensor_reading.update(
+                        {
+                            "accel_x": vals.get("x", 0),
+                            "accel_y": vals.get("y", 0),
+                            "accel_z": vals.get("z", 0),
+                        }
+                    )
+                elif sensor_type == "gyroscope":
+                    vals = parsed_json.get("values", {})
+                    sensor_reading.update(
+                        {
+                            "gyro_x": vals.get("x", 0),
+                            "gyro_y": vals.get("y", 0),
+                            "gyro_z": vals.get("z", 0),
+                        }
+                    )
+                elif sensor_type == "rotation_vector":
+                    vals = parsed_json.get("values", {})
+                    sensor_reading.update(
+                        {
+                            "rot_x": vals.get("x", 0),
+                            "rot_y": vals.get("y", 0),
+                            "rot_z": vals.get("z", 0),
+                            "rot_w": vals.get("w", 1),
+                        }
+                    )
+
+                sensor_buffer.append(sensor_reading)
+
+                # Run prediction if buffer is full and enough time has passed
+                if (
+                    len(sensor_buffer) >= 100
+                    and current_time - last_prediction_time > PREDICTION_INTERVAL
+                ):
+
+                    try:
+                        # Convert buffer to DataFrame
+                        buffer_df = pd.DataFrame(list(sensor_buffer))
+
+                        # Extract features
+                        features = extract_window_features(buffer_df)
+
+                        # Create feature vector matching training format
+                        feature_vector = pd.DataFrame([features])
+                        feature_vector = feature_vector.reindex(
+                            columns=ml_feature_names, fill_value=0
+                        )
+
+                        # Scale features
+                        features_scaled = ml_scaler.transform(feature_vector)
+
+                        # Predict gesture
+                        prediction = ml_model.predict(features_scaled)[0]
+                        confidence = ml_model.predict_proba(features_scaled).max()
+
+                        # Execute gesture if confidence is high enough
+                        if confidence >= ML_CONFIDENCE_THRESHOLD:
+                            if prediction == "jump":
+                                print(f"\n[ML] JUMP ({confidence:.2f})")
+                                keyboard.press(KEY_MAP["jump"])
+                                time.sleep(0.1)
+                                keyboard.release(KEY_MAP["jump"])
+                            elif prediction == "punch":
+                                print(f"\n[ML] ATTACK ({confidence:.2f})")
+                                keyboard.press(KEY_MAP["attack"])
+                                time.sleep(0.1)
+                                keyboard.release(KEY_MAP["attack"])
+                            elif prediction == "turn":
+                                print(f"\n[ML] TURN ({confidence:.2f})")
+                                facing_direction = (
+                                    "left" if facing_direction == "right" else "right"
+                                )
+                            # walk is handled by step detector
+                            # noise is ignored
+
+                        last_prediction_time = current_time
+
+                    except Exception as e:
+                        # Silently handle prediction errors
+                        pass
 
             # NEW: Rotation vector now used for turn detection with stability check
             if sensor_type == "rotation_vector":
