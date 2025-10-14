@@ -17,6 +17,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Real-time progress bar for continuous recording with elapsed/remaining time display
 - Comprehensive documentation: `docs/Phase_II/HYBRID_COLLECTION_PROTOCOL.md`
 
+### Added - Phase II: Command-Line Interface
+
+- **NEW FEATURE**: Flexible CLI arguments for selective data collection
+- `--gestures` flag to collect specific gestures (e.g., `--gestures punch,jump`)
+- `--samples N` flag to customize sample count for snippet mode
+- `--duration SEC` flag to customize snippet recording duration
+- `--continuous-duration MIN` flag to customize continuous recording duration
+- `--session-id ID` flag to resume interrupted sessions or add to existing data
+- `--list-gestures` flag to display all available gestures and their modes
+- `--help` for comprehensive usage information
+- Documentation: `docs/Phase_II/CLI_REFERENCE.md`
+
 ### Changed - Phase II: Data Collection Architecture
 
 - **BREAKING**: `data_collector.py` now uses TWO collection modes:

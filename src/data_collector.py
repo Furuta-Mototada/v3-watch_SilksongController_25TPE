@@ -10,6 +10,27 @@ Phase II: Guided Data Collection Procedure
 - Provides unambiguous gesture execution instructions
 - Records labeled time-series sensor data
 - Exports data in ML-ready format (CSV)
+
+Command-Line Arguments:
+    --gestures GESTURE1,GESTURE2    Collect only specific gestures (e.g., --gestures punch,jump)
+    --samples N                     Number of samples per gesture (default: 40)
+    --duration SEC                  Recording duration for snippet mode in seconds (default: 2.5)
+    --continuous-duration MIN       Recording duration for continuous mode in minutes (default: 2.5)
+    --session-id ID                 Use specific session ID (for resuming)
+    --list-gestures                 List all available gestures and exit
+
+Examples:
+    # Collect only PUNCH and JUMP
+    python data_collector.py --gestures punch,jump
+
+    # Collect WALK only (useful for testing continuous mode)
+    python data_collector.py --gestures walk
+
+    # Collect NOISE with custom sample count
+    python data_collector.py --gestures noise --samples 100
+
+    # Resume a specific session
+    python data_collector.py --session-id 20251014_143052 --gestures turn
 """
 
 import socket
@@ -17,6 +38,7 @@ import json
 import time
 import csv
 import os
+import argparse
 from datetime import datetime
 from collections import deque
 import network_utils
@@ -33,7 +55,7 @@ SENSORS_TO_COLLECT = [
 
 # Data collection parameters
 RECORDING_DURATION_SEC = 2.5  # Duration to record each gesture (snippet mode)
-COUNTDOWN_SEC = 3  # Countdown before recording starts
+COUNTDOWN_SEC = 1  # Countdown before recording starts
 SAMPLES_PER_GESTURE = 40  # Number of repetitions per gesture (snippet mode)
 NOISE_SAMPLES = 80  # Oversample NOISE for robustness (2x target gestures)
 
@@ -238,9 +260,9 @@ the 4 sacred gestures.
 class DataCollector:
     """Manages the data collection session and file I/O."""
 
-    def __init__(self):
+    def __init__(self, session_id=None):
         self.config = self.load_config()
-        self.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.session_id = session_id if session_id else datetime.now().strftime("%Y%m%d_%H%M%S")
         self.output_dir = f"training_data/session_{self.session_id}"
         self.sock = None
         self.current_recording = []
@@ -299,12 +321,16 @@ class DataCollector:
         print(f"{Colors.BLUE}{stance['description']}{Colors.RESET}")
         input(f"\n{Colors.BOLD}Press [Enter] when you have adopted this stance...{Colors.RESET}")
 
-    def record_gesture(self, gesture_key, sample_num):
+    def record_gesture(self, gesture_key, sample_num, total_samples=None):
         """Record a single gesture execution (snippet mode)."""
         gesture = GESTURES[gesture_key]
 
+        # Determine total samples for progress display
+        if total_samples is None:
+            total_samples = NOISE_SAMPLES if gesture_key == "noise" else SAMPLES_PER_GESTURE
+
         print("\n" + "─" * 70)
-        print(f"{Colors.BOLD}{Colors.BLUE}Recording: {gesture['name']} - Sample {sample_num}/{SAMPLES_PER_GESTURE}{Colors.RESET}")
+        print(f"{Colors.BOLD}{Colors.BLUE}Recording: {gesture['name']} - Sample {sample_num}/{total_samples}{Colors.RESET}")
         print("─" * 70)
         print(f"{Colors.YELLOW}{gesture['description']}{Colors.RESET}")
 
@@ -612,10 +638,148 @@ class DataCollector:
             self.sock.close()
 
 
+# ==================== ARGUMENT PARSING ====================
+
+def parse_arguments():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        description='Collect IMU gesture training data from Wear OS watch',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Collect only PUNCH and JUMP
+  python data_collector.py --gestures punch,jump
+
+  # Collect WALK only (test continuous mode)
+  python data_collector.py --gestures walk
+
+  # Collect NOISE with custom sample count
+  python data_collector.py --gestures noise --samples 100
+
+  # Resume a specific session
+  python data_collector.py --session-id 20251014_143052 --gestures turn
+
+Available gestures: punch, jump, turn, walk, noise
+        """
+    )
+
+    parser.add_argument(
+        '--gestures',
+        type=str,
+        help='Comma-separated list of gestures to collect (e.g., punch,jump,walk). '
+             'If not specified, all gestures will be collected.'
+    )
+
+    parser.add_argument(
+        '--samples',
+        type=int,
+        default=SAMPLES_PER_GESTURE,
+        help=f'Number of samples per gesture for snippet mode (default: {SAMPLES_PER_GESTURE})'
+    )
+
+    parser.add_argument(
+        '--duration',
+        type=float,
+        default=RECORDING_DURATION_SEC,
+        help=f'Recording duration for snippet mode in seconds (default: {RECORDING_DURATION_SEC})'
+    )
+
+    parser.add_argument(
+        '--continuous-duration',
+        type=float,
+        default=CONTINUOUS_RECORDING_DURATION_MIN,
+        help=f'Recording duration for continuous mode in minutes (default: {CONTINUOUS_RECORDING_DURATION_MIN})'
+    )
+
+    parser.add_argument(
+        '--session-id',
+        type=str,
+        help='Use specific session ID (useful for resuming an interrupted session)'
+    )
+
+    parser.add_argument(
+        '--list-gestures',
+        action='store_true',
+        help='List all available gestures and their collection modes, then exit'
+    )
+
+    return parser.parse_args()
+
+
+def list_gestures_info():
+    """Display information about all available gestures."""
+    print("\n" + "╔" + "═" * 68 + "╗")
+    print("║" + f"  {Colors.BOLD}{Colors.GREEN}AVAILABLE GESTURES{Colors.RESET}".ljust(78) + "║")
+    print("╚" + "═" * 68 + "╝")
+
+    for gesture_key, gesture in GESTURES.items():
+        mode = gesture.get("collection_mode", "snippet")
+        mode_color = Colors.YELLOW if mode == "continuous" else Colors.BLUE
+        mode_label = "CONTINUOUS" if mode == "continuous" else "SNIPPET"
+
+        print(f"\n{Colors.BOLD}{gesture_key.upper()}{Colors.RESET}")
+        print(f"  Name: {gesture['name']}")
+        print(f"  Mode: {mode_color}{mode_label}{Colors.RESET}")
+        print(f"  Stance: {gesture['stance']}")
+        print(f"  Class: {gesture['class_label']}")
+
+        if mode == "continuous":
+            print(f"  Collection: 1 session × {CONTINUOUS_RECORDING_DURATION_MIN} minutes")
+        else:
+            samples = NOISE_SAMPLES if gesture_key == "noise" else SAMPLES_PER_GESTURE
+            print(f"  Collection: {samples} samples × {RECORDING_DURATION_SEC}s each")
+
+    print("\n" + "─" * 70)
+    print(f"{Colors.GREEN}Usage examples:{Colors.RESET}")
+    print(f"  python data_collector.py --gestures punch,jump")
+    print(f"  python data_collector.py --gestures walk")
+    print(f"  python data_collector.py --gestures noise --samples 100")
+    print()
+
+
 # ==================== MAIN COLLECTION FLOW ====================
 
 def main():
     """Main data collection workflow."""
+
+    # Parse command-line arguments
+    args = parse_arguments()
+
+    # Handle --list-gestures
+    if args.list_gestures:
+        list_gestures_info()
+        return
+
+    # Parse gestures to collect
+    gestures_to_collect = None
+    if args.gestures:
+        gestures_to_collect = [g.strip().lower() for g in args.gestures.split(',')]
+
+        # Validate gesture names
+        invalid_gestures = [g for g in gestures_to_collect if g not in GESTURES]
+        if invalid_gestures:
+            print(f"\n{Colors.RED}ERROR: Invalid gesture(s): {', '.join(invalid_gestures)}{Colors.RESET}")
+            print(f"{Colors.YELLOW}Available gestures: {', '.join(GESTURES.keys())}{Colors.RESET}")
+            print(f"{Colors.BLUE}Use --list-gestures to see details.{Colors.RESET}\n")
+            return
+
+        print(f"\n{Colors.GREEN}✓ Collecting specific gestures: {', '.join(gestures_to_collect)}{Colors.RESET}")
+    else:
+        print(f"\n{Colors.BLUE}ℹ️  Collecting all gestures (use --gestures to select specific ones){Colors.RESET}")
+
+    # Override global parameters if specified
+    global SAMPLES_PER_GESTURE, RECORDING_DURATION_SEC, CONTINUOUS_RECORDING_DURATION_MIN
+    if args.samples != SAMPLES_PER_GESTURE:
+        SAMPLES_PER_GESTURE = args.samples
+        print(f"{Colors.YELLOW}⚙️  Using custom sample count: {SAMPLES_PER_GESTURE}{Colors.RESET}")
+
+    if args.duration != RECORDING_DURATION_SEC:
+        RECORDING_DURATION_SEC = args.duration
+        print(f"{Colors.YELLOW}⚙️  Using custom snippet duration: {RECORDING_DURATION_SEC}s{Colors.RESET}")
+
+    if args.continuous_duration != CONTINUOUS_RECORDING_DURATION_MIN:
+        CONTINUOUS_RECORDING_DURATION_MIN = args.continuous_duration
+        print(f"{Colors.YELLOW}⚙️  Using custom continuous duration: {CONTINUOUS_RECORDING_DURATION_MIN}min{Colors.RESET}")
 
     print("\n")
     print("╔" + "═" * 68 + "╗")
@@ -705,8 +869,15 @@ The NOISE class is a {Colors.YELLOW}single, diverse category{Colors.RESET} conta
     print(welcome_message)
     input(f"\n{Colors.BOLD}{Colors.GREEN}Press [Enter] to begin setup...{Colors.RESET}")
 
-    # Initialize collector
-    collector = DataCollector()
+    # Initialize collector with optional custom session ID
+    collector = DataCollector(session_id=args.session_id)
+
+    if args.session_id:
+        print(f"{Colors.YELLOW}📁 Resuming/Using session: {args.session_id}{Colors.RESET}")
+        if os.path.exists(collector.output_dir):
+            print(f"{Colors.BLUE}ℹ️  Output directory exists, will add to existing data{Colors.RESET}")
+        else:
+            print(f"{Colors.BLUE}ℹ️  Creating new session directory{Colors.RESET}")
 
     try:
         collector.setup()
@@ -762,12 +933,21 @@ The NOISE class is a {Colors.YELLOW}single, diverse category{Colors.RESET} conta
         # HYBRID APPROACH: Use snippet mode for atomic gestures, continuous mode for state-based gestures
         gestures_by_stance = {}
         for gesture_key, gesture in GESTURES.items():
+            # Filter by selected gestures if specified
+            if gestures_to_collect and gesture_key not in gestures_to_collect:
+                continue
+
             stance = gesture["stance"]
             if stance not in gestures_by_stance:
                 gestures_by_stance[stance] = []
             gestures_by_stance[stance].append(gesture_key)
 
         gestures_completed = []
+
+        # Check if any gestures to collect
+        if not gestures_by_stance:
+            print(f"\n{Colors.YELLOW}⚠️  No gestures to collect!{Colors.RESET}")
+            return
 
         for stance_key in ["combat", "neutral", "travel"]:
             if stance_key not in gestures_by_stance:
@@ -801,17 +981,20 @@ The NOISE class is a {Colors.YELLOW}single, diverse category{Colors.RESET} conta
 
                 else:
                     # SNIPPET MODE: Record multiple short samples
-                    for sample_num in range(1, SAMPLES_PER_GESTURE + 1):
-                        success = collector.record_gesture(gesture_key, sample_num)
+                    # Use NOISE_SAMPLES for noise gesture, SAMPLES_PER_GESTURE for others
+                    num_samples = NOISE_SAMPLES if gesture_key == "noise" else SAMPLES_PER_GESTURE
+
+                    for sample_num in range(1, num_samples + 1):
+                        success = collector.record_gesture(gesture_key, sample_num, total_samples=num_samples)
 
                         if not success:
                             retry = input(f"\n  {Colors.YELLOW}Try recording this sample again? (y/n): {Colors.RESET}")
                             if retry.lower() == 'y':
-                                success = collector.record_gesture(gesture_key, sample_num)
+                                success = collector.record_gesture(gesture_key, sample_num, total_samples=num_samples)
 
                         if success:
                             # Brief pause between samples
-                            if sample_num < SAMPLES_PER_GESTURE:
+                            if sample_num < num_samples:
                                 print(f"\n  {Colors.BLUE}Take a moment to reset to stance...{Colors.RESET}")
                                 time.sleep(2)
 
