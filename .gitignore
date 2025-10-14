@@ -46,7 +46,7 @@ tmp/
 *.bak
 
 # Training data (ML datasets - can be large)
-training_data/
+# training_data/
 
 # ML Models (serialized models can be large)
 models/*.pkl
