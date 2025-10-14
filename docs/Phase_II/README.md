@@ -2,7 +2,21 @@
 
 Welcome to the Phase II documentation for the Silksong Controller project. This phase focuses on guided data collection for machine learning gesture recognition.
 
-## 📚 Documentation Overview
+## � NEW: Hybrid Data Collection Protocol (v3.1.0)
+
+**MAJOR UPDATE (Oct 14, 2025):** We've implemented a sophisticated hybrid approach that treats event-based gestures (PUNCH, JUMP, TURN) differently from state-based gestures (WALK). This fundamental improvement enhances data quality and model robustness.
+
+-   **`IMPLEMENTATION_SUMMARY.md`** ⭐ **START HERE** - Executive summary of the hybrid protocol
+-   **`HYBRID_COLLECTION_PROTOCOL.md`** - Complete technical specification
+-   **`HYBRID_PROTOCOL_VISUAL.md`** - Visual diagrams and flowcharts
+
+**Key Benefits:**
+- 37x more training examples for WALK gesture
+- 13% faster data collection
+- Training-inference alignment (both use sliding windows)
+- Significantly improved model robustness
+
+## �📚 Documentation Overview
 
 ### Getting Started
 

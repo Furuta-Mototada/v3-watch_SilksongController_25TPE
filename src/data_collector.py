@@ -32,10 +32,13 @@ SENSORS_TO_COLLECT = [
 ]
 
 # Data collection parameters
-RECORDING_DURATION_SEC = 2.5  # Duration to record each gesture
+RECORDING_DURATION_SEC = 2.5  # Duration to record each gesture (snippet mode)
 COUNTDOWN_SEC = 3  # Countdown before recording starts
-SAMPLES_PER_GESTURE = 40  # Number of repetitions per gesture
+SAMPLES_PER_GESTURE = 40  # Number of repetitions per gesture (snippet mode)
 NOISE_SAMPLES = 80  # Oversample NOISE for robustness (2x target gestures)
+
+# Continuous recording parameters (for state-based gestures like WALK)
+CONTINUOUS_RECORDING_DURATION_MIN = 2.5  # Duration for continuous gestures (minutes)
 
 # Connection monitoring
 CONNECTION_TIMEOUT_SEC = 2.0  # Time without data before connection lost
@@ -117,6 +120,7 @@ GESTURES = {
         "name": "Punch",
         "stance": "combat",
         "class_label": "PUNCH",
+        "collection_mode": "snippet",  # Atomic event gesture
         "description": """
 Execute a sharp, forward PUNCH motion:
   • From combat stance, thrust your fist forward
@@ -133,6 +137,7 @@ Execute a sharp, forward PUNCH motion:
         "name": "Jump",
         "stance": "neutral",
         "class_label": "JUMP",
+        "collection_mode": "snippet",  # Atomic event gesture
         "description": """
 Execute a sharp, upward HOP motion:
   • From neutral stance, make a quick upward hop
@@ -149,6 +154,7 @@ Execute a sharp, upward HOP motion:
         "name": "Turn (180°)",
         "stance": "travel",
         "class_label": "TURN",
+        "collection_mode": "snippet",  # Atomic event gesture
         "description": """
 Execute a 180-degree body turn:
   • Start from travel stance, facing forward
@@ -159,18 +165,25 @@ Execute a 180-degree body turn:
     },
 
     # ═══════════════════════════════════════════════════════════
-    # TARGET GESTURE CLASS 4: WALK
+    # TARGET GESTURE CLASS 4: WALK (CONTINUOUS MODE)
     # ═══════════════════════════════════════════════════════════
+    # CRITICAL DESIGN DECISION: Walking is a STATE, not an EVENT.
+    # We use continuous recording to capture the full temporal dynamics,
+    # including transitions (starting, maintaining pace, stopping).
+    # In the ML pipeline, we'll use a sliding window to generate hundreds
+    # of training samples from this single continuous recording.
     "walk": {
         "name": "Walk",
         "stance": "travel",
         "class_label": "WALK",
+        "collection_mode": "continuous",  # State-based gesture
         "description": """
-Walk in place with natural arm swing:
+Walk in place with natural arm swing (CONTINUOUS RECORDING):
   • From travel stance, begin walking in place
   • Let your arm swing naturally
   • Maintain a steady, comfortable rhythm
-  • Continue for the full recording duration
+  • Continue walking for the FULL duration (2.5 minutes)
+  • This captures starting, maintaining, and stopping patterns
         """,
     },
 
@@ -185,6 +198,7 @@ Walk in place with natural arm swing:
         "name": "NOISE (The Stray Catcher)",
         "stance": "neutral",
         "class_label": "NOISE",
+        "collection_mode": "snippet",  # Varied short samples
         "description": """
 Perform ANY confounding movement (NOT one of the 4 target gestures).
 The script will randomly select from these categories:
@@ -286,7 +300,7 @@ class DataCollector:
         input(f"\n{Colors.BOLD}Press [Enter] when you have adopted this stance...{Colors.RESET}")
 
     def record_gesture(self, gesture_key, sample_num):
-        """Record a single gesture execution."""
+        """Record a single gesture execution (snippet mode)."""
         gesture = GESTURES[gesture_key]
 
         print("\n" + "─" * 70)
@@ -385,6 +399,133 @@ class DataCollector:
 
         return True
 
+    def record_continuous_gesture(self, gesture_key, duration_min):
+        """
+        Record a continuous gesture for an extended duration (continuous mode).
+
+        This is designed for STATE-BASED gestures like WALK, where we want to capture
+        the full temporal dynamics including transitions (starting, maintaining, stopping).
+
+        The ML pipeline will use a sliding window to generate hundreds of training samples
+        from this single continuous recording.
+        """
+        gesture = GESTURES[gesture_key]
+        duration_sec = duration_min * 60
+
+        print("\n" + "═" * 70)
+        print(f"{Colors.BOLD}{Colors.BLUE}CONTINUOUS RECORDING MODE{Colors.RESET}")
+        print("═" * 70)
+        print(f"{Colors.BOLD}{Colors.GREEN}Gesture: {gesture['name']}{Colors.RESET}")
+        print(f"{Colors.BOLD}{Colors.YELLOW}Duration: {duration_min} minutes ({duration_sec:.0f} seconds){Colors.RESET}")
+        print("═" * 70)
+        print(f"{Colors.YELLOW}{gesture['description']}{Colors.RESET}")
+
+        print(f"\n{Colors.RED}{Colors.BOLD}IMPORTANT:{Colors.RESET}")
+        print(f"  {Colors.YELLOW}• This is a LONG recording - pace yourself!{Colors.RESET}")
+        print(f"  {Colors.YELLOW}• Walk naturally and continuously{Colors.RESET}")
+        print(f"  {Colors.YELLOW}• It's OK to vary your pace slightly{Colors.RESET}")
+        print(f"  {Colors.YELLOW}• This captures starting, maintaining, and stopping patterns{Colors.RESET}")
+
+        input(f"\n{Colors.BOLD}Press [Enter] when ready to begin continuous recording...{Colors.RESET}")
+
+        # Extended countdown for continuous mode
+        for i in range(COUNTDOWN_SEC, 0, -1):
+            print(f"  {Colors.YELLOW}{i}...{Colors.RESET}")
+            time.sleep(1)
+
+        print(f"\n  {Colors.RED}{Colors.BOLD}🔴 RECORDING - BEGIN WALKING NOW!{Colors.RESET}")
+
+        # Clear any buffered data and reset connection tracking
+        self._flush_socket()
+        self.last_data_time = time.time()
+
+        # Record data
+        self.current_recording = []
+        start_time = time.time()
+        recording_end = start_time + duration_sec
+        last_status_update = 0
+        data_points_received = 0
+
+        while time.time() < recording_end:
+            elapsed = time.time() - start_time
+            remaining = recording_end - time.time()
+            progress_pct = (elapsed / duration_sec) * 100
+
+            # Update connection status every 0.5 seconds (less frequent for long recording)
+            if time.time() - last_status_update > 0.5:
+                connection_status = self._get_connection_status()
+                data_rate = data_points_received / elapsed if elapsed > 0 else 0
+
+                # Show progress bar
+                bar_width = 30
+                filled = int(bar_width * progress_pct / 100)
+                bar = "█" * filled + "░" * (bar_width - filled)
+
+                status_line = (
+                    f"\r  ⏱️  {Colors.BOLD}{int(elapsed)}s / {int(duration_sec)}s{Colors.RESET} "
+                    f"[{bar}] {progress_pct:.0f}% | "
+                    f"{connection_status} | "
+                    f"{Colors.BLUE}📊 {data_points_received} pts ({data_rate:.0f} pts/s){Colors.RESET}"
+                )
+                print(status_line, end="", flush=True)
+                last_status_update = time.time()
+
+            try:
+                data, addr = self.sock.recvfrom(4096)
+                parsed = json.loads(data.decode())
+                sensor_type = parsed.get("sensor")
+
+                if sensor_type in SENSORS_TO_COLLECT:
+                    # Update connection timestamp
+                    self.last_data_time = time.time()
+
+                    # Add timestamp and label (no sample number for continuous mode)
+                    record = {
+                        "timestamp": time.time() - start_time,
+                        "sensor": sensor_type,
+                        "gesture": gesture_key,
+                        "stance": gesture["stance"],
+                        "collection_mode": "continuous",
+                    }
+
+                    # Flatten sensor values
+                    if "values" in parsed:
+                        vals = parsed["values"]
+                        if sensor_type == "rotation_vector":
+                            record["rot_x"] = vals.get("x", 0)
+                            record["rot_y"] = vals.get("y", 0)
+                            record["rot_z"] = vals.get("z", 0)
+                            record["rot_w"] = vals.get("w", 0)
+                        elif sensor_type == "linear_acceleration":
+                            record["accel_x"] = vals.get("x", 0)
+                            record["accel_y"] = vals.get("y", 0)
+                            record["accel_z"] = vals.get("z", 0)
+                        elif sensor_type == "gyroscope":
+                            record["gyro_x"] = vals.get("x", 0)
+                            record["gyro_y"] = vals.get("y", 0)
+                            record["gyro_z"] = vals.get("z", 0)
+
+                    self.current_recording.append(record)
+                    data_points_received += 1
+
+            except (BlockingIOError, json.JSONDecodeError, KeyError):
+                pass
+
+        print(f"\n\n  {Colors.GREEN}✓ Continuous recording complete!{Colors.RESET}")
+
+        # Check if we got data
+        if len(self.current_recording) == 0:
+            print(f"\n  {Colors.RED}⚠️  WARNING: No data recorded! Check your watch connection.{Colors.RESET}")
+            return False
+
+        print(f"  {Colors.GREEN}📊 Captured {len(self.current_recording)} data points{Colors.RESET}")
+        print(f"  {Colors.GREEN}📊 Average rate: {data_points_received / duration_sec:.1f} pts/s{Colors.RESET}")
+
+        # Save to CSV (continuous mode uses different filename)
+        self._save_continuous_recording(gesture_key)
+
+        return True
+
     def _flush_socket(self):
         """Clear any buffered data from the socket."""
         try:
@@ -403,7 +544,7 @@ class DataCollector:
             return f"{Colors.GREEN}✓ CONNECTED{Colors.RESET}"
 
     def _save_recording(self, gesture_key, sample_num):
-        """Save the current recording to a CSV file."""
+        """Save the current recording to a CSV file (snippet mode)."""
         filename = f"{gesture_key}_sample{sample_num:02d}.csv"
         filepath = os.path.join(self.output_dir, filename)
 
@@ -423,6 +564,29 @@ class DataCollector:
             writer.writerows(self.current_recording)
 
         print(f"  {Colors.GREEN}💾 Saved: {filename}{Colors.RESET}")
+
+    def _save_continuous_recording(self, gesture_key):
+        """Save the current continuous recording to a single CSV file."""
+        filename = f"{gesture_key}_continuous.csv"
+        filepath = os.path.join(self.output_dir, filename)
+
+        if len(self.current_recording) == 0:
+            return
+
+        # Determine all possible fields
+        fieldnames = set()
+        for record in self.current_recording:
+            fieldnames.update(record.keys())
+
+        fieldnames = sorted(list(fieldnames))
+
+        with open(filepath, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(self.current_recording)
+
+        print(f"  {Colors.GREEN}💾 Saved: {filename}{Colors.RESET}")
+        print(f"  {Colors.BLUE}ℹ️  This continuous recording will be processed with a sliding window in the ML pipeline{Colors.RESET}")
 
     def save_session_metadata(self, gestures_completed):
         """Save metadata about this collection session."""
@@ -501,10 +665,11 @@ The NOISE class is a {Colors.YELLOW}single, diverse category{Colors.RESET} conta
 
 {Colors.BOLD}{Colors.BLUE}═══ WHAT TO EXPECT ═══{Colors.RESET}
   • You will collect {Colors.YELLOW}{total_gestures} gesture classes{Colors.RESET}
-  • {Colors.GREEN}4 target gestures{Colors.RESET} × {SAMPLES_PER_GESTURE} samples each
+  • {Colors.GREEN}3 event-based gestures{Colors.RESET} (PUNCH, JUMP, TURN) × {SAMPLES_PER_GESTURE} samples each
+  • {Colors.GREEN}1 state-based gesture{Colors.RESET} (WALK) × 1 continuous session ({CONTINUOUS_RECORDING_DURATION_MIN:.1f} min)
   • {Colors.RED}1 NOISE class{Colors.RESET} × {NOISE_SAMPLES} samples (oversampled for robustness)
   • {Colors.GREEN}Clear, detailed instructions{Colors.RESET} will be provided before each recording
-  • The entire process takes approximately {Colors.YELLOW}60-75 minutes{Colors.RESET}
+  • The entire process takes approximately {Colors.YELLOW}50-60 minutes{Colors.RESET}
 
 {Colors.BOLD}{Colors.RED}═══ REQUIREMENTS ═══{Colors.RESET}
   • Your Wear OS watch must be {Colors.GREEN}connected and streaming{Colors.RESET} sensor data
@@ -520,12 +685,21 @@ The NOISE class is a {Colors.YELLOW}single, diverse category{Colors.RESET} conta
   • For NOISE samples, {Colors.RED}be natural and varied{Colors.RESET} - variety is key!
   • Read each instruction {Colors.RED}carefully{Colors.RESET} before executing
 
-{Colors.BOLD}{Colors.BLUE}═══ SIMPLIFIED DATASET BREAKDOWN ═══{Colors.RESET}
-  {Colors.GREEN}TARGET Gestures:{Colors.RESET} {len(target_gestures)} types × {SAMPLES_PER_GESTURE} = {target_samples} samples
-  {Colors.RED}NOISE (Stray Catcher):{Colors.RESET} 1 diverse class × {NOISE_SAMPLES} = {noise_total} samples
+{Colors.BOLD}{Colors.BLUE}═══ HYBRID COLLECTION PROTOCOL ═══{Colors.RESET}
+  {Colors.GREEN}EVENT Gestures (Snippet Mode):{Colors.RESET}
+    • PUNCH, JUMP, TURN: {SAMPLES_PER_GESTURE} discrete samples each
+    • Each sample is a 2.5s recording of one complete gesture execution
+
+  {Colors.YELLOW}STATE Gesture (Continuous Mode):{Colors.RESET}
+    • WALK: 1 continuous recording ({CONTINUOUS_RECORDING_DURATION_MIN:.1f} minutes)
+    • Captures full temporal dynamics (starting, maintaining, stopping)
+    • Will generate hundreds of training samples via sliding window in ML pipeline
+
+  {Colors.RED}NOISE (Stray Catcher):{Colors.RESET}
+    • {NOISE_SAMPLES} diverse samples of confounding movements
   ────────────────────────────────────────────────────────────────
-  {Colors.YELLOW}{Colors.BOLD}► Total samples to collect: {total_samples}{Colors.RESET}
-  {Colors.GREEN}{Colors.BOLD}► This is MANAGEABLE in a single focused session!{Colors.RESET}
+  {Colors.YELLOW}{Colors.BOLD}► This HYBRID approach optimizes data quality for both gesture types!{Colors.RESET}
+  {Colors.GREEN}{Colors.BOLD}► More efficient collection + Better model performance{Colors.RESET}
     """
 
     print(welcome_message)
@@ -585,6 +759,7 @@ The NOISE class is a {Colors.YELLOW}single, diverse category{Colors.RESET} conta
         collector._flush_socket()
 
         # Main collection loop - organized by stance
+        # HYBRID APPROACH: Use snippet mode for atomic gestures, continuous mode for state-based gestures
         gestures_by_stance = {}
         for gesture_key, gesture in GESTURES.items():
             stance = gesture["stance"]
@@ -604,25 +779,41 @@ The NOISE class is a {Colors.YELLOW}single, diverse category{Colors.RESET} conta
             # Collect all gestures for this stance
             for gesture_key in gestures_by_stance[stance_key]:
                 gesture = GESTURES[gesture_key]
+                collection_mode = gesture.get("collection_mode", "snippet")
 
                 print("\n" + "═" * 70)
                 print(f"  {Colors.BOLD}{Colors.GREEN}GESTURE: {gesture['name'].upper()}{Colors.RESET}")
+                if collection_mode == "continuous":
+                    print(f"  {Colors.BOLD}{Colors.YELLOW}MODE: CONTINUOUS RECORDING (State-Based Gesture){Colors.RESET}")
+                else:
+                    print(f"  {Colors.BOLD}{Colors.BLUE}MODE: SNIPPET RECORDING (Event-Based Gesture){Colors.RESET}")
                 print("═" * 70)
 
-                # Collect multiple samples
-                for sample_num in range(1, SAMPLES_PER_GESTURE + 1):
-                    success = collector.record_gesture(gesture_key, sample_num)
+                # Handle based on collection mode
+                if collection_mode == "continuous":
+                    # CONTINUOUS MODE: Record one long session
+                    success = collector.record_continuous_gesture(gesture_key, CONTINUOUS_RECORDING_DURATION_MIN)
 
                     if not success:
-                        retry = input(f"\n  {Colors.YELLOW}Try recording this sample again? (y/n): {Colors.RESET}")
+                        retry = input(f"\n  {Colors.YELLOW}Try recording this continuous session again? (y/n): {Colors.RESET}")
                         if retry.lower() == 'y':
-                            success = collector.record_gesture(gesture_key, sample_num)
+                            success = collector.record_continuous_gesture(gesture_key, CONTINUOUS_RECORDING_DURATION_MIN)
 
-                    if success:
-                        # Brief pause between samples
-                        if sample_num < SAMPLES_PER_GESTURE:
-                            print(f"\n  {Colors.BLUE}Take a moment to reset to stance...{Colors.RESET}")
-                            time.sleep(2)
+                else:
+                    # SNIPPET MODE: Record multiple short samples
+                    for sample_num in range(1, SAMPLES_PER_GESTURE + 1):
+                        success = collector.record_gesture(gesture_key, sample_num)
+
+                        if not success:
+                            retry = input(f"\n  {Colors.YELLOW}Try recording this sample again? (y/n): {Colors.RESET}")
+                            if retry.lower() == 'y':
+                                success = collector.record_gesture(gesture_key, sample_num)
+
+                        if success:
+                            # Brief pause between samples
+                            if sample_num < SAMPLES_PER_GESTURE:
+                                print(f"\n  {Colors.BLUE}Take a moment to reset to stance...{Colors.RESET}")
+                                time.sleep(2)
 
                 gestures_completed.append(gesture_key)
 
