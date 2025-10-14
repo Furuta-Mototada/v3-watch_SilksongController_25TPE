@@ -37,14 +37,22 @@ v3-watch_SilksongController_25TPE/
 │   ├── udp_listener.py       # Main controller logic
 │   ├── network_utils.py      # UDP network handling
 │   ├── calibrate.py          # Calibration tool
-│   └── data_collector.py     # Phase II: ML training data collection
+│   ├── data_collector.py     # Phase II: ML training data collection
+│   └── feature_extractor.py  # Phase III: Feature engineering module
+├── models/                    # Trained ML models (Phase III output)
+│   ├── gesture_classifier.pkl
+│   ├── feature_scaler.pkl
+│   └── README.md
+├── docs/                      # Documentation
+│   ├── Phase_II/             # Data collection guides
+│   └── Phase_III/            # ML pipeline documentation
 ├── installer/                # Installation scripts and templates
 │   ├── INSTALLATION_GUIDE.md
 │   ├── run_controller.sh/bat
 │   └── run_calibration.sh/bat
-├── docs/                     # Documentation and development notes
+├── CS156_Silksong_Watch.ipynb # Phase III: ML Pipeline Notebook
 ├── config.json              # Runtime configuration
-└── requirements.txt         # Python dependencies
+└── requirements.txt         # Python dependencies (includes ML libs)
 ```
 
 ## 🚀 Quick Start
@@ -133,6 +141,50 @@ This tool:
 - Create custom gesture sets
 
 See `docs/Phase_II/DATA_COLLECTION_GUIDE.md` for full documentation.
+
+## 🤖 Phase III: Machine Learning Pipeline
+
+Transform collected sensor data into a trained gesture recognition model using a comprehensive Jupyter Notebook:
+
+```bash
+# Install ML dependencies
+pip install -r requirements.txt
+
+# Run the ML pipeline notebook
+jupyter notebook CS156_Silksong_Watch.ipynb
+```
+
+**The notebook includes:**
+- ✅ Data loading and exploration
+- ✅ Feature engineering (~60+ features from time-series data)
+- ✅ Model training (SVM with RBF kernel + Random Forest)
+- ✅ Hyperparameter tuning via GridSearchCV
+- ✅ Model evaluation and validation
+- ✅ Model serialization for deployment
+
+**Output Models:**
+- `models/gesture_classifier.pkl` - Trained SVM classifier
+- `models/feature_scaler.pkl` - Feature normalization scaler
+- `models/feature_names.pkl` - Feature reference list
+- `models/model_metadata.json` - Performance metrics
+
+**Performance Targets:**
+- Test accuracy: >85%
+- Real-time latency: <100ms
+- Confidence threshold: 0.7 (70%)
+
+See `docs/Phase_III/README.md` for complete ML pipeline documentation.
+
+## 🚀 Phase IV: Real-Time Deployment (Coming Soon)
+
+Integrate trained ML models into the controller for gesture-based predictions:
+
+- Load trained model and scaler at startup
+- Implement sliding window buffer for sensor data
+- Extract features and predict gestures in real-time
+- Execute actions based on predictions with confidence thresholding
+
+See `docs/Phase_III/PHASE_IV_INTEGRATION.md` for integration guide.
 
 ## 🔧 Development
 

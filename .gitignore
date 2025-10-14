@@ -47,3 +47,12 @@ tmp/
 
 # Training data (ML datasets - can be large)
 training_data/
+
+# ML Models (serialized models can be large)
+models/*.pkl
+models/*.joblib
+models/*.h5
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
