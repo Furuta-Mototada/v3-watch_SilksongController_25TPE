@@ -116,6 +116,13 @@ KEY_MAP = {
     "attack": get_key(config["keyboard_mappings"]["attack"]),
 }
 
+# Load hybrid system configuration
+HYBRID_ENABLED = config.get("hybrid_system", {}).get("enabled", False)
+REFLEX_JUMP_THRESHOLD = config.get("hybrid_system", {}).get("reflex_layer", {}).get("jump_threshold", 15.0)
+REFLEX_ATTACK_THRESHOLD = config.get("hybrid_system", {}).get("reflex_layer", {}).get("attack_threshold", 12.0)
+REFLEX_STABILITY_THRESHOLD = config.get("hybrid_system", {}).get("reflex_layer", {}).get("stability_threshold", 5.0)
+REFLEX_COOLDOWN = config.get("hybrid_system", {}).get("reflex_layer", {}).get("cooldown_seconds", 0.3)
+
 
 # --- ML Model Loading ---
 def load_ml_models():
@@ -140,9 +147,46 @@ def extract_window_features(window_df):
     features = {}
 
     # Separate by sensor type
-    accel = window_df[window_df["sensor"] == "linear_acceleration"]
+    accel = window_df[window_df["sensor"] == "linear_acceleration"].copy()
     gyro = window_df[window_df["sensor"] == "gyroscope"]
     rot = window_df[window_df["sensor"] == "rotation_vector"]
+    
+    # ========== WORLD-COORDINATE TRANSFORMATION ==========
+    # Transform acceleration to world coordinates for orientation invariance
+    if len(accel) > 0 and len(rot) > 0:
+        for idx in accel.index:
+            # Find closest rotation reading by timestamp/index
+            if idx in rot.index:
+                rot_idx = idx
+            else:
+                # Find nearest rotation reading
+                rot_idx = rot.index[np.argmin(np.abs(rot.index - idx))]
+            
+            if rot_idx in rot.index:
+                # Get device-local acceleration
+                device_accel = [
+                    accel.loc[idx, 'accel_x'],
+                    accel.loc[idx, 'accel_y'],
+                    accel.loc[idx, 'accel_z']
+                ]
+                
+                # Get rotation quaternion
+                quaternion = {
+                    'x': rot.loc[rot_idx, 'rot_x'],
+                    'y': rot.loc[rot_idx, 'rot_y'],
+                    'z': rot.loc[rot_idx, 'rot_z'],
+                    'w': rot.loc[rot_idx, 'rot_w']
+                }
+                
+                # Transform to world coordinates
+                try:
+                    world_accel = rotate_vector_by_quaternion(device_accel, quaternion)
+                    accel.loc[idx, 'world_accel_x'] = world_accel[0]
+                    accel.loc[idx, 'world_accel_y'] = world_accel[1]
+                    accel.loc[idx, 'world_accel_z'] = world_accel[2]
+                except (KeyError, IndexError, TypeError):
+                    # If transformation fails, leave world coords as NaN
+                    pass
 
     # ========== ACCELERATION FEATURES ==========
     if len(accel) > 0:
@@ -168,6 +212,23 @@ def extract_window_features(window_df):
                         features[f"{axis}_fft_max"] = fft_vals.max()
                         features[f"{axis}_dominant_freq"] = fft_vals.argmax()
                         features[f"{axis}_fft_mean"] = fft_vals.mean()
+        
+        # World-coordinate acceleration features (orientation-invariant)
+        for axis in ['world_accel_x', 'world_accel_y', 'world_accel_z']:
+            if axis in accel.columns:
+                values = accel[axis].dropna()
+                
+                if len(values) > 0:
+                    # Time-domain statistics
+                    features[f'{axis}_mean'] = values.mean()
+                    features[f'{axis}_std'] = values.std()
+                    features[f'{axis}_max'] = values.max()
+                    features[f'{axis}_min'] = values.min()
+                    features[f'{axis}_range'] = values.max() - values.min()
+                    
+                    # Distribution shape
+                    features[f'{axis}_skew'] = stats.skew(values)
+                    features[f'{axis}_kurtosis'] = stats.kurtosis(values)
 
     # ========== GYROSCOPE FEATURES ==========
     if len(gyro) > 0:
@@ -222,15 +283,102 @@ def extract_window_features(window_df):
     return features
 
 
+# --- Hybrid System: Reflex Layer ---
+class ExecutionArbitrator:
+    """Coordinates action execution between reflex and ML layers."""
+    
+    def __init__(self, cooldown_seconds=0.3):
+        self.last_action_time = {}
+        self.cooldown = cooldown_seconds
+    
+    def can_execute(self, action):
+        """Check if action can be executed (cooldown check)."""
+        now = time.time()
+        last_time = self.last_action_time.get(action, 0)
+        return now - last_time >= self.cooldown
+    
+    def execute(self, action, source='unknown'):
+        """Execute action if cooldown has elapsed."""
+        if not self.can_execute(action):
+            return False
+        
+        # Execute keyboard action
+        if action == 'jump':
+            print(f"[{source.upper()}] JUMP")
+            keyboard.press(KEY_MAP["jump"])
+            time.sleep(0.1)
+            keyboard.release(KEY_MAP["jump"])
+        elif action == 'attack':
+            print(f"[{source.upper()}] ATTACK")
+            keyboard.press(KEY_MAP["attack"])
+            time.sleep(0.1)
+            keyboard.release(KEY_MAP["attack"])
+        elif action == 'turn':
+            global facing_direction
+            print(f"[{source.upper()}] TURN")
+            facing_direction = "left" if facing_direction == "right" else "right"
+        
+        # Update last action time
+        self.last_action_time[action] = time.time()
+        return True
+
+
+def detect_reflex_actions(accel_values, rotation_quaternion):
+    """Fast threshold-based detection in world coordinates.
+    
+    Parameters:
+    -----------
+    accel_values : dict
+        Device-local acceleration values {'x': float, 'y': float, 'z': float}
+    rotation_quaternion : dict
+        Rotation quaternion {'x': float, 'y': float, 'z': float, 'w': float}
+        
+    Returns:
+    --------
+    tuple : (action, confidence)
+        action: str or None - 'jump', 'attack', or None
+        confidence: float - normalized confidence score (0.0 to 2.0+)
+    """
+    # Transform to world coordinates
+    device_accel = [
+        accel_values.get('x', 0),
+        accel_values.get('y', 0),
+        accel_values.get('z', 0)
+    ]
+    
+    try:
+        world_accel = rotate_vector_by_quaternion(device_accel, rotation_quaternion)
+    except (KeyError, TypeError, ZeroDivisionError):
+        # If transformation fails, can't do reflex detection
+        return None, 0.0
+    
+    # Jump: Strong upward motion in world Z-axis
+    if world_accel[2] > REFLEX_JUMP_THRESHOLD:
+        confidence = world_accel[2] / REFLEX_JUMP_THRESHOLD
+        return 'jump', confidence
+    
+    # Attack: Forward motion with stable base
+    forward_mag = math.sqrt(world_accel[0]**2 + world_accel[1]**2)
+    if (forward_mag > REFLEX_ATTACK_THRESHOLD and 
+        abs(world_accel[2]) < REFLEX_STABILITY_THRESHOLD):
+        confidence = forward_mag / REFLEX_ATTACK_THRESHOLD
+        return 'attack', confidence
+    
+    return None, 0.0
+
+
 # Load ML models
 ml_model, ml_scaler, ml_feature_names = load_ml_models()
 ML_ENABLED = ml_model is not None
 
 # Create sensor data buffer for ML predictions (~2.5 seconds at 50Hz)
 sensor_buffer = deque(maxlen=125)
-ML_CONFIDENCE_THRESHOLD = 0.7
+ML_CONFIDENCE_THRESHOLD = config.get("hybrid_system", {}).get("ml_layer", {}).get("confidence_threshold", 0.7)
 last_prediction_time = 0
-PREDICTION_INTERVAL = 0.5  # Run prediction every 0.5 seconds
+PREDICTION_INTERVAL = config.get("hybrid_system", {}).get("ml_layer", {}).get("prediction_interval", 0.5)
+
+# Create execution arbitrator for hybrid system
+arbitrator = ExecutionArbitrator(cooldown_seconds=REFLEX_COOLDOWN)
 
 
 # --- Walker Thread ---
@@ -306,10 +454,22 @@ service_info = ServiceInfo(
 zeroconf.register_service(service_info)
 print(f"✓ Service registered as '{service_name}'")
 
-ml_mode = "ML-POWERED" if ML_ENABLED else "THRESHOLD-BASED"
+if HYBRID_ENABLED and ML_ENABLED:
+    ml_mode = "HYBRID (Reflex + ML)"
+elif ML_ENABLED:
+    ml_mode = "ML-POWERED"
+else:
+    ml_mode = "THRESHOLD-BASED"
+
 print(f"--- Silksong Controller v2.0 ({ml_mode}) ---")
 print(f"Listening on {LISTEN_IP}:{LISTEN_PORT}")
-if ML_ENABLED:
+
+if HYBRID_ENABLED:
+    print(f"✓ Hybrid System Active")
+    print(f"  Reflex Layer: Jump & Attack (<50ms latency)")
+    print(f"  ML Layer: Turn & Complex Gestures (~500ms)")
+    print(f"  Reflex Cooldown: {REFLEX_COOLDOWN}s")
+elif ML_ENABLED:
     print(f"✓ Machine Learning Model Active")
     print(f"  Confidence Threshold: {ML_CONFIDENCE_THRESHOLD:.0%}")
     print(f"  Prediction Interval: {PREDICTION_INTERVAL}s")
@@ -361,6 +521,19 @@ try:
         try:
             parsed_json = json.loads(data.decode())
             sensor_type = parsed_json.get("sensor")
+
+            # --- REFLEX LAYER: Fast threshold-based detection ---
+            if HYBRID_ENABLED and sensor_type == "linear_acceleration":
+                accel_values = parsed_json.get("values", {})
+                
+                # Try reflex detection using world coordinates
+                reflex_action, confidence = detect_reflex_actions(
+                    accel_values,
+                    last_known_orientation
+                )
+                
+                if reflex_action:
+                    arbitrator.execute(reflex_action, 'reflex')
 
             # --- ML PREDICTION LOGIC ---
             if ML_ENABLED:
@@ -433,21 +606,30 @@ try:
 
                         # Execute gesture if confidence is high enough
                         if confidence >= ML_CONFIDENCE_THRESHOLD:
-                            if prediction == "jump":
-                                print(f"\n[ML] JUMP ({confidence:.2f})")
-                                keyboard.press(KEY_MAP["jump"])
-                                time.sleep(0.1)
-                                keyboard.release(KEY_MAP["jump"])
-                            elif prediction == "punch":
-                                print(f"\n[ML] ATTACK ({confidence:.2f})")
-                                keyboard.press(KEY_MAP["attack"])
-                                time.sleep(0.1)
-                                keyboard.release(KEY_MAP["attack"])
-                            elif prediction == "turn":
-                                print(f"\n[ML] TURN ({confidence:.2f})")
-                                facing_direction = (
-                                    "left" if facing_direction == "right" else "right"
-                                )
+                            # In hybrid mode, ML only handles complex gestures (turn)
+                            # Jump and attack are handled by reflex layer for speed
+                            if HYBRID_ENABLED:
+                                # ML layer only handles turn in hybrid mode
+                                if prediction == "turn":
+                                    arbitrator.execute('turn', 'ml')
+                                    print(f"  Confidence: {confidence:.2f}")
+                            else:
+                                # Legacy mode: ML handles all gestures
+                                if prediction == "jump":
+                                    print(f"\n[ML] JUMP ({confidence:.2f})")
+                                    keyboard.press(KEY_MAP["jump"])
+                                    time.sleep(0.1)
+                                    keyboard.release(KEY_MAP["jump"])
+                                elif prediction == "punch":
+                                    print(f"\n[ML] ATTACK ({confidence:.2f})")
+                                    keyboard.press(KEY_MAP["attack"])
+                                    time.sleep(0.1)
+                                    keyboard.release(KEY_MAP["attack"])
+                                elif prediction == "turn":
+                                    print(f"\n[ML] TURN ({confidence:.2f})")
+                                    facing_direction = (
+                                        "left" if facing_direction == "right" else "right"
+                                    )
                             # walk is handled by step detector
                             # noise is ignored
 
