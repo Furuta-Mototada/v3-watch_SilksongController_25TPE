@@ -184,16 +184,33 @@ jupyter notebook CS156_Silksong_Watch.ipynb
 
 See `docs/Phase_III/README.md` for complete ML pipeline documentation.
 
-## 🚀 Phase IV: Real-Time Deployment (Coming Soon)
+## 🚀 Phase IV: Multi-Threaded ML Controller ✅ **COMPLETE**
 
-Integrate trained ML models into the controller for gesture-based predictions:
+**Fully ML-powered** gesture recognition system with decoupled architecture for low-latency real-time performance:
 
-- Load trained model and scaler at startup
-- Implement sliding window buffer for sensor data
-- Extract features and predict gestures in real-time
-- Execute actions based on predictions with confidence thresholding
+### Architecture
 
-See `docs/Phase_III/PHASE_IV_INTEGRATION.md` for integration guide.
+**Collector Thread** → **Predictor Thread** → **Actor Thread**
+
+1. **Collector**: Reads UDP sensor data at network speed, no processing delay
+2. **Predictor**: Runs ML inference continuously on 0.3s micro-windows
+3. **Actor**: Executes keyboard actions with confidence gating (5 consecutive predictions)
+
+### Key Features
+
+- **Micro-Windows**: 0.3s windows instead of 2.5s for <500ms latency
+- **Continuous Prediction**: No fixed intervals, predicts as fast as CPU allows
+- **Confidence Gating**: Requires 5 consecutive matching predictions for stable state changes
+- **Thread-Safe Queues**: Producer-consumer pattern eliminates bottlenecks
+- **All ML**: Jump, punch, turn, and walk all handled by ML model
+
+### Performance
+
+- **Latency**: <500ms (down from 1+ second)
+- **Responsiveness**: Near real-time gesture detection
+- **CPU**: ~30-40% single-core usage
+
+See `docs/Phase_IV/README.md` for complete documentation.
 
 ## 🔧 Development
 

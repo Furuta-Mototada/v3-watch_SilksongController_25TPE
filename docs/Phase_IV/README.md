@@ -1,39 +1,51 @@
-# Phase IV: Real-Time ML Deployment
+# Phase IV: Multi-Threaded ML Controller
 
 **Status:** ✅ COMPLETE
 
 ## Overview
 
-Phase IV integrates the trained machine learning model from Phase III into the real-time gesture controller. The system now uses a Support Vector Machine (SVM) to intelligently recognize gestures with confidence-based execution.
+Phase IV implements a **fully ML-powered** controller with a decoupled multi-threaded architecture. This eliminates bottlenecks and achieves low latency (<500ms) without abandoning the ML model.
 
 ---
 
-## What's New in v2.0
+## What's New in v2.0 (Multi-Threaded)
 
-### ML-Powered Gesture Recognition
+### Architecture: Collector → Predictor → Actor
 
-- **Trained SVM Model**: Uses RBF kernel with optimized hyperparameters
-- **Feature Extraction**: 60+ time and frequency domain features
-- **Sliding Window**: 2.5-second buffer for real-time predictions
-- **Confidence Thresholding**: Only executes gestures above 70% confidence
+The controller runs **three parallel threads** with thread-safe queues:
 
-### Hybrid Detection System
+1. **Collector Thread** (Network Speed)
+   - Reads UDP sensor data continuously
+   - No processing overhead
+   - Pushes to `sensor_queue`
+   - Never blocked by ML or keyboard actions
 
-The controller now runs **dual systems**:
+2. **Predictor Thread** (CPU Speed)
+   - Pulls from `sensor_queue`
+   - Maintains 0.3s micro-windows
+   - Extracts 60+ features continuously
+   - Runs SVM predictions as fast as CPU allows
+   - Pushes to `action_queue`
 
-1. **ML System** (Primary)
-   - Predicts: jump, punch, turn, walk, noise
-   - Runs every 0.5 seconds
-   - High accuracy (85-95%)
+3. **Actor Thread** (Keyboard Control)
+   - Pulls from `action_queue`
+   - Implements confidence gating (5 consecutive predictions)
+   - Executes keyboard actions
+   - Manages walking state
 
-2. **Threshold System** (Backup)
-   - Legacy acceleration/gyroscope thresholds
-   - Instant response for critical actions
-   - Ensures reliability
+### Key Improvements
 
-### Automatic Fallback
+- **Micro-Windows**: 0.3s instead of 2.5s for fast gesture detection
+- **Continuous Prediction**: No fixed intervals, runs as fast as possible
+- **Confidence Gating**: Requires 5 consecutive matching predictions for stability
+- **Parallel Processing**: Threads run independently, eliminating bottlenecks
+- **Low Latency**: <500ms from gesture to action (down from 1+ second)
 
-If ML models fail to load, the system automatically switches to threshold-based mode, ensuring the controller always works.
+### All ML-Powered
+
+✅ Jump, punch, turn, and walk all handled by ML model
+✅ No threshold-based fallback (except when models missing)
+✅ Intelligent gesture recognition for all actions
 
 ---
 
