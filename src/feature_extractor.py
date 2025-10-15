@@ -15,58 +15,6 @@ from scipy import stats
 from scipy.fft import fft
 
 
-def rotate_vector_by_quaternion(vector, quat):
-    """Rotates a 3D vector by a quaternion using standard quaternion rotation formula.
-    
-    This transforms device-local coordinates to world coordinates, making features
-    orientation-invariant.
-    
-    Parameters:
-    -----------
-    vector : list or array
-        3D vector [x, y, z] to rotate
-    quat : dict
-        Quaternion with keys 'x', 'y', 'z', 'w'
-        
-    Returns:
-    --------
-    list
-        Rotated 3D vector [x', y', z']
-        
-    Example:
-    --------
-    >>> device_accel = [10, 0, 0]  # Forward in device coords
-    >>> quat = {'x': 0, 'y': 0, 'z': 0, 'w': 1}  # No rotation
-    >>> world_accel = rotate_vector_by_quaternion(device_accel, quat)
-    >>> print(world_accel)  # [10, 0, 0]
-    """
-    q_vec = [quat["x"], quat["y"], quat["z"]]
-    q_scalar = quat["w"]
-
-    # Standard formula for vector rotation by quaternion
-    a = [
-        2 * (q_vec[1] * vector[2] - q_vec[2] * vector[1]),
-        2 * (q_vec[2] * vector[0] - q_vec[0] * vector[2]),
-        2 * (q_vec[0] * vector[1] - q_vec[1] * vector[0]),
-    ]
-
-    b = [q_scalar * a[0], q_scalar * a[1], q_scalar * a[2]]
-
-    c = [
-        q_vec[1] * a[2] - q_vec[2] * a[1],
-        q_vec[2] * a[0] - q_vec[0] * a[2],
-        q_vec[0] * a[1] - q_vec[1] * a[0],
-    ]
-
-    rotated_vector = [
-        vector[0] + b[0] + c[0],
-        vector[1] + b[1] + c[1],
-        vector[2] + b[2] + c[2],
-    ]
-
-    return rotated_vector
-
-
 def extract_window_features(window_df):
     """Extract comprehensive features from a time window of sensor data.
     
@@ -105,46 +53,9 @@ def extract_window_features(window_df):
     features = {}
     
     # Separate by sensor type
-    accel = window_df[window_df['sensor'] == 'linear_acceleration'].copy()
+    accel = window_df[window_df['sensor'] == 'linear_acceleration']
     gyro = window_df[window_df['sensor'] == 'gyroscope']
     rot = window_df[window_df['sensor'] == 'rotation_vector']
-    
-    # ========== WORLD-COORDINATE TRANSFORMATION ==========
-    # Transform acceleration to world coordinates for orientation invariance
-    if len(accel) > 0 and len(rot) > 0:
-        for idx in accel.index:
-            # Find closest rotation reading by timestamp/index
-            if idx in rot.index:
-                rot_idx = idx
-            else:
-                # Find nearest rotation reading
-                rot_idx = rot.index[np.argmin(np.abs(rot.index - idx))]
-            
-            if rot_idx in rot.index:
-                # Get device-local acceleration
-                device_accel = [
-                    accel.loc[idx, 'accel_x'],
-                    accel.loc[idx, 'accel_y'],
-                    accel.loc[idx, 'accel_z']
-                ]
-                
-                # Get rotation quaternion
-                quaternion = {
-                    'x': rot.loc[rot_idx, 'rot_x'],
-                    'y': rot.loc[rot_idx, 'rot_y'],
-                    'z': rot.loc[rot_idx, 'rot_z'],
-                    'w': rot.loc[rot_idx, 'rot_w']
-                }
-                
-                # Transform to world coordinates
-                try:
-                    world_accel = rotate_vector_by_quaternion(device_accel, quaternion)
-                    accel.loc[idx, 'world_accel_x'] = world_accel[0]
-                    accel.loc[idx, 'world_accel_y'] = world_accel[1]
-                    accel.loc[idx, 'world_accel_z'] = world_accel[2]
-                except (KeyError, IndexError, TypeError):
-                    # If transformation fails, leave world coords as NaN
-                    pass
     
     # ========== ACCELERATION FEATURES ==========
     if len(accel) > 0:
@@ -175,23 +86,6 @@ def extract_window_features(window_df):
                         features[f'{axis}_fft_max'] = fft_vals.max()
                         features[f'{axis}_dominant_freq'] = fft_vals.argmax()
                         features[f'{axis}_fft_mean'] = fft_vals.mean()
-        
-        # World-coordinate acceleration features (orientation-invariant)
-        for axis in ['world_accel_x', 'world_accel_y', 'world_accel_z']:
-            if axis in accel.columns:
-                values = accel[axis].dropna()
-                
-                if len(values) > 0:
-                    # Time-domain statistics
-                    features[f'{axis}_mean'] = values.mean()
-                    features[f'{axis}_std'] = values.std()
-                    features[f'{axis}_max'] = values.max()
-                    features[f'{axis}_min'] = values.min()
-                    features[f'{axis}_range'] = values.max() - values.min()
-                    
-                    # Distribution shape
-                    features[f'{axis}_skew'] = stats.skew(values)
-                    features[f'{axis}_kurtosis'] = stats.kurtosis(values)
     
     # ========== GYROSCOPE FEATURES ==========
     if len(gyro) > 0:

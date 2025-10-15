@@ -15,19 +15,5 @@
         "right": "Key.right",
         "jump": "z",
         "attack": "x"
-    },
-    "hybrid_system": {
-        "enabled": true,
-        "reflex_layer": {
-            "jump_threshold": 15.0,
-            "attack_threshold": 12.0,
-            "stability_threshold": 5.0,
-            "cooldown_seconds": 0.3
-        },
-        "ml_layer": {
-            "confidence_threshold": 0.70,
-            "prediction_interval": 0.5,
-            "gestures": ["turn"]
-        }
     }
 }

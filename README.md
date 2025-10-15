@@ -184,38 +184,33 @@ jupyter notebook CS156_Silksong_Watch.ipynb
 
 See `docs/Phase_III/README.md` for complete ML pipeline documentation.
 
-## 🚀 Phase IV: Real-Time Hybrid System ✅ **COMPLETE**
+## 🚀 Phase IV: Multi-Threaded ML Controller ✅ **COMPLETE**
 
-The controller now uses a **dual-layer hybrid system** combining fast reflexes with intelligent ML:
+**Fully ML-powered** gesture recognition system with decoupled architecture for low-latency real-time performance:
 
-### Hybrid Architecture
+### Architecture
 
-**"Reflexes for Survival, Intelligence for Strategy"**
+**Collector Thread** → **Predictor Thread** → **Actor Thread**
 
-1. **Reflex Layer** (<50ms latency)
-   - World-coordinate transformation for orientation invariance
-   - Threshold-based detection for jump & attack
-   - **10x faster** than ML-only approach
+1. **Collector**: Reads UDP sensor data at network speed, no processing delay
+2. **Predictor**: Runs ML inference continuously on 0.3s micro-windows
+3. **Actor**: Executes keyboard actions with confidence gating (5 consecutive predictions)
 
-2. **ML Layer** (~500ms latency)
-   - SVM-based prediction for complex gestures (turn)
-   - 85-95% accuracy for nuanced patterns
-   - Handles orientation-invariant features
+### Key Features
 
-3. **Execution Arbitrator**
-   - Coordinates between layers
-   - Prevents duplicate actions
-   - Provides redundancy
+- **Micro-Windows**: 0.3s windows instead of 2.5s for <500ms latency
+- **Continuous Prediction**: No fixed intervals, predicts as fast as CPU allows
+- **Confidence Gating**: Requires 5 consecutive matching predictions for stable state changes
+- **Thread-Safe Queues**: Producer-consumer pattern eliminates bottlenecks
+- **All ML**: Jump, punch, turn, and walk all handled by ML model
 
-### Performance Improvements
+### Performance
 
-| Action  | Before | After   | Improvement |
-|---------|--------|---------|-------------|
-| Jump    | 500ms  | <50ms   | **90% faster** |
-| Attack  | 500ms  | <50ms   | **90% faster** |
-| Turn    | 500ms  | 500ms   | ML-powered   |
+- **Latency**: <500ms (down from 1+ second)
+- **Responsiveness**: Near real-time gesture detection
+- **CPU**: ~30-40% single-core usage
 
-See `docs/Phase_IV/README.md` for complete documentation and `docs/Phase_IV/HYBRID_SYSTEM_DESIGN.md` for architecture details.
+See `docs/Phase_IV/README.md` for complete documentation.
 
 ## 🔧 Development
 

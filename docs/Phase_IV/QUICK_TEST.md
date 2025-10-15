@@ -32,55 +32,48 @@ python udp_listener.py
 ```
 🔍 Auto-detecting IP address...
 ✓ IP address configured: 192.168.x.x
---- Silksong Controller v2.0 (HYBRID (Reflex + ML)) ---
+--- Silksong Controller v2.0 (ML-POWERED) ---
 Listening on 192.168.x.x:5005
-✓ Hybrid System Active
-  Reflex Layer: Jump & Attack (<50ms latency)
-  ML Layer: Turn & Complex Gestures (~500ms)
-  Reflex Cooldown: 0.3s
+✓ Machine Learning Model Active
+  Confidence Threshold: 70%
+  Prediction Interval: 0.5s
 Official Hollow Knight/Silksong key mappings:
   Movement: a/d (direction-based)
   Jump: z | Attack: x
 ---------------------------------------
 ```
 
-**Mode Indicators:**
-- `(HYBRID (Reflex + ML))` - Full hybrid system active (best performance)
-- `(ML-POWERED)` - ML-only mode (if hybrid disabled in config)
-- `(THRESHOLD-BASED)` - Legacy mode (if model files missing)
+If you see `(THRESHOLD-BASED)` instead of `(ML-POWERED)`, check model files.
 
 ---
 
 ### 2. Test Each Gesture
 
-In **Hybrid Mode**, gestures are handled by different layers:
+Perform each gesture and watch for ML predictions in the console:
 
-#### **Jump Test** (Reflex Layer)
+#### **Jump Test**
 - **Action**: Quick upward flick of wrist
-- **Expected**: `[REFLEX] JUMP`
+- **Expected**: `[ML] JUMP (0.XX)`
 - **Keyboard**: Z key press
-- **Latency**: Should feel instant (<50ms)
-- **Note**: World-coordinate transformation makes this work in any orientation
+- **Confidence**: Should be >0.75 for clean jumps
 
-#### **Attack Test** (Reflex Layer)
-- **Action**: Forward punch motion (stable stance)
-- **Expected**: `[REFLEX] ATTACK`
+#### **Attack Test**
+- **Action**: Forward punch motion
+- **Expected**: `[ML] ATTACK (0.XX)`
 - **Keyboard**: X key press
-- **Latency**: Should feel instant (<50ms)
-- **Note**: Requires stable base (not jumping)
+- **Confidence**: Should be >0.70 for deliberate punches
 
-#### **Turn Test** (ML Layer)
+#### **Turn Test**
 - **Action**: Rotate wrist 180° horizontally
-- **Expected**: `[ML] TURN` with confidence
+- **Expected**: `[ML] TURN (0.XX)`
 - **Result**: `Facing:` changes from RIGHT to LEFT
-- **Latency**: ~500ms delay (normal for ML)
-- **Confidence**: Should be >0.70 for smooth turns
+- **Confidence**: Should be >0.65 for smooth turns
 
-#### **Walk Test** (Legacy System)
+#### **Walk Test**
 - **Action**: Natural walking steps
 - **Expected**: `Walk:` changes to WALKING
 - **Fuel Bar**: `[####----]` fills with each step
-- **Note**: Walking uses step detector, independent of hybrid system
+- **Note**: Walking uses legacy step detector, not ML
 
 ---
 
