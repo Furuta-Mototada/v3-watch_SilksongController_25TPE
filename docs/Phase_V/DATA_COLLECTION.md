@@ -100,7 +100,7 @@ Record: session_01.csv (10 minutes of natural motion)
 
 **Features**:
 - Records continuous sensor stream
-- Keyboard shortcuts mark gesture boundaries
+- Voice commands mark gesture boundaries (using Whisper)
 - Real-time visualization
 - Auto-saves with timestamps
 - Generates label files automatically
@@ -115,11 +115,11 @@ python continuous_data_collector.py --duration 600  # 10 minutes
 
 **Step 2: Perform Motion + Mark Gestures**
 
-While recording, press keys to mark gestures:
-- **'j'** = Jump (marks next 0.3s as jump)
-- **'p'** = Punch (marks next 0.3s as punch)
-- **'t'** = Turn (marks next 0.5s as turn)
-- **'n'** = Noise (marks next 1.0s as noise)
+While recording, speak commands to mark gestures:
+- Say **"jump"** = Jump (marks next 0.3s as jump)
+- Say **"punch"** = Punch (marks next 0.3s as punch)
+- Say **"turn"** = Turn (marks next 0.5s as turn)
+- Say **"noise"** = Noise (marks next 1.0s as noise)
 - **Everything else** = Walk (default state)
 
 **Step 3: Review and Save**
@@ -151,9 +151,9 @@ Recording automatically saves:
 │    Turn:  6 events                                      │
 │    Noise: 4 events                                      │
 ├─────────────────────────────────────────────────────────┤
-│  CONTROLS:                                              │
-│    j = Jump  |  p = Punch  |  t = Turn  |  n = Noise  │
-│    q = Quit  |  s = Save Now                          │
+│  VOICE COMMANDS:                                        │
+│  Say "jump" | "punch" | "turn" | "noise"              │
+│  Say "quit" to stop | "save" to save now              │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -245,22 +245,22 @@ for t in range(len(sensor_data)):
 **Jump**:
 - Mark right when you start upward motion
 - Duration: 0.3 seconds
-- Press 'j' at gesture start
+- Say "jump" at gesture start
 
 **Punch**:
 - Mark at start of forward motion
 - Duration: 0.3 seconds
-- Press 'p' at gesture start
+- Say "punch" at gesture start
 
 **Turn**:
 - Mark at start of rotation
 - Duration: 0.5 seconds (slightly longer)
-- Press 't' at gesture start
+- Say "turn" at gesture start
 
 **Noise**:
 - Any non-gesture motion
 - Duration: 1.0 seconds
-- Press 'n' when doing random motion
+- Say "noise" when doing random motion
 
 ---
 
