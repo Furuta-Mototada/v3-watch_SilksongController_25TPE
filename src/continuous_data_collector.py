@@ -2,12 +2,12 @@
 Continuous Data Collector for Phase V CNN/LSTM Training
 
 This tool records continuous sensor streams from the smartwatch, allowing users
-to mark gesture boundaries in real-time using keyboard shortcuts. Unlike Phase II's
+to mark gesture boundaries in real-time using VOICE COMMANDS. Unlike Phase II's
 snippet-based approach, this captures natural transitions and realistic gesture flow.
 
 Features:
 - Continuous sensor data recording
-- Real-time keyboard shortcuts to mark gestures
+- Real-time voice commands to mark gestures (using Whisper)
 - Live visualization of recording status
 - Auto-save with timestamps
 - Generates label files for ML training
@@ -15,14 +15,14 @@ Features:
 Usage:
     python continuous_data_collector.py --duration 600  # 10 minutes
     
-    During recording, press keys to mark gestures:
-    - 'j' = Jump (marks next 0.3s as jump)
-    - 'p' = Punch (marks next 0.3s as punch)
-    - 't' = Turn (marks next 0.5s as turn)
-    - 'n' = Noise (marks next 1.0s as noise)
+    During recording, speak commands to mark gestures:
+    - Say "jump" = Marks next 0.3s as jump
+    - Say "punch" = Marks next 0.3s as punch
+    - Say "turn" = Marks next 0.5s as turn
+    - Say "noise" = Marks next 1.0s as noise
     - Everything else = Walk (default state)
-    - 'q' = Quit recording
-    - 's' = Save now
+    - Say "quit" = Quit recording
+    - Say "save" = Save now
 """
 
 import socket
@@ -36,6 +36,10 @@ from datetime import datetime
 from collections import deque
 import sys
 import network_utils
+import whisper
+import sounddevice as sd
+import numpy as np
+import queue
 
 # ==================== CONFIGURATION ====================
 
@@ -110,7 +114,12 @@ class ContinuousDataCollector:
         
         # Threading
         self.stop_event = threading.Event()
-        self.keyboard_thread = None
+        self.voice_thread = None
+        
+        # Voice recognition
+        self.whisper_model = None
+        self.audio_queue = queue.Queue()
+        self.sample_rate = 16000  # Whisper expects 16kHz audio
         
     def load_config(self):
         """Load configuration from config.json"""
@@ -146,6 +155,15 @@ class ContinuousDataCollector:
             print(f"{Colors.YELLOW}Make sure no other listener is running!{Colors.RESET}")
             raise e
         
+        # Load Whisper model
+        print(f"{Colors.CYAN}🎤 Loading Whisper model (this may take a moment)...{Colors.RESET}")
+        try:
+            self.whisper_model = whisper.load_model("base")  # Using 'base' for balance of speed and accuracy
+            print(f"{Colors.GREEN}✓ Whisper model loaded successfully{Colors.RESET}")
+        except Exception as e:
+            print(f"{Colors.RED}ERROR: Could not load Whisper model: {e}{Colors.RESET}")
+            raise e
+        
         return True
     
     def display_instructions(self):
@@ -158,88 +176,145 @@ class ContinuousDataCollector:
 {Colors.BOLD}Session:{Colors.RESET} {self.session_name}
 {Colors.BOLD}Duration:{Colors.RESET} {self.duration_sec} seconds ({self.duration_sec/60:.1f} minutes)
 
-{Colors.BOLD}{Colors.YELLOW}KEYBOARD CONTROLS:{Colors.RESET}
-  {Colors.GREEN}j{Colors.RESET} = Mark JUMP (next {GESTURE_DURATIONS['jump']}s)
-  {Colors.GREEN}p{Colors.RESET} = Mark PUNCH (next {GESTURE_DURATIONS['punch']}s)
-  {Colors.GREEN}t{Colors.RESET} = Mark TURN (next {GESTURE_DURATIONS['turn']}s)
-  {Colors.GREEN}n{Colors.RESET} = Mark NOISE (next {GESTURE_DURATIONS['noise']}s)
+{Colors.BOLD}{Colors.YELLOW}VOICE COMMANDS:{Colors.RESET}
+  Say {Colors.GREEN}"jump"{Colors.RESET} = Mark JUMP (next {GESTURE_DURATIONS['jump']}s)
+  Say {Colors.GREEN}"punch"{Colors.RESET} = Mark PUNCH (next {GESTURE_DURATIONS['punch']}s)
+  Say {Colors.GREEN}"turn"{Colors.RESET} = Mark TURN (next {GESTURE_DURATIONS['turn']}s)
+  Say {Colors.GREEN}"noise"{Colors.RESET} = Mark NOISE (next {GESTURE_DURATIONS['noise']}s)
   {Colors.BLUE}(default){Colors.RESET} = WALK (continuous state)
   
-  {Colors.RED}q{Colors.RESET} = Quit recording
-  {Colors.CYAN}s{Colors.RESET} = Save immediately
+  Say {Colors.RED}"quit"{Colors.RESET} = Quit recording
+  Say {Colors.CYAN}"save"{Colors.RESET} = Save immediately
 
 {Colors.BOLD}{Colors.BLUE}HOW TO USE:{Colors.RESET}
 1. Start recording - sensor data begins streaming
 2. Perform gestures naturally while moving continuously
-3. Press corresponding key RIGHT WHEN you start each gesture
+3. Speak the command RIGHT WHEN you start each gesture
 4. The tool will mark the next N seconds as that gesture
 5. Between gestures, you're automatically in WALK state
 
 {Colors.BOLD}{Colors.YELLOW}TIPS:{Colors.RESET}
 - Move naturally, as you would in gameplay
-- Press keys at gesture START, not during or after
+- Speak commands clearly at gesture START, not during or after
 - Walk between gestures for realistic transitions
 - Aim for 10-20 jumps, 10-20 punches, 5-10 turns per session
 - Don't worry about being perfect - variety is good!
 
 {Colors.BOLD}{Colors.RED}IMPORTANT:{Colors.RESET}
-- Keep the terminal window focused to capture keyboard input
+- Keep your microphone accessible and functional
 - Watch should be streaming sensor data
 - Recording will auto-save when complete
+- Voice commands are processed in real-time using Whisper
 
 ──────────────────────────────────────────────────────────────
 """
         print(instructions)
     
-    def keyboard_listener(self):
-        """Listen for keyboard input in a separate thread"""
-        import sys
-        import select
-        
-        print(f"{Colors.CYAN}Keyboard listener started. Press keys to mark gestures...{Colors.RESET}")
-        
-        while not self.stop_event.is_set():
-            # Check if data is available to read (with timeout)
-            if select.select([sys.stdin], [], [], 0.1)[0]:
-                key = sys.stdin.read(1).lower()
-                self.handle_key_press(key)
+    def audio_callback(self, indata, frames, time_info, status):
+        """Callback for audio stream - captures audio chunks"""
+        if status:
+            print(f"{Colors.YELLOW}Audio status: {status}{Colors.RESET}")
+        # Add audio data to queue for processing
+        self.audio_queue.put(indata.copy())
     
-    def handle_key_press(self, key):
-        """Handle keyboard input for gesture marking"""
+    def voice_listener(self):
+        """Listen for voice commands in a separate thread"""
+        print(f"{Colors.CYAN}🎤 Voice listener started. Speak commands to mark gestures...{Colors.RESET}")
+        
+        # Audio buffer for collecting samples (1.5 seconds)
+        buffer_duration = 1.5
+        buffer_size = int(self.sample_rate * buffer_duration)
+        audio_buffer = np.zeros(buffer_size, dtype=np.float32)
+        
+        # Start audio stream
+        with sd.InputStream(samplerate=self.sample_rate, channels=1, 
+                           callback=self.audio_callback, dtype='float32'):
+            
+            last_process_time = time.time()
+            process_interval = 0.5  # Process audio every 0.5 seconds
+            
+            while not self.stop_event.is_set():
+                try:
+                    # Collect audio chunks
+                    while not self.audio_queue.empty():
+                        chunk = self.audio_queue.get()
+                        chunk_mono = chunk.flatten()
+                        
+                        # Shift buffer and append new chunk
+                        shift_amount = len(chunk_mono)
+                        audio_buffer = np.roll(audio_buffer, -shift_amount)
+                        audio_buffer[-shift_amount:] = chunk_mono
+                    
+                    # Process audio buffer periodically
+                    if time.time() - last_process_time > process_interval:
+                        self.process_audio_buffer(audio_buffer)
+                        last_process_time = time.time()
+                    
+                    time.sleep(0.1)  # Small delay to avoid busy waiting
+                    
+                except Exception as e:
+                    print(f"{Colors.RED}Voice listener error: {e}{Colors.RESET}")
+                    time.sleep(0.1)
+    
+    def process_audio_buffer(self, audio_buffer):
+        """Process audio buffer with Whisper to detect commands"""
+        try:
+            # Check if audio has sufficient energy (not silence)
+            energy = np.sqrt(np.mean(audio_buffer**2))
+            if energy < 0.01:  # Silence threshold
+                return
+            
+            # Transcribe with Whisper
+            result = self.whisper_model.transcribe(audio_buffer, language='english', fp16=False)
+            text = result['text'].strip().lower()
+            
+            if text:
+                # Extract command from text
+                self.handle_voice_command(text)
+                
+        except Exception as e:
+            # Silently ignore processing errors to avoid flooding console
+            pass
+    
+    def handle_voice_command(self, text):
+        """Handle voice command for gesture marking"""
         if not self.recording:
             return
         
         current_time = time.time() - self.start_time
         
-        if key == 'q':
-            print(f"\n{Colors.YELLOW}Quit requested by user{Colors.RESET}")
+        # Check for quit/save commands
+        if 'quit' in text or 'stop' in text or 'exit' in text:
+            print(f"\n{Colors.YELLOW}🛑 Quit requested by voice command{Colors.RESET}")
             self.stop_event.set()
             return
         
-        if key == 's':
-            print(f"\n{Colors.CYAN}Save requested - will save at end of recording{Colors.RESET}")
+        if 'save' in text:
+            print(f"\n{Colors.CYAN}💾 Save requested - will save at end of recording{Colors.RESET}")
             return
         
-        # Map keys to gestures
-        gesture_map = {
-            'j': 'jump',
-            'p': 'punch',
-            't': 'turn',
-            'n': 'noise'
+        # Map voice commands to gestures
+        gesture_keywords = {
+            'jump': 'jump',
+            'punch': 'punch',
+            'turn': 'turn',
+            'noise': 'noise'
         }
         
-        if key in gesture_map:
-            gesture = gesture_map[key]
-            duration = GESTURE_DURATIONS[gesture]
-            
-            # Create label
-            label = GestureLabel(current_time, gesture, duration)
-            self.labels.append(label)
-            
-            # Update statistics
-            self.gesture_counts[gesture] += 1
-            
-            print(f"\n{Colors.GREEN}✓ Marked {gesture.upper()} at {current_time:.2f}s (duration: {duration}s){Colors.RESET}")
+        # Check if any gesture keyword is in the transcribed text
+        for keyword, gesture in gesture_keywords.items():
+            if keyword in text:
+                duration = GESTURE_DURATIONS[gesture]
+                
+                # Create label
+                label = GestureLabel(current_time, gesture, duration)
+                self.labels.append(label)
+                
+                # Update statistics
+                self.gesture_counts[gesture] += 1
+                
+                print(f"\n{Colors.GREEN}✓ Heard '{keyword}' - Marked {gesture.upper()} at {current_time:.2f}s (duration: {duration}s){Colors.RESET}")
+                break  # Only mark one gesture per voice command
     
     def record_sensor_data(self):
         """Main recording loop for sensor data"""
@@ -454,7 +529,7 @@ class ContinuousDataCollector:
 def parse_arguments():
     """Parse command-line arguments"""
     parser = argparse.ArgumentParser(
-        description='Continuous gesture data collector for Phase V CNN/LSTM training',
+        description='Continuous gesture data collector for Phase V CNN/LSTM training (with voice commands)',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -464,9 +539,9 @@ Examples:
   # Record 5-minute session with custom name
   python continuous_data_collector.py --duration 300 --session my_session_01
   
-During recording:
-  j = Jump, p = Punch, t = Turn, n = Noise
-  q = Quit, s = Save
+During recording (speak these commands):
+  "jump" = Jump, "punch" = Punch, "turn" = Turn, "noise" = Noise
+  "quit" = Quit, "save" = Save
         """
     )
     
@@ -503,15 +578,23 @@ def main():
         
         input(f"\n{Colors.BOLD}{Colors.GREEN}Press [Enter] to start recording...{Colors.RESET}")
         
-        # Start keyboard listener in separate thread
-        # Note: For simplicity, we'll use a simpler approach without threading
-        # Users can type in terminal during recording
-        print(f"{Colors.YELLOW}Note: Keep this terminal focused. Type keys to mark gestures.{Colors.RESET}")
+        # Start voice listener in separate thread
+        print(f"{Colors.YELLOW}🎤 Starting voice command listener...{Colors.RESET}")
         print(f"{Colors.YELLOW}Recording starts in 3 seconds...{Colors.RESET}")
+        
+        # Start voice thread
+        collector.voice_thread = threading.Thread(target=collector.voice_listener, daemon=True)
+        collector.voice_thread.start()
+        
         time.sleep(3)
         
         # Record
         collector.record_sensor_data()
+        
+        # Stop voice thread
+        collector.stop_event.set()
+        if collector.voice_thread:
+            collector.voice_thread.join(timeout=2)
         
         # Save
         collector.save_data()
@@ -521,6 +604,7 @@ def main():
         
     except KeyboardInterrupt:
         print(f"\n\n{Colors.YELLOW}⚠️  Recording interrupted by user{Colors.RESET}")
+        collector.stop_event.set()
         if collector.sensor_data:
             save = input(f"{Colors.YELLOW}Save partial recording? (y/n): {Colors.RESET}")
             if save.lower() == 'y':
@@ -532,6 +616,9 @@ def main():
         traceback.print_exc()
     
     finally:
+        collector.stop_event.set()
+        if collector.voice_thread:
+            collector.voice_thread.join(timeout=2)
         collector.cleanup()
         print(f"\n{Colors.GREEN}✓ Cleanup complete{Colors.RESET}")
 

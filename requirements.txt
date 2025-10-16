@@ -21,5 +21,10 @@ tensorflow>=2.10.0
 keras>=2.10.0
 h5py>=3.7.0
 
+# Voice Command Dependencies for Data Collection
+openai-whisper>=20230314
+sounddevice>=0.4.6
+numpy>=1.24.0  # Already listed above, but needed for audio processing
+
 # Note: On Windows, you may also need:
 # windows-curses  # Uncomment this line if you're on Windows
