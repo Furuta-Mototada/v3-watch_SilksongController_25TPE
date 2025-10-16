@@ -15,6 +15,15 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
 
 ![data collection complete oct 14 2025](telegram-cloud-photo-size-5-6300675731876416733-y-1.jpg)
 
+<div>
+    <a href="https://www.loom.com/share/dfb0398e038c409084696484e159a588">
+      <p>SVM Live Demo (Bad Performance)- Watch Video</p>
+    </a>
+    <a href="https://www.loom.com/share/dfb0398e038c409084696484e159a588">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/dfb0398e038c409084696484e159a588-cd70ba8caabdfa18-full-play.gif">
+    </a>
+  </div>
+
 ## 🎮 Features
 
 ![Hornet from Hollowknight: Silksong Colors](distribution.png)
