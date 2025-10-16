@@ -146,30 +146,55 @@ WhisperX will automatically download models on first use. They're cached in:
 
 ### Option 2: Use Existing Whisper Models
 
-If you already have Whisper models (like the one at `/Users/cvk/Library/Application Support/MacWhisper/models/`), WhisperX can use them with some caveats:
+If you already have Whisper models (like MacWhisper CoreML models), note the following:
 
-**Note**: The MacWhisper CoreML models you have are optimized for Apple's CoreML framework and are not directly compatible with WhisperX, which uses PyTorch models.
+#### About MacWhisper CoreML Models
 
-However, WhisperX will download and cache its own PyTorch versions automatically:
+The MacWhisper CoreML models (like those at `/Users/cvk/Library/Application Support/MacWhisper/models/whisperkit/models/`) are optimized for Apple's CoreML framework and are **not directly compatible** with WhisperX, which uses PyTorch models.
+
+**Key differences:**
+- **MacWhisper/WhisperKit**: Uses CoreML format (.mlmodelc files) optimized for Apple Neural Engine
+- **WhisperX**: Uses PyTorch format (.pt files) for cross-platform compatibility
+- **File structure**: CoreML has AudioEncoder.mlmodelc, TextDecoder.mlmodelc, etc.
+- **PyTorch**: Has single .pt files with all weights
+
+#### Solution: Let WhisperX Download Its Own Models
+
+The easiest and recommended approach:
 
 ```bash
 # Just specify the model name - WhisperX handles downloading
 python whisperx_transcribe.py --audio session_01.wav --model large-v3
 ```
 
-The models are relatively small compared to CoreML versions:
-- `large-v3`: ~3GB
-- `large-v2`: ~3GB
-- `medium`: ~1.5GB
+**Benefits:**
+- Automatic download and caching
+- Cross-platform compatibility
+- Guaranteed compatibility with forced alignment
+- No conversion needed
 
-### Converting Between Formats (Advanced)
+**Storage:**
+- WhisperX models are cached in `~/.cache/whisper/`
+- Models are relatively compact:
+  - `large-v3`: ~3GB (PyTorch)
+  - `large-v2`: ~3GB (PyTorch)
+  - `medium`: ~1.5GB (PyTorch)
+- Your CoreML models can stay where they are for MacWhisper
 
-If you want to convert CoreML models to PyTorch format, you would need:
-1. Export from CoreML to ONNX
+#### Why Not Convert?
+
+Converting CoreML to PyTorch for Whisper is complex:
+1. Export from CoreML to ONNX format
 2. Convert ONNX to PyTorch
-3. Align with Whisper model structure
+3. Align weight names with Whisper model structure
+4. Test compatibility with forced alignment models
+5. Validate accuracy matches original
 
-This is complex and not recommended. It's easier to let WhisperX download its own models.
+**Our recommendation:** Let WhisperX use its own models. The 3GB download is worth it for:
+- Guaranteed compatibility
+- No conversion headaches
+- Better support and updates
+- Consistent behavior across platforms
 
 ## Complete Workflow
 
