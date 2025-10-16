@@ -1,28 +1,32 @@
 """
 Continuous Data Collector for Phase V CNN/LSTM Training
 
-This tool records continuous sensor streams from the smartwatch, allowing users
-to mark gesture boundaries in real-time using keyboard shortcuts. Unlike Phase II's
-snippet-based approach, this captures natural transitions and realistic gesture flow.
+This tool records continuous sensor streams from the smartwatch alongside audio recording.
+Users speak gesture commands during recording, which are transcribed post-recording using
+Whisper and then aligned with sensor data.
 
 Features:
 - Continuous sensor data recording
-- Real-time keyboard shortcuts to mark gestures
+- Simultaneous audio recording for voice commands
 - Live visualization of recording status
 - Auto-save with timestamps
-- Generates label files for ML training
+- Post-processing script to align voice commands with sensor data
 
 Usage:
     python continuous_data_collector.py --duration 600  # 10 minutes
     
-    During recording, press keys to mark gestures:
-    - 'j' = Jump (marks next 0.3s as jump)
-    - 'p' = Punch (marks next 0.3s as punch)
-    - 't' = Turn (marks next 0.5s as turn)
-    - 'n' = Noise (marks next 1.0s as noise)
-    - Everything else = Walk (default state)
-    - 'q' = Quit recording
-    - 's' = Save now
+    During recording, speak commands naturally:
+    - Say "jump" when performing jump gesture
+    - Say "punch" when performing punch gesture
+    - Say "turn" when performing turn gesture
+    - Say "noise" for noise/unintentional movements
+    - Say "walk start" at the beginning to start walking
+    - Say "walk" periodically during walking segments
+    - Default state between commands = Walk
+    
+    After recording:
+    - Run Whisper on the audio file (Large V3 Turbo recommended)
+    - Use the post-processing script to align commands with sensor data
 """
 
 import socket
@@ -36,6 +40,9 @@ from datetime import datetime
 from collections import deque
 import sys
 import network_utils
+import sounddevice as sd
+import numpy as np
+import wave
 
 # ==================== CONFIGURATION ====================
 
@@ -91,18 +98,6 @@ class ContinuousDataCollector:
         self.recording = False
         self.start_time = None
         self.sensor_data = []
-        self.labels = []
-        self.current_gesture = 'walk'  # Default state
-        self.last_label_time = 0
-        
-        # Statistics
-        self.gesture_counts = {
-            'walk': 0,
-            'jump': 0,
-            'punch': 0,
-            'turn': 0,
-            'noise': 0
-        }
         
         # Network
         self.sock = None
@@ -110,7 +105,11 @@ class ContinuousDataCollector:
         
         # Threading
         self.stop_event = threading.Event()
-        self.keyboard_thread = None
+        
+        # Audio recording
+        self.audio_data = []
+        self.audio_sample_rate = 16000  # 16kHz for Whisper
+        self.audio_file = None
         
     def load_config(self):
         """Load configuration from config.json"""
@@ -158,93 +157,55 @@ class ContinuousDataCollector:
 {Colors.BOLD}Session:{Colors.RESET} {self.session_name}
 {Colors.BOLD}Duration:{Colors.RESET} {self.duration_sec} seconds ({self.duration_sec/60:.1f} minutes)
 
-{Colors.BOLD}{Colors.YELLOW}KEYBOARD CONTROLS:{Colors.RESET}
-  {Colors.GREEN}j{Colors.RESET} = Mark JUMP (next {GESTURE_DURATIONS['jump']}s)
-  {Colors.GREEN}p{Colors.RESET} = Mark PUNCH (next {GESTURE_DURATIONS['punch']}s)
-  {Colors.GREEN}t{Colors.RESET} = Mark TURN (next {GESTURE_DURATIONS['turn']}s)
-  {Colors.GREEN}n{Colors.RESET} = Mark NOISE (next {GESTURE_DURATIONS['noise']}s)
-  {Colors.BLUE}(default){Colors.RESET} = WALK (continuous state)
+{Colors.BOLD}{Colors.YELLOW}VOICE COMMANDS (speak naturally):{Colors.RESET}
+  Say {Colors.GREEN}"jump"{Colors.RESET} when performing jump gesture
+  Say {Colors.GREEN}"punch"{Colors.RESET} when performing punch gesture
+  Say {Colors.GREEN}"turn"{Colors.RESET} when performing turn gesture
+  Say {Colors.GREEN}"noise"{Colors.RESET} for unintentional movements
+  Say {Colors.GREEN}"walk start"{Colors.RESET} at the beginning
+  Say {Colors.GREEN}"walk"{Colors.RESET} during walking segments
   
-  {Colors.RED}q{Colors.RESET} = Quit recording
-  {Colors.CYAN}s{Colors.RESET} = Save immediately
+  {Colors.BLUE}Default state = WALK{Colors.RESET}
 
 {Colors.BOLD}{Colors.BLUE}HOW TO USE:{Colors.RESET}
-1. Start recording - sensor data begins streaming
-2. Perform gestures naturally while moving continuously
-3. Press corresponding key RIGHT WHEN you start each gesture
-4. The tool will mark the next N seconds as that gesture
-5. Between gestures, you're automatically in WALK state
+1. Start recording - sensor data and audio recording begin
+2. Speak "walk start" and begin moving naturally
+3. Speak gesture commands RIGHT WHEN you perform each gesture
+4. Continue speaking naturally as you would during gameplay
+5. Press Ctrl+C to stop recording early (or let it run full duration)
 
-{Colors.BOLD}{Colors.YELLOW}TIPS:{Colors.RESET}
-- Move naturally, as you would in gameplay
-- Press keys at gesture START, not during or after
-- Walk between gestures for realistic transitions
-- Aim for 10-20 jumps, 10-20 punches, 5-10 turns per session
-- Don't worry about being perfect - variety is good!
+{Colors.BOLD}{Colors.YELLOW}AFTER RECORDING:{Colors.RESET}
+1. Run Whisper on the audio file: {self.session_name}.wav
+2. Use post-processing script to align voice commands with sensor data
+3. Review and validate the generated labels
+
+{Colors.BOLD}{Colors.YELLOW}TIPS FOR NATURAL DATA:{Colors.RESET}
+- Play Hollow Knight: Silksong while recording
+- Speak commands as you react to gameplay
+- Move naturally - match your gestures to game actions
+- Don't overthink timing - be natural and reactive
+- Variety in speed and intensity is good!
 
 {Colors.BOLD}{Colors.RED}IMPORTANT:{Colors.RESET}
-- Keep the terminal window focused to capture keyboard input
+- Microphone should be working and accessible
 - Watch should be streaming sensor data
-- Recording will auto-save when complete
+- Audio and sensor data saved automatically at end
 
 ──────────────────────────────────────────────────────────────
 """
         print(instructions)
     
-    def keyboard_listener(self):
-        """Listen for keyboard input in a separate thread"""
-        import sys
-        import select
-        
-        print(f"{Colors.CYAN}Keyboard listener started. Press keys to mark gestures...{Colors.RESET}")
-        
-        while not self.stop_event.is_set():
-            # Check if data is available to read (with timeout)
-            if select.select([sys.stdin], [], [], 0.1)[0]:
-                key = sys.stdin.read(1).lower()
-                self.handle_key_press(key)
-    
-    def handle_key_press(self, key):
-        """Handle keyboard input for gesture marking"""
-        if not self.recording:
-            return
-        
-        current_time = time.time() - self.start_time
-        
-        if key == 'q':
-            print(f"\n{Colors.YELLOW}Quit requested by user{Colors.RESET}")
-            self.stop_event.set()
-            return
-        
-        if key == 's':
-            print(f"\n{Colors.CYAN}Save requested - will save at end of recording{Colors.RESET}")
-            return
-        
-        # Map keys to gestures
-        gesture_map = {
-            'j': 'jump',
-            'p': 'punch',
-            't': 'turn',
-            'n': 'noise'
-        }
-        
-        if key in gesture_map:
-            gesture = gesture_map[key]
-            duration = GESTURE_DURATIONS[gesture]
-            
-            # Create label
-            label = GestureLabel(current_time, gesture, duration)
-            self.labels.append(label)
-            
-            # Update statistics
-            self.gesture_counts[gesture] += 1
-            
-            print(f"\n{Colors.GREEN}✓ Marked {gesture.upper()} at {current_time:.2f}s (duration: {duration}s){Colors.RESET}")
+    def audio_callback(self, indata, frames, time_info, status):
+        """Callback for audio stream - captures audio chunks"""
+        if status:
+            print(f"\n{Colors.YELLOW}Audio status: {status}{Colors.RESET}")
+        # Store audio data
+        self.audio_data.append(indata.copy())
     
     def record_sensor_data(self):
-        """Main recording loop for sensor data"""
+        """Main recording loop for sensor data and audio"""
         print(f"\n{Colors.RED}{Colors.BOLD}🔴 RECORDING STARTED{Colors.RESET}")
-        print(f"{Colors.YELLOW}Perform gestures naturally and press keys to mark them!{Colors.RESET}\n")
+        print(f"{Colors.YELLOW}🎤 Audio recording active - speak commands naturally!{Colors.RESET}\n")
         
         self.recording = True
         self.start_time = time.time()
@@ -253,6 +214,15 @@ class ContinuousDataCollector:
         last_status_update = 0
         data_points = 0
         last_data_time = time.time()
+        
+        # Start audio recording in separate thread
+        audio_stream = sd.InputStream(
+            samplerate=self.audio_sample_rate,
+            channels=1,
+            callback=self.audio_callback,
+            dtype='float32'
+        )
+        audio_stream.start()
         
         while time.time() < recording_end and not self.stop_event.is_set():
             elapsed = time.time() - self.start_time
@@ -307,9 +277,12 @@ class ContinuousDataCollector:
                 print(f"\r{Colors.RED}⚠️  WARNING: No data received for 2 seconds! Check watch connection.{Colors.RESET}")
         
         self.recording = False
+        audio_stream.stop()
+        audio_stream.close()
+        
         print(f"\n\n{Colors.GREEN}✓ Recording complete!{Colors.RESET}")
         print(f"{Colors.BLUE}Captured {len(self.sensor_data)} sensor data points{Colors.RESET}")
-        print(f"{Colors.BLUE}Marked {len(self.labels)} explicit gestures{Colors.RESET}")
+        print(f"{Colors.BLUE}Recorded {len(self.audio_data)} audio chunks{Colors.RESET}")
     
     def _display_status(self, elapsed, remaining, progress_pct, data_points):
         """Display recording status"""
@@ -325,65 +298,18 @@ class ContinuousDataCollector:
         # Data rate
         data_rate = data_points / elapsed if elapsed > 0 else 0
         
+        # Audio chunks
+        audio_chunks = len(self.audio_data)
+        
         # Display
         status = f"\r⏱️  {elapsed_str}/{total_str} [{bar}] {progress_pct:.0f}% | "
         status += f"📊 {data_points} pts ({data_rate:.0f} pts/s) | "
-        
-        # Gesture counts
-        status += f"J:{self.gesture_counts['jump']} P:{self.gesture_counts['punch']} "
-        status += f"T:{self.gesture_counts['turn']} N:{self.gesture_counts['noise']}"
+        status += f"🎤 {audio_chunks} audio chunks"
         
         print(status, end="", flush=True)
     
-    def generate_labels(self):
-        """Generate complete label file from marked gestures"""
-        # Sort labels by timestamp
-        self.labels.sort(key=lambda x: x.timestamp)
-        
-        # Generate complete labels covering entire recording
-        complete_labels = []
-        current_time = 0.0
-        total_duration = self.sensor_data[-1]['timestamp'] if self.sensor_data else self.duration_sec
-        
-        label_idx = 0
-        while current_time < total_duration:
-            # Check if we're at a labeled gesture
-            if label_idx < len(self.labels):
-                label = self.labels[label_idx]
-                
-                if abs(current_time - label.timestamp) < 0.1:  # Within 100ms
-                    # Add the labeled gesture
-                    complete_labels.append({
-                        'timestamp': label.timestamp,
-                        'gesture': label.gesture,
-                        'duration': label.duration
-                    })
-                    current_time = label.timestamp + label.duration
-                    label_idx += 1
-                    continue
-            
-            # Find next labeled gesture or end
-            if label_idx < len(self.labels):
-                next_label_time = self.labels[label_idx].timestamp
-            else:
-                next_label_time = total_duration
-            
-            # Fill with walk
-            walk_duration = next_label_time - current_time
-            if walk_duration > 0:
-                complete_labels.append({
-                    'timestamp': current_time,
-                    'gesture': 'walk',
-                    'duration': walk_duration
-                })
-                self.gesture_counts['walk'] += walk_duration
-            
-            current_time = next_label_time
-        
-        return complete_labels
-    
     def save_data(self):
-        """Save sensor data and labels to CSV files"""
+        """Save sensor data and audio to files"""
         print(f"\n{Colors.CYAN}💾 Saving data...{Colors.RESET}")
         
         # Save sensor data
@@ -401,28 +327,37 @@ class ContinuousDataCollector:
             
             print(f"{Colors.GREEN}✓ Sensor data saved: {sensor_file}{Colors.RESET}")
         
-        # Generate and save labels
-        complete_labels = self.generate_labels()
-        labels_file = os.path.join(self.output_dir, f"{self.session_name}_labels.csv")
-        
-        with open(labels_file, 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=['timestamp', 'gesture', 'duration'])
-            writer.writeheader()
-            writer.writerows(complete_labels)
-        
-        print(f"{Colors.GREEN}✓ Labels saved: {labels_file}{Colors.RESET}")
+        # Save audio data as WAV file
+        audio_file = os.path.join(self.output_dir, f"{self.session_name}.wav")
+        if self.audio_data:
+            # Concatenate all audio chunks
+            audio_array = np.concatenate(self.audio_data, axis=0)
+            
+            # Save as WAV file
+            with wave.open(audio_file, 'wb') as wf:
+                wf.setnchannels(1)  # Mono
+                wf.setsampwidth(2)  # 16-bit
+                wf.setframerate(self.audio_sample_rate)
+                # Convert float32 to int16
+                audio_int16 = (audio_array * 32767).astype(np.int16)
+                wf.writeframes(audio_int16.tobytes())
+            
+            print(f"{Colors.GREEN}✓ Audio saved: {audio_file}{Colors.RESET}")
         
         # Save session metadata
         metadata_file = os.path.join(self.output_dir, f"{self.session_name}_metadata.json")
+        actual_duration = self.sensor_data[-1]['timestamp'] if self.sensor_data else 0
+        audio_duration = len(np.concatenate(self.audio_data)) / self.audio_sample_rate if self.audio_data else 0
+        
         metadata = {
             'session_name': self.session_name,
             'recording_date': datetime.now().isoformat(),
             'duration_sec': self.duration_sec,
-            'actual_duration_sec': self.sensor_data[-1]['timestamp'] if self.sensor_data else 0,
+            'actual_duration_sec': actual_duration,
+            'audio_duration_sec': audio_duration,
             'sensor_data_points': len(self.sensor_data),
-            'explicit_labels': len(self.labels),
-            'total_labels': len(complete_labels),
-            'gesture_counts': self.gesture_counts,
+            'audio_sample_rate': self.audio_sample_rate,
+            'audio_chunks': len(self.audio_data),
             'sensors_collected': SENSORS_TO_COLLECT
         }
         
@@ -433,15 +368,15 @@ class ContinuousDataCollector:
         
         # Display summary
         print(f"\n{Colors.BOLD}📊 Recording Summary:{Colors.RESET}")
-        print(f"  {Colors.BLUE}• Total duration: {self.sensor_data[-1]['timestamp']:.1f}s{Colors.RESET}")
+        print(f"  {Colors.BLUE}• Sensor duration: {actual_duration:.1f}s{Colors.RESET}")
+        print(f"  {Colors.BLUE}• Audio duration: {audio_duration:.1f}s{Colors.RESET}")
         print(f"  {Colors.BLUE}• Sensor data points: {len(self.sensor_data)}{Colors.RESET}")
-        print(f"  {Colors.BLUE}• Total labels: {len(complete_labels)}{Colors.RESET}")
-        print(f"\n{Colors.BOLD}Gesture Distribution:{Colors.RESET}")
-        for gesture, count in self.gesture_counts.items():
-            if gesture == 'walk':
-                print(f"  {Colors.CYAN}• {gesture.upper()}: {count:.1f}s{Colors.RESET}")
-            else:
-                print(f"  {Colors.GREEN}• {gesture.upper()}: {count} events{Colors.RESET}")
+        print(f"  {Colors.BLUE}• Audio chunks: {len(self.audio_data)}{Colors.RESET}")
+        
+        print(f"\n{Colors.BOLD}🎤 Next Steps:{Colors.RESET}")
+        print(f"  1. Run Whisper on: {audio_file}")
+        print(f"  2. Use post-processing script to align voice with sensor data")
+        print(f"  3. Review generated labels")
     
     def cleanup(self):
         """Clean up resources"""
@@ -454,7 +389,7 @@ class ContinuousDataCollector:
 def parse_arguments():
     """Parse command-line arguments"""
     parser = argparse.ArgumentParser(
-        description='Continuous gesture data collector for Phase V CNN/LSTM training',
+        description='Continuous gesture data collector with audio recording for Phase V CNN/LSTM training',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -464,9 +399,13 @@ Examples:
   # Record 5-minute session with custom name
   python continuous_data_collector.py --duration 300 --session my_session_01
   
-During recording:
-  j = Jump, p = Punch, t = Turn, n = Noise
-  q = Quit, s = Save
+During recording (speak naturally):
+  "jump" = Jump gesture
+  "punch" = Punch gesture
+  "turn" = Turn gesture
+  "noise" = Unintentional movement
+  "walk start" = Begin walking
+  "walk" = Walking state
         """
     )
     
@@ -503,11 +442,8 @@ def main():
         
         input(f"\n{Colors.BOLD}{Colors.GREEN}Press [Enter] to start recording...{Colors.RESET}")
         
-        # Start keyboard listener in separate thread
-        # Note: For simplicity, we'll use a simpler approach without threading
-        # Users can type in terminal during recording
-        print(f"{Colors.YELLOW}Note: Keep this terminal focused. Type keys to mark gestures.{Colors.RESET}")
-        print(f"{Colors.YELLOW}Recording starts in 3 seconds...{Colors.RESET}")
+        print(f"{Colors.YELLOW}🎤 Microphone will start recording in 3 seconds...{Colors.RESET}")
+        print(f"{Colors.YELLOW}📱 Make sure your watch is streaming sensor data!{Colors.RESET}")
         time.sleep(3)
         
         # Record
