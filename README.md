@@ -221,6 +221,47 @@ See `docs/Phase_III/README.md` for complete ML pipeline documentation.
 
 See `docs/Phase_IV/README.md` for complete documentation.
 
+## 🎙️ Phase V: Voice-Controlled Data Collection
+
+**Continuous motion data collection** using voice commands instead of keyboard shortcuts:
+
+### Features
+
+- **Voice Commands**: Speak "jump", "punch", "turn", "noise" to mark gestures
+- **Hands-Free**: No keyboard needed - maintain natural motion
+- **Whisper AI**: Real-time speech recognition for accurate command detection
+- **Continuous Recording**: Record 5-10 minute sessions of natural motion
+- **No Data Pollution**: Voice commands don't affect sensor readings
+
+### Quick Start
+
+```bash
+# Install voice command dependencies
+pip install openai-whisper sounddevice
+
+# Linux users also need:
+sudo apt-get install portaudio19-dev
+
+# Start recording session
+cd src
+python continuous_data_collector.py --duration 600
+```
+
+### Why Voice Commands?
+
+**Problem**: Keyboard shortcuts require reaching away from natural motion, which:
+- Affects sensor readings (arm movement to keyboard)
+- Breaks flow of continuous motion
+- Creates timing inaccuracies
+
+**Solution**: Voice commands allow you to:
+- Keep hands free for natural gestures
+- Maintain consistent motion patterns
+- Mark gestures with precise timing
+- Focus on performance quality
+
+See `docs/Phase_V/VOICE_COMMANDS.md` and `docs/Phase_V/DATA_COLLECTION.md` for complete documentation.
+
 ## 🔧 Development
 
 ### Android Package
