@@ -221,46 +221,50 @@ See `docs/Phase_III/README.md` for complete ML pipeline documentation.
 
 See `docs/Phase_IV/README.md` for complete documentation.
 
-## 🎙️ Phase V: Voice-Controlled Data Collection
+## 🎙️ Phase V: Voice-Controlled Data Collection (Post-Processing)
 
-**Continuous motion data collection** using voice commands instead of keyboard shortcuts:
+**Continuous motion data collection** using voice commands with retrospective Whisper processing:
 
 ### Features
 
-- **Voice Commands**: Speak "jump", "punch", "turn", "noise" to mark gestures
-- **Hands-Free**: No keyboard needed - maintain natural motion
-- **Whisper AI**: Real-time speech recognition for accurate command detection
-- **Continuous Recording**: Record 5-10 minute sessions of natural motion
-- **No Data Pollution**: Voice commands don't affect sensor readings
+- **Audio Recording**: Records audio alongside sensor data during gameplay
+- **Post-Processing**: Run Whisper locally after recording with Large V3 Turbo
+- **Natural Gameplay**: No performance impact - optimized for lower-spec devices (M2 Air 8GB)
+- **Word-Level Timestamps**: Precise alignment of voice commands to sensor data
+- **Hands-Free**: Maintain natural motion while playing Hollow Knight: Silksong
 
 ### Quick Start
 
 ```bash
-# Install voice command dependencies
-pip install openai-whisper sounddevice
+# Install audio recording dependencies
+pip install sounddevice numpy
+sudo apt-get install portaudio19-dev  # Linux only
 
-# Linux users also need:
-sudo apt-get install portaudio19-dev
-
-# Start recording session
+# 1. Record session (lightweight)
 cd src
-python continuous_data_collector.py --duration 600
+python continuous_data_collector.py --duration 600 --session gameplay_01
+
+# 2. Transcribe with Whisper (run locally)
+cd ../data/continuous
+whisper gameplay_01.wav --model large-v3-turbo --word_timestamps True --output_format json
+
+# 3. Align voice commands to sensor data
+cd ../../src
+python align_voice_labels.py --session gameplay_01 --whisper ../data/continuous/gameplay_01.json
 ```
 
-### Why Voice Commands?
+### Why Post-Processing?
 
-**Problem**: Keyboard shortcuts require reaching away from natural motion, which:
-- Affects sensor readings (arm movement to keyboard)
-- Breaks flow of continuous motion
-- Creates timing inaccuracies
+**Problem**: Real-time Whisper processing requires significant CPU resources
 
-**Solution**: Voice commands allow you to:
-- Keep hands free for natural gestures
-- Maintain consistent motion patterns
-- Mark gestures with precise timing
-- Focus on performance quality
+**Solution**: Retrospective processing allows:
+- No performance impact during gameplay
+- Use powerful local models (Large V3 Turbo)
+- Word-level timestamp granularity
+- Re-process with different parameters
+- Natural, reactive gameplay
 
-See `docs/Phase_V/VOICE_COMMANDS.md` and `docs/Phase_V/DATA_COLLECTION.md` for complete documentation.
+See `docs/Phase_V/DATA_COLLECTION_GUIDE.md` for complete step-by-step instructions.
 
 ## 🔧 Development
 

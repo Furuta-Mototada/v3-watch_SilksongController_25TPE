@@ -94,39 +94,55 @@ Record: session_01.csv (10 minutes of natural motion)
 
 ## Data Collection Tool
 
-### New Tool: Continuous Recorder
+### New Tool: Continuous Recorder with Audio
 
 **File**: `src/continuous_data_collector.py`
 
 **Features**:
 - Records continuous sensor stream
-- Voice commands mark gesture boundaries (using Whisper)
-- Real-time visualization
+- Records audio simultaneously for voice commands
+- Post-processing with Whisper for label generation
+- Optimized for low-resource devices
 - Auto-saves with timestamps
-- Generates label files automatically
 
-### Usage
+### Usage Overview
 
-**Step 1: Start Recording**
+**Step 1: Record Session**
 ```bash
 cd src
-python continuous_data_collector.py --duration 600  # 10 minutes
+python continuous_data_collector.py --duration 600 --session gameplay_01
 ```
 
-**Step 2: Perform Motion + Mark Gestures**
+**Step 2: Transcribe Audio with Whisper**
+```bash
+cd ../data/continuous
+whisper gameplay_01.wav --model large-v3-turbo --word_timestamps True --output_format json
+```
 
-While recording, speak commands to mark gestures:
-- Say **"jump"** = Jump (marks next 0.3s as jump)
-- Say **"punch"** = Punch (marks next 0.3s as punch)
-- Say **"turn"** = Turn (marks next 0.5s as turn)
-- Say **"noise"** = Noise (marks next 1.0s as noise)
-- **Everything else** = Walk (default state)
+**Step 3: Align Voice Commands to Sensor Data**
+```bash
+cd ../../src
+python align_voice_labels.py --session gameplay_01 --whisper ../data/continuous/gameplay_01.json
+```
 
-**Step 3: Review and Save**
+**Output Files:**
+- `session_01.csv` - Sensor data
+- `session_01.wav` - Audio recording
+- `session_01_labels.csv` - Generated gesture labels
+- `session_01_metadata.json` - Session information
 
-Recording automatically saves:
-- `data/continuous/session_01.csv` (sensor data)
-- `data/continuous/session_01_labels.csv` (gesture labels)
+### Voice Commands During Recording
+
+While recording, speak commands naturally:
+- Say **"walk start"** at the beginning
+- Say **"jump"** when performing jump gesture
+- Say **"punch"** when performing punch gesture
+- Say **"turn"** when performing turn gesture
+- Say **"noise"** for unintentional movements
+- Say **"walk"** occasionally during walking segments
+- **Default state** = Walk (automatic between gestures)
+
+**For detailed step-by-step instructions, see:** `DATA_COLLECTION_GUIDE.md`
 
 ### Recording Interface
 
