@@ -1,14 +1,21 @@
 """
 Post-Processing Script: Align Voice Commands with Sensor Data
 
-This script takes Whisper transcription output (with word-level timestamps) and
+This script takes Whisper or WhisperX transcription output (with word-level timestamps) and
 aligns voice commands with sensor data to generate gesture labels.
 
 Usage:
+    # Using standard Whisper output
     python align_voice_labels.py --session session_20250101_120000 --whisper whisper_output.json
+    
+    # Using WhisperX output (recommended for research)
+    python align_voice_labels.py --session session_20250101_120000 --whisper session_20250101_120000_whisperx.json
 
 The Whisper output should be generated using word-level timestamps:
     whisper session_20250101_120000.wav --model large-v3-turbo --word_timestamps True --output_format json
+
+For research-grade timestamps, use WhisperX:
+    python whisperx_transcribe.py --audio session_20250101_120000.wav --model large-v3
 """
 
 import json
@@ -45,7 +52,10 @@ def load_sensor_metadata(session_dir, session_name):
 
 
 def extract_gesture_commands(whisper_data):
-    """Extract gesture commands from Whisper word-level timestamps
+    """Extract gesture commands from Whisper or WhisperX word-level timestamps
+    
+    Supports both standard Whisper format and WhisperX format with forced alignment.
+    WhisperX format includes 'score' instead of 'probability' for confidence.
     
     Returns:
         List of (timestamp, gesture, duration) tuples
@@ -60,6 +70,10 @@ def extract_gesture_commands(whisper_data):
                     word = word_info['word'].strip().lower()
                     timestamp = word_info['start']
                     
+                    # Get confidence score (different field names for Whisper vs WhisperX)
+                    # WhisperX uses 'score', standard Whisper uses 'probability'
+                    confidence = word_info.get('score', word_info.get('probability', 1.0))
+                    
                     # Check for gesture keywords
                     for gesture, duration in GESTURE_KEYWORDS.items():
                         if gesture in word:
@@ -67,7 +81,7 @@ def extract_gesture_commands(whisper_data):
                                 'timestamp': timestamp,
                                 'gesture': gesture,
                                 'duration': duration,
-                                'confidence': word_info.get('probability', 1.0)
+                                'confidence': confidence
                             })
                             break
                     
@@ -78,7 +92,7 @@ def extract_gesture_commands(whisper_data):
                             'timestamp': timestamp,
                             'gesture': 'walk',
                             'duration': 1.0,  # Explicit walk marker
-                            'confidence': word_info.get('probability', 1.0)
+                            'confidence': confidence
                         })
     
     return commands
@@ -156,13 +170,14 @@ def calculate_statistics(labels):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Align Whisper transcription with sensor data to generate gesture labels'
+        description='Align Whisper/WhisperX transcription with sensor data to generate gesture labels'
     )
     parser.add_argument('--session', required=True, help='Session name')
-    parser.add_argument('--whisper', required=True, help='Whisper JSON output file with word timestamps')
+    parser.add_argument('--whisper', required=True, 
+                       help='Whisper or WhisperX JSON output file with word timestamps')
     parser.add_argument('--output-dir', default='data/continuous', help='Output directory')
     parser.add_argument('--min-confidence', type=float, default=0.5, 
-                       help='Minimum confidence for word detection (0.0-1.0)')
+                       help='Minimum confidence for word detection (0.0-1.0, WhisperX uses score field)')
     
     args = parser.parse_args()
     

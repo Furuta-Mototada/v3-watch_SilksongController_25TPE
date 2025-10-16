@@ -34,5 +34,14 @@ numpy>=1.24.0  # Already listed above, but needed for audio processing
 # Install locally: pip install openai-whisper
 # Recommended: Use Large V3 Turbo model for best word-level timestamps
 
+# WhisperX for research-grade word segmentation with forced alignment
+# Install with: pip install whisperx
+# Provides more stable per-word timings than Large-V3-Turbo's internal alignment
+whisperx>=3.1.1
+
+# Audio preprocessing libraries for WhisperX
+librosa>=0.10.0
+soundfile>=0.12.0
+
 # Note: On Windows, you may also need:
 # windows-curses  # Uncomment this line if you're on Windows

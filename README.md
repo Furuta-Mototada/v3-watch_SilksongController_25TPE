@@ -266,6 +266,56 @@ python align_voice_labels.py --session gameplay_01 --whisper ../data/continuous/
 
 See `docs/Phase_V/DATA_COLLECTION_GUIDE.md` for complete step-by-step instructions.
 
+## 🔬 WhisperX: Research-Grade Word Segmentation
+
+**For word-level research** where you need precise, consistent timestamps for linguistic analysis, alignment, or keyword timing—use **WhisperX with forced alignment**.
+
+### Why WhisperX?
+
+WhisperX provides more stable per-word timings than Large-V3-Turbo's internal alignment, especially on fast speech, code-switching, and noisy clips.
+
+### Quick Start
+
+```bash
+# Install WhisperX
+pip install whisperx
+
+# Transcribe with research-grade word timestamps
+cd src
+python whisperx_transcribe.py --audio ../data/continuous/gameplay_01.wav --model large-v3
+
+# Align with sensor data (same as before)
+python align_voice_labels.py --session gameplay_01 --whisper ../data/continuous/gameplay_01_whisperx.json
+```
+
+### Recommended Setup for Research
+
+```bash
+# High-accuracy ASR + forced alignment + diarization
+python whisperx_transcribe.py \
+  --audio session.wav \
+  --model large-v3 \
+  --language en \
+  --diarize \
+  --hf-token YOUR_HF_TOKEN
+```
+
+**Key Features:**
+- ✅ Best-in-class word timing accuracy
+- ✅ Forced alignment using wav2vec2
+- ✅ Fewer drift issues on long files
+- ✅ Confidence scores for each word
+- ✅ Optional speaker diarization
+- ✅ Audio preprocessing (16kHz mono, VAD)
+
+**Trade-offs:**
+- WhisperX: Slightly heavier pipeline, but best word timing accuracy
+- Large-V3-Turbo: Fastest and simple, but less stable word timings for research
+
+**If you need reproducible timing for studies or quantitative analysis, WhisperX's forced alignment is the safer choice.**
+
+See `docs/WHISPERX_GUIDE.md` for complete documentation.
+
 ## 🔧 Development
 
 ### Android Package
