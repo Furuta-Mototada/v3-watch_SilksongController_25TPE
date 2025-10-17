@@ -535,3 +535,27 @@ This is not just an incremental improvement - it's a fundamental architectural s
 **Next Step**: Create continuous data collection tool  
 **Expected Completion**: 4 weeks from start  
 **Performance Goal**: <100ms latency, >90% accuracy
+
+---
+
+## Documentation Index
+
+### Getting Started
+- [DATA_COLLECTION_GUIDE.md](DATA_COLLECTION_GUIDE.md) - Step-by-step guide for recording training data
+- [POST_PROCESSING.md](POST_PROCESSING.md) - WhisperX transcription and label alignment workflow
+- [QUICK_START.md](QUICK_START.md) - Quick reference for common tasks
+
+### Technical Details
+- [CNN_LSTM_ARCHITECTURE.md](CNN_LSTM_ARCHITECTURE.md) - Deep learning model architecture
+- [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) - Implementation details and best practices
+
+### WhisperX Documentation
+- [WhisperX/WHISPERX_GUIDE.md](WhisperX/WHISPERX_GUIDE.md) - Comprehensive WhisperX documentation
+- [WhisperX/WHISPERX_INSTALL.md](WhisperX/WHISPERX_INSTALL.md) - Installation instructions
+- [WhisperX/WHISPERX_QUICKREF.md](WhisperX/WHISPERX_QUICKREF.md) - Quick reference guide
+
+### Workflow
+1. **Data Collection** → [DATA_COLLECTION_GUIDE.md](DATA_COLLECTION_GUIDE.md)
+2. **Post-Processing** → [POST_PROCESSING.md](POST_PROCESSING.md)
+3. **Model Training** → [CNN_LSTM_ARCHITECTURE.md](CNN_LSTM_ARCHITECTURE.md)
+4. **Deployment** → [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)
