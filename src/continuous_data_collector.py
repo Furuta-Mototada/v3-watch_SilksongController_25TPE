@@ -468,13 +468,16 @@ class ContinuousDataCollector:
             # Downsample to 16kHz for Whisper transcription
             try:
                 from scipy import signal
-                # Calculate downsampling factor
-                downsample_factor = self.audio_sample_rate // self.whisper_sample_rate
-                # Resample using scipy (high quality)
-                audio_downsampled = signal.resample_poly(
+                # Calculate exact number of samples needed to maintain duration
+                # Duration = num_samples / sample_rate
+                # So: num_samples_16k = duration * 16000
+                original_duration = len(audio_array) / self.audio_sample_rate
+                target_num_samples = int(original_duration * self.whisper_sample_rate)
+
+                # Use signal.resample for exact duration preservation
+                audio_downsampled = signal.resample(
                     audio_array.flatten(),
-                    up=1,
-                    down=downsample_factor
+                    target_num_samples
                 )
 
                 # Save 16kHz version for Whisper
