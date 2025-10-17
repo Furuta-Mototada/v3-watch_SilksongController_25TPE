@@ -221,36 +221,48 @@ See `docs/Phase_III/README.md` for complete ML pipeline documentation.
 
 See `docs/Phase_IV/README.md` for complete documentation.
 
-## 🎙️ Phase V: Voice-Controlled Data Collection (Post-Processing)
+## 🎙️ Phase V: Voice-Controlled Data Collection + WhisperX Post-Processing
 
-**Continuous motion data collection** using voice commands with retrospective Whisper processing:
+**Continuous motion data collection** using voice commands with retrospective WhisperX processing:
 
 ### Features
 
 - **Audio Recording**: Records audio alongside sensor data during gameplay
-- **Post-Processing**: Run Whisper locally after recording with Large V3 Turbo
-- **Natural Gameplay**: No performance impact - optimized for lower-spec devices (M2 Air 8GB)
+- **WhisperX Post-Processing**: Research-grade word segmentation with forced alignment
+- **Automated Workflow**: One-command processing with `process_transcripts.sh`
+- **Natural Gameplay**: No performance impact during recording
 - **Word-Level Timestamps**: Precise alignment of voice commands to sensor data
 - **Hands-Free**: Maintain natural motion while playing Hollow Knight: Silksong
 
 ### Quick Start
 
 ```bash
-# Install audio recording dependencies
-pip install sounddevice numpy
-sudo apt-get install portaudio19-dev  # Linux only
+# Install dependencies
+pip install whisperx sounddevice numpy librosa soundfile
 
-# 1. Record session (lightweight)
+# 1. Record session (5-10 minutes)
 cd src
 python continuous_data_collector.py --duration 600 --session gameplay_01
 
-# 2. Transcribe with Whisper (run locally)
-cd ../data/continuous
-whisper gameplay_01.wav --model large-v3-turbo --word_timestamps True --output_format json
+# 2. Automated post-processing (WhisperX + alignment)
+cd ..
+./process_transcripts.sh YYYYMMDD_HHMMSS_gameplay_01
 
-# 3. Align voice commands to sensor data
-cd ../../src
-python align_voice_labels.py --session gameplay_01 --whisper ../data/continuous/gameplay_01.json
+# That's it! Your labeled training data is ready.
+```
+
+### Manual Post-Processing (Alternative)
+
+```bash
+# Step 1: WhisperX transcription with forced alignment
+python src/whisperx_transcribe.py \
+  --audio src/data/continuous/SESSION/audio_16k.wav \
+  --model large-v3
+
+# Step 2: Align voice commands to sensor data
+python src/align_voice_labels.py \
+  --session SESSION \
+  --whisper src/data/continuous/SESSION/SESSION_whisperx.json
 ```
 
 ### Why Post-Processing?
@@ -259,62 +271,17 @@ python align_voice_labels.py --session gameplay_01 --whisper ../data/continuous/
 
 **Solution**: Retrospective processing allows:
 - No performance impact during gameplay
-- Use powerful local models (Large V3 Turbo)
-- Word-level timestamp granularity
+- Use powerful WhisperX models with forced alignment
+- Research-grade word-level timestamp granularity
 - Re-process with different parameters
 - Natural, reactive gameplay
 
-See `docs/Phase_V/DATA_COLLECTION_GUIDE.md` for complete step-by-step instructions.
+### Documentation
 
-## 🔬 WhisperX: Research-Grade Word Segmentation
-
-**For word-level research** where you need precise, consistent timestamps for linguistic analysis, alignment, or keyword timing—use **WhisperX with forced alignment**.
-
-### Why WhisperX?
-
-WhisperX provides more stable per-word timings than Large-V3-Turbo's internal alignment, especially on fast speech, code-switching, and noisy clips.
-
-### Quick Start
-
-```bash
-# Install WhisperX
-pip install whisperx
-
-# Transcribe with research-grade word timestamps
-cd src
-python whisperx_transcribe.py --audio ../data/continuous/gameplay_01.wav --model large-v3
-
-# Align with sensor data (same as before)
-python align_voice_labels.py --session gameplay_01 --whisper ../data/continuous/gameplay_01_whisperx.json
-```
-
-### Recommended Setup for Research
-
-```bash
-# High-accuracy ASR + forced alignment + diarization
-python whisperx_transcribe.py \
-  --audio session.wav \
-  --model large-v3 \
-  --language en \
-  --diarize \
-  --hf-token YOUR_HF_TOKEN
-```
-
-**Key Features:**
-- ✅ Best-in-class word timing accuracy
-- ✅ Forced alignment using wav2vec2
-- ✅ Fewer drift issues on long files
-- ✅ Confidence scores for each word
-- ✅ Optional speaker diarization
-- ✅ Audio preprocessing (16kHz mono, VAD)
-
-**Trade-offs:**
-- WhisperX: Slightly heavier pipeline, but best word timing accuracy
-- Large-V3-Turbo: Fastest and simple, but less stable word timings for research
-
-**If you need reproducible timing for studies or quantitative analysis, WhisperX's forced alignment is the safer choice.**
-
-See `docs/WHISPERX_GUIDE.md` for complete documentation.
+- **Quick Start**: `docs/Phase_V/QUICK_REFERENCE.md` - Commands and workflow
+- **Full Guide**: `docs/Phase_V/POST_PROCESSING.md` - Complete documentation
+- **Data Collection**: `docs/Phase_V/DATA_COLLECTION_GUIDE.md` - Recording best practices
+- **WhisperX**: `docs/Phase_V/WhisperX/WHISPERX_GUIDE.md` - WhisperX details
 
 ## 🔧 Development
 
