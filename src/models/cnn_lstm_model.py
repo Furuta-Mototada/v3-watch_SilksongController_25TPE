@@ -164,6 +164,7 @@ def prepare_data_for_training(
     
     This function converts continuous recordings with labels into windowed samples
     suitable for training. It handles:
+    - Sensor data processing (pivoting separate sensor rows)
     - Sliding window extraction
     - Label assignment for each window
     - Feature ordering and normalization
@@ -171,10 +172,11 @@ def prepare_data_for_training(
     Args:
         sensor_data: DataFrame with columns [timestamp, sensor, accel_x, accel_y, accel_z,
                     gyro_x, gyro_y, gyro_z, rot_x, rot_y, rot_z, rot_w]
+                    NOTE: Sensor data has separate rows for each sensor type
         labels_data: DataFrame with columns [timestamp, gesture, duration]
         window_size: Number of timesteps per window (default: 50 = 1 second at 50Hz)
         stride: Step size for sliding window (default: 25 = 50% overlap)
-        sensor_columns: List of sensor column names to use (default: all 9 sensors)
+        sensor_columns: List of sensor column names to use (default: all 10 sensors)
     
     Returns:
         X: np.ndarray of shape (num_samples, window_size, num_features)
@@ -187,11 +189,11 @@ def prepare_data_for_training(
         >>> print(f"Generated {len(X)} training samples")
     """
     if sensor_columns is None:
-        # Default: use all 9 sensor axes
+        # Default: use all 10 sensor axes (including rot_w)
         sensor_columns = [
             'accel_x', 'accel_y', 'accel_z',
             'gyro_x', 'gyro_y', 'gyro_z',
-            'rot_x', 'rot_y', 'rot_z'
+            'rot_w', 'rot_x', 'rot_y', 'rot_z'
         ]
     
     # Gesture to index mapping
@@ -203,23 +205,51 @@ def prepare_data_for_training(
         'noise': 4
     }
     
-    # Sort data by timestamp
-    sensor_data = sensor_data.sort_values('timestamp').reset_index(drop=True)
-    labels_data = labels_data.sort_values('timestamp').reset_index(drop=True)
+    # Process sensor data: separate rows per sensor need to be merged
+    # Separate by sensor type
+    if 'sensor' in sensor_data.columns:
+        accel_data = sensor_data[sensor_data['sensor'] == 'linear_acceleration'][
+            ['timestamp', 'accel_x', 'accel_y', 'accel_z']
+        ].copy()
+        gyro_data = sensor_data[sensor_data['sensor'] == 'gyroscope'][
+            ['timestamp', 'gyro_x', 'gyro_y', 'gyro_z']
+        ].copy()
+        rot_data = sensor_data[sensor_data['sensor'] == 'rotation_vector'][
+            ['timestamp', 'rot_w', 'rot_x', 'rot_y', 'rot_z']
+        ].copy()
+        
+        # Get all unique timestamps
+        all_timestamps = pd.DataFrame({'timestamp': sorted(sensor_data['timestamp'].unique())})
+        
+        # Merge all sensors on timestamp
+        sensor_processed = all_timestamps.copy()
+        sensor_processed = sensor_processed.merge(accel_data, on='timestamp', how='left')
+        sensor_processed = sensor_processed.merge(gyro_data, on='timestamp', how='left')
+        sensor_processed = sensor_processed.merge(rot_data, on='timestamp', how='left')
+        
+        # Forward-fill to propagate sensor values (sensors update at different rates)
+        sensor_processed[sensor_columns] = sensor_processed[sensor_columns].ffill()
+        
+        # Fill any remaining NaN (at the beginning) with 0
+        sensor_processed[sensor_columns] = sensor_processed[sensor_columns].fillna(0)
+    else:
+        # Data is already processed
+        sensor_processed = sensor_data.copy()
     
-    # Pivot sensor data to have one row per timestamp with all sensor values
-    # This assumes sensor data is already in wide format
+    # Sort data by timestamp
+    sensor_processed = sensor_processed.sort_values('timestamp').reset_index(drop=True)
+    labels_data = labels_data.sort_values('timestamp').reset_index(drop=True)
     
     # Extract windows
     X_windows = []
     y_labels = []
     
     # Create sliding windows
-    for start_idx in range(0, len(sensor_data) - window_size, stride):
+    for start_idx in range(0, len(sensor_processed) - window_size, stride):
         end_idx = start_idx + window_size
         
         # Extract window
-        window = sensor_data.iloc[start_idx:end_idx]
+        window = sensor_processed.iloc[start_idx:end_idx]
         
         # Get timestamp at center of window
         center_time = window['timestamp'].iloc[window_size // 2]
