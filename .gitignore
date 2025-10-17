@@ -46,7 +46,7 @@ tmp/
 *.bak
 
 # Training data (ML datasets - can be large)
-training_data
+docs/Phase_III/training_data
 data/
 
 # ML Models (serialized models can be large)
