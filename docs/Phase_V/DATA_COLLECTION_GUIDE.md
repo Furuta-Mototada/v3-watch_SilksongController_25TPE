@@ -132,11 +132,11 @@ The post-processing script detects keywords, so natural speech is fine!
 
 ### What NOT to Do
 
-❌ **Don't** speak commands without performing gestures
-❌ **Don't** perform gestures without speaking
-❌ **Don't** overthink timing - be natural
-❌ **Don't** stop mid-session - keep playing naturally
-❌ **Don't** worry about mistakes - variety is good!
+* ❌ **Don't** speak commands without performing gestures
+* ❌ **Don't** perform gestures without speaking
+* ❌ **Don't** overthink timing - be natural
+* ❌ **Don't** stop mid-session - keep playing naturally
+* ❌ **Don't** worry about mistakes - variety is good!
 
 ### Walking Segments & State Management
 
