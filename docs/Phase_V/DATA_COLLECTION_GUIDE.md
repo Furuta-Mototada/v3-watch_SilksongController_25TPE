@@ -90,6 +90,7 @@ python continuous_data_collector.py --duration 600 --session gameplay_session_01
 | Game Action | What You Do | What You Say | Timing |
 |-------------|-------------|--------------|--------|
 | Walking in game | Walk naturally | Nothing (or "walk") | Default state |
+| Standing still | Stop walking, stand still | **"idle"**, **"rest"**, or **"stop"** | When stationary |
 | Hornet jumps | Perform jump gesture | **"jump"** | Right as you gesture |
 | Hornet attacks | Perform punch gesture | **"punch"** | Right as you gesture |
 | Hornet turns around | Perform turn gesture | **"turn"** | Right as you gesture |
@@ -102,6 +103,9 @@ python continuous_data_collector.py --duration 600 --session gameplay_session_01
 "jump" - [perform jump]
 "punch punch" - [rapid attacks]
 "turn" - [turning around]
+"idle" - [standing still]
+"rest" - [standing, preparing]
+"stop" - [pause movement]
 "jump oh no" - [jump while reacting]
 "punch jump punch" - [combo attack]
 "noise" - [adjusting watch]
@@ -144,12 +148,14 @@ The post-processing script detects keywords, so natural speech is fine!
 - You don't need to keep saying "walk" - it's the default state!
 - Optional: Say "walk" occasionally if you want to reinforce walking state explicitly
 
-**Question:** What if I want to stop walking before a gesture (for more precision)?
+**Question:** What if I want to mark standing still (not walking)?
 
 **Answer:** **Use "idle", "rest", or "stop" to mark standing still!**
-- Say **"idle"** or **"rest"** when you stop moving to prepare for a gesture
-- Say **"stop"** when you pause briefly
-- These create a 2-second standing-still marker before your gesture
+- Say **"idle"** when you stop moving and stand still (2-second duration)
+- Say **"rest"** as an alternative to idle (2-second duration)
+- Say **"stop"** when you pause or stop moving (2-second duration)
+- These create a standing-still state separate from walking
+- Use these when you're actually standing still, not walking in place
 
 **Example - Simple (Recommended):**
 ```
@@ -180,9 +186,9 @@ The post-processing script detects keywords, so natural speech is fine!
 ```
 
 **Available Commands:**
-- **Gestures**: `jump`, `punch`, `turn` (0.3-0.5s duration)
-- **States**: `walk`, `idle`, `rest`, `stop` (longer duration)
-- **Other**: `noise` (for non-game movements)
+- **Quick Gestures**: `jump` (0.3s), `punch` (0.3s), `turn` (0.5s)
+- **States**: `walk` (default/auto-fill), `idle` (2.0s), `rest` (2.0s), `stop` (2.0s)
+- **Other**: `noise` (1.0s for non-game movements like adjusting watch)
 
 ---
 
