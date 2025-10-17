@@ -134,29 +134,55 @@ The post-processing script detects keywords, so natural speech is fine!
 ❌ **Don't** stop mid-session - keep playing naturally
 ❌ **Don't** worry about mistakes - variety is good!
 
-### Walking Segments
+### Walking Segments & State Management
 
 **Question:** Should I say "walk" multiple times or just once at the start?
 
-**Answer:** **Both!**
+**Answer:** **Just say "walk start" at the beginning!**
 - Say **"walk start"** at the very beginning
-- Say **"walk"** occasionally (every 20-30 seconds) during long walking segments
-- Between gestures, walking is automatic (you don't need to say anything)
+- **All gaps between gestures are automatically labeled as "walk"**
+- You don't need to keep saying "walk" - it's the default state!
+- Optional: Say "walk" occasionally if you want to reinforce walking state explicitly
 
-**Example:**
+**Question:** What if I want to stop walking before a gesture (for more precision)?
+
+**Answer:** **Use "idle", "rest", or "stop" to mark standing still!**
+- Say **"idle"** or **"rest"** when you stop moving to prepare for a gesture
+- Say **"stop"** when you pause briefly
+- These create a 2-second standing-still marker before your gesture
+
+**Example - Simple (Recommended):**
 ```
 [Recording starts]
 "walk start" [begin walking]
-[walk for 10 seconds]
+[walk for 10 seconds - automatic, no need to speak]
 "jump" [jump gesture]
-[walk for 5 seconds]
+[walk for 5 seconds - automatic]
 "punch" [punch gesture]
-[walk for 15 seconds]
-"walk" [reinforcing walk state]
-[walk for 8 seconds]
+[walk for 8 seconds - automatic]
 "turn" [turn gesture]
 ...
 ```
+
+**Example - With Precision (Using Idle State):**
+```
+[Recording starts]
+"walk start" [begin walking]
+[walk for 10 seconds - automatic]
+"idle" [stop walking, stand still for 2 seconds]
+"jump" [precise jump from standing]
+[walk resumes automatically]
+"punch" [punch while walking]
+[walk continues]
+"rest" [stop, prepare for combo]
+"jump punch turn" [precise combo from standing]
+...
+```
+
+**Available Commands:**
+- **Gestures**: `jump`, `punch`, `turn` (0.3-0.5s duration)
+- **States**: `walk`, `idle`, `rest`, `stop` (longer duration)
+- **Other**: `noise` (for non-game movements)
 
 ---
 
@@ -289,7 +315,7 @@ fig, ax = plt.subplots(figsize=(15, 3))
 colors = {'walk': 'blue', 'jump': 'green', 'punch': 'red', 'turn': 'orange', 'noise': 'gray'}
 
 for _, row in labels.iterrows():
-    ax.barh(0, row['duration'], left=row['timestamp'], 
+    ax.barh(0, row['duration'], left=row['timestamp'],
             color=colors[row['gesture']], height=0.5)
 
 ax.set_xlabel('Time (seconds)')

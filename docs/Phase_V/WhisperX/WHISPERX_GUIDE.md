@@ -5,6 +5,7 @@ This guide explains how to use WhisperX for word-specific research-grade word se
 ## Table of Contents
 
 - [Why WhisperX?](#why-whisperx)
+- [Voice Command Reference](#voice-command-reference)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Recommended Setup for Research](#recommended-setup-for-research)
@@ -39,6 +40,99 @@ For word-level research—where you need precise, consistent timestamps for ling
 - ✅ Speed is more important than precision
 - ✅ General-purpose transcription
 - ⚠️ Word timings are less stable for fine-grained research
+
+## Voice Command Reference
+
+### Quick Answer: How to Label Your Gestures
+
+**Q: Should I say "walk start" once or multiple times?**
+**A: Just once at the beginning!** All gaps between gestures are automatically filled with "walk" labels.
+
+**Q: Can I be more specific, like stopping before a jump?**
+**A: Yes! Use "idle", "rest", or "stop" to mark when you're standing still.**
+
+**Q: Can I say "walk end"?**
+**A: You can, but it's unnecessary.** The system treats it the same as "walk". Just start your next gesture when ready.
+
+### Command Categories
+
+| Category | Commands | Duration | When to Use |
+|----------|----------|----------|-------------|
+| **Gestures** | `jump`, `punch`, `turn` | 0.3-0.5s | Right when you perform the action |
+| **States** | `walk`, `idle`, `rest`, `stop` | 1-2s | To mark movement states |
+| **Other** | `noise` | 1.0s | Non-game movements (adjusting watch, etc.) |
+
+### Detailed Command Guide
+
+#### Gesture Commands (Action Labels)
+- **`jump`** - Jump gesture (0.3s label)
+- **`punch`** - Attack/punch gesture (0.3s label)
+- **`turn`** - Turn around gesture (0.5s label)
+
+#### State Commands (Movement Labels)
+- **`walk`** / **`walking`** / **`start`** - Walking/moving state
+  - Default state - automatically fills all gaps
+  - Say "walk start" at beginning
+  - Optional: Say "walk" occasionally to reinforce
+- **`idle`** / **`rest`** / **`stop`** - Standing still state (2.0s label)
+  - Use when you stop moving to prepare for a precise gesture
+  - Creates a distinct "not walking" period
+  - Example: "idle" [stand still] "jump" [precise jump from standing]
+
+#### Other Commands
+- **`noise`** - Non-game movement (1.0s label)
+  - Adjusting watch, scratching, fidgeting
+  - Any movement that's NOT part of gameplay
+
+### Usage Examples
+
+#### Simple Flow (Recommended for Most Cases)
+```text
+[Start recording]
+"walk start" → [walk naturally for 10s, automatic labeling]
+"jump" → [jump gesture while walking]
+→ [walk for 5s, automatic labeling]
+"punch" → [punch gesture]
+→ [walk for 8s, automatic labeling]
+"turn" → [turn gesture]
+```
+
+**Result:** Gaps automatically labeled as "walk" - no need to keep saying it!
+
+#### Precise Control Flow (For Specific Needs)
+```text
+[Start recording]
+"walk start" → [walk for 10s, automatic]
+"idle" → [stop walking, stand still for 2s]
+"jump" → [precise jump from stationary position]
+→ [walk resumes automatically]
+"rest" → [stop, prepare for combo]
+"punch jump turn" → [execute combo from standing]
+→ [walk resumes automatically]
+```
+
+**Result:** Mix walking with stationary periods for more precise gesture timing.
+
+### What the System Does
+
+1. **Detects keywords** in your speech: `jump`, `punch`, `turn`, `idle`, `walk`, etc.
+2. **Creates time-stamped labels** at the word's timestamp
+3. **Fills ALL gaps** between labels with "walk" (default state)
+4. **No "end" commands needed** - next command automatically ends the previous state
+
+### Pro Tips
+
+✅ **DO:**
+- Say "walk start" at the beginning to mark baseline
+- Speak commands RIGHT when performing gestures
+- Use "idle"/"rest"/"stop" when you need precision
+- Speak naturally - keywords are detected within sentences
+
+❌ **DON'T:**
+- Don't worry about saying "walk end" or "stop walking"
+- Don't keep repeating "walk" - it's automatic
+- Don't speak commands without performing gestures
+- Don't perform gestures without speaking
 
 ## Installation
 

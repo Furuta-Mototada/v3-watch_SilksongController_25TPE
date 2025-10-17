@@ -7,7 +7,7 @@ aligns voice commands with sensor data to generate gesture labels.
 Usage:
     # Using standard Whisper output
     python align_voice_labels.py --session session_20250101_120000 --whisper whisper_output.json
-    
+
     # Using WhisperX output (recommended for research)
     python align_voice_labels.py --session session_20250101_120000 --whisper session_20250101_120000_whisperx.json
 
@@ -30,11 +30,14 @@ GESTURE_KEYWORDS = {
     'punch': 0.3,
     'turn': 0.5,
     'noise': 1.0,
+    'idle': 2.0,   # Standing still, preparing for gesture
+    'rest': 2.0,   # Alternative to idle
+    'stop': 2.0,   # Another alternative
     'walk': None  # Will be filled in as default
 }
 
 # Keywords that indicate walking
-WALK_KEYWORDS = ['walk', 'walking', 'start']
+WALK_KEYWORDS = ['walk', 'walking', 'start', 'moving']
 
 
 def load_whisper_output(whisper_file):
@@ -53,15 +56,15 @@ def load_sensor_metadata(session_dir, session_name):
 
 def extract_gesture_commands(whisper_data):
     """Extract gesture commands from Whisper or WhisperX word-level timestamps
-    
+
     Supports both standard Whisper format and WhisperX format with forced alignment.
     WhisperX format includes 'score' instead of 'probability' for confidence.
-    
+
     Returns:
         List of (timestamp, gesture, duration) tuples
     """
     commands = []
-    
+
     # Check if we have word-level timestamps
     if 'segments' in whisper_data:
         for segment in whisper_data['segments']:
@@ -69,11 +72,11 @@ def extract_gesture_commands(whisper_data):
                 for word_info in segment['words']:
                     word = word_info['word'].strip().lower()
                     timestamp = word_info['start']
-                    
+
                     # Get confidence score (different field names for Whisper vs WhisperX)
                     # WhisperX uses 'score', standard Whisper uses 'probability'
                     confidence = word_info.get('score', word_info.get('probability', 1.0))
-                    
+
                     # Check for gesture keywords
                     for gesture, duration in GESTURE_KEYWORDS.items():
                         if gesture in word:
@@ -84,7 +87,7 @@ def extract_gesture_commands(whisper_data):
                                 'confidence': confidence
                             })
                             break
-                    
+
                     # Check for walk keywords
                     if any(kw in word for kw in WALK_KEYWORDS):
                         # Mark explicit walk command
@@ -94,26 +97,26 @@ def extract_gesture_commands(whisper_data):
                             'duration': 1.0,  # Explicit walk marker
                             'confidence': confidence
                         })
-    
+
     return commands
 
 
 def generate_complete_labels(commands, total_duration):
     """Generate complete label file with walk as default state
-    
+
     Args:
         commands: List of gesture commands with timestamps
         total_duration: Total recording duration in seconds
-        
+
     Returns:
         List of label dictionaries
     """
     # Sort commands by timestamp
     commands.sort(key=lambda x: x['timestamp'])
-    
+
     labels = []
     current_time = 0.0
-    
+
     for i, cmd in enumerate(commands):
         # Fill gap with walk
         if current_time < cmd['timestamp']:
@@ -122,7 +125,7 @@ def generate_complete_labels(commands, total_duration):
                 'gesture': 'walk',
                 'duration': cmd['timestamp'] - current_time
             })
-        
+
         # Add the gesture command
         gesture_duration = cmd['duration']
         labels.append({
@@ -130,9 +133,9 @@ def generate_complete_labels(commands, total_duration):
             'gesture': cmd['gesture'],
             'duration': gesture_duration
         })
-        
+
         current_time = cmd['timestamp'] + gesture_duration
-    
+
     # Fill remaining time with walk
     if current_time < total_duration:
         labels.append({
@@ -140,7 +143,7 @@ def generate_complete_labels(commands, total_duration):
             'gesture': 'walk',
             'duration': total_duration - current_time
         })
-    
+
     return labels
 
 
@@ -158,13 +161,13 @@ def calculate_statistics(labels):
     for label in labels:
         gesture = label['gesture']
         duration = label['duration']
-        
+
         if gesture not in stats:
             stats[gesture] = {'count': 0, 'total_duration': 0}
-        
+
         stats[gesture]['count'] += 1
         stats[gesture]['total_duration'] += duration
-    
+
     return stats
 
 
@@ -173,42 +176,42 @@ def main():
         description='Align Whisper/WhisperX transcription with sensor data to generate gesture labels'
     )
     parser.add_argument('--session', required=True, help='Session name')
-    parser.add_argument('--whisper', required=True, 
+    parser.add_argument('--whisper', required=True,
                        help='Whisper or WhisperX JSON output file with word timestamps')
     parser.add_argument('--output-dir', default='data/continuous', help='Output directory')
-    parser.add_argument('--min-confidence', type=float, default=0.5, 
+    parser.add_argument('--min-confidence', type=float, default=0.5,
                        help='Minimum confidence for word detection (0.0-1.0, WhisperX uses score field)')
-    
+
     args = parser.parse_args()
-    
+
     print("=" * 70)
     print("Voice Command Label Alignment - Phase V")
     print("=" * 70)
     print()
-    
+
     # Load Whisper output
     print(f"Loading Whisper transcription: {args.whisper}")
     whisper_data = load_whisper_output(args.whisper)
     print(f"✓ Loaded transcription")
     print()
-    
+
     # Load sensor metadata
     print(f"Loading sensor metadata for session: {args.session}")
     metadata = load_sensor_metadata(args.output_dir, args.session)
     total_duration = metadata.get('actual_duration_sec', metadata.get('duration_sec', 600))
     print(f"✓ Total recording duration: {total_duration:.1f}s")
     print()
-    
+
     # Extract gesture commands
     print("Extracting gesture commands from transcription...")
     commands = extract_gesture_commands(whisper_data)
-    
+
     # Filter by confidence
     filtered_commands = [c for c in commands if c['confidence'] >= args.min_confidence]
     print(f"✓ Found {len(commands)} total commands")
     print(f"✓ {len(filtered_commands)} commands above confidence threshold {args.min_confidence}")
     print()
-    
+
     # Display detected commands
     print("Detected commands:")
     for cmd in filtered_commands[:20]:  # Show first 20
@@ -216,13 +219,13 @@ def main():
     if len(filtered_commands) > 20:
         print(f"  ... and {len(filtered_commands) - 20} more")
     print()
-    
+
     # Generate complete labels
     print("Generating complete label file...")
     labels = generate_complete_labels(filtered_commands, total_duration)
     print(f"✓ Generated {len(labels)} label segments")
     print()
-    
+
     # Calculate statistics
     stats = calculate_statistics(labels)
     print("Gesture Distribution:")
@@ -232,13 +235,13 @@ def main():
         else:
             print(f"  {gesture:8s}: {data['count']:3d} events, {data['total_duration']:6.1f}s total")
     print()
-    
+
     # Save labels
     output_file = os.path.join(args.output_dir, f"{args.session}_labels.csv")
     save_labels(labels, output_file)
     print(f"✓ Labels saved to: {output_file}")
     print()
-    
+
     # Save alignment metadata
     alignment_metadata = {
         'session_name': args.session,
@@ -249,13 +252,13 @@ def main():
         'min_confidence': args.min_confidence,
         'gesture_stats': stats
     }
-    
+
     alignment_file = os.path.join(args.output_dir, f"{args.session}_alignment.json")
     with open(alignment_file, 'w') as f:
         json.dump(alignment_metadata, f, indent=2)
     print(f"✓ Alignment metadata saved to: {alignment_file}")
     print()
-    
+
     print("=" * 70)
     print("✅ Label alignment complete!")
     print("=" * 70)
