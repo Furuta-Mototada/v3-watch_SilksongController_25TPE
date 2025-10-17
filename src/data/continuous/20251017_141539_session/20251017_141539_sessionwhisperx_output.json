@@ -1,0 +1,6088 @@
+{
+  "segments": [
+    {
+      "start": 0.453,
+      "end": 1.315,
+      "text": " This is noise.",
+      "words": [
+        {
+          "word": "This",
+          "start": 0.453,
+          "end": 0.714,
+          "score": 0.811
+        },
+        {
+          "word": "is",
+          "start": 0.794,
+          "end": 0.874,
+          "score": 0.865
+        },
+        {
+          "word": "noise.",
+          "start": 0.954,
+          "end": 1.315,
+          "score": 0.918
+        }
+      ]
+    },
+    {
+      "start": 2.357,
+      "end": 14.06,
+      "text": "I am playing with my laptop right now.",
+      "words": [
+        {
+          "word": "I",
+          "start": 2.357,
+          "end": 2.417,
+          "score": 0.925
+        },
+        {
+          "word": "am",
+          "start": 2.517,
+          "end": 2.597,
+          "score": 0.97
+        },
+        {
+          "word": "playing",
+          "start": 3.419,
+          "end": 3.679,
+          "score": 0.841
+        },
+        {
+          "word": "with",
+          "start": 3.76,
+          "end": 3.84,
+          "score": 0.018
+        },
+        {
+          "word": "my",
+          "start": 3.86,
+          "end": 3.9,
+          "score": 0.152
+        },
+        {
+          "word": "laptop",
+          "start": 3.92,
+          "end": 4.381,
+          "score": 0.768
+        },
+        {
+          "word": "right",
+          "start": 4.401,
+          "end": 4.581,
+          "score": 0.583
+        },
+        {
+          "word": "now.",
+          "start": 4.641,
+          "end": 14.06,
+          "score": 0.852
+        }
+      ]
+    },
+    {
+      "start": 14.08,
+      "end": 14.501,
+      "text": "Alright.",
+      "words": [
+        {
+          "word": "Alright.",
+          "start": 14.08,
+          "end": 14.501,
+          "score": 0.543
+        }
+      ]
+    },
+    {
+      "start": 17.046,
+      "end": 17.567,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 17.046,
+          "end": 17.567,
+          "score": 0.898
+        }
+      ]
+    },
+    {
+      "start": 47.838,
+      "end": 76.275,
+      "text": " noise turn left idle noise noise lots of noise noise noise noise noise walk start",
+      "words": [
+        {
+          "word": "noise",
+          "start": 47.838,
+          "end": 48.679,
+          "score": 0.918
+        },
+        {
+          "word": "turn",
+          "start": 55.368,
+          "end": 60.154,
+          "score": 0.77
+        },
+        {
+          "word": "left",
+          "start": 60.314,
+          "end": 60.595,
+          "score": 0.911
+        },
+        {
+          "word": "idle",
+          "start": 61.316,
+          "end": 61.556,
+          "score": 0.897
+        },
+        {
+          "word": "noise",
+          "start": 63.498,
+          "end": 63.719,
+          "score": 0.655
+        },
+        {
+          "word": "noise",
+          "start": 65.521,
+          "end": 65.942,
+          "score": 0.895
+        },
+        {
+          "word": "lots",
+          "start": 66.983,
+          "end": 67.163,
+          "score": 0.718
+        },
+        {
+          "word": "of",
+          "start": 67.223,
+          "end": 67.303,
+          "score": 0.718
+        },
+        {
+          "word": "noise",
+          "start": 67.343,
+          "end": 67.624,
+          "score": 0.86
+        },
+        {
+          "word": "noise",
+          "start": 68.525,
+          "end": 68.805,
+          "score": 0.891
+        },
+        {
+          "word": "noise",
+          "start": 70.207,
+          "end": 70.548,
+          "score": 0.972
+        },
+        {
+          "word": "noise",
+          "start": 71.829,
+          "end": 72.27,
+          "score": 0.803
+        },
+        {
+          "word": "noise",
+          "start": 73.872,
+          "end": 74.272,
+          "score": 0.947
+        },
+        {
+          "word": "walk",
+          "start": 75.254,
+          "end": 75.514,
+          "score": 0.906
+        },
+        {
+          "word": "start",
+          "start": 75.534,
+          "end": 76.275,
+          "score": 0.818
+        }
+      ]
+    },
+    {
+      "start": 81.487,
+      "end": 82.128,
+      "text": " Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 81.487,
+          "end": 82.128,
+          "score": 0.844
+        }
+      ]
+    },
+    {
+      "start": 83.09,
+      "end": 83.53,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 83.09,
+          "end": 83.53,
+          "score": 0.787
+        }
+      ]
+    },
+    {
+      "start": 84.512,
+      "end": 84.932,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 84.512,
+          "end": 84.932,
+          "score": 0.899
+        }
+      ]
+    },
+    {
+      "start": 85.994,
+      "end": 86.415,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 85.994,
+          "end": 86.415,
+          "score": 0.845
+        }
+      ]
+    },
+    {
+      "start": 87.536,
+      "end": 87.957,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 87.536,
+          "end": 87.957,
+          "score": 0.864
+        }
+      ]
+    },
+    {
+      "start": 88.959,
+      "end": 89.359,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 88.959,
+          "end": 89.359,
+          "score": 0.873
+        }
+      ]
+    },
+    {
+      "start": 90.141,
+      "end": 90.381,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 90.141,
+          "end": 90.381,
+          "score": 0.769
+        }
+      ]
+    },
+    {
+      "start": 92.244,
+      "end": 92.424,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 92.244,
+          "end": 92.424,
+          "score": 0.645
+        }
+      ]
+    },
+    {
+      "start": 93.305,
+      "end": 93.846,
+      "text": "Still walking.",
+      "words": [
+        {
+          "word": "Still",
+          "start": 93.305,
+          "end": 93.446,
+          "score": 0.248
+        },
+        {
+          "word": "walking.",
+          "start": 93.466,
+          "end": 93.846,
+          "score": 0.398
+        }
+      ]
+    },
+    {
+      "start": 94.227,
+      "end": 94.487,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 94.227,
+          "end": 94.487,
+          "score": 0.731
+        }
+      ]
+    },
+    {
+      "start": 96.27,
+      "end": 96.571,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 96.27,
+          "end": 96.571,
+          "score": 0.78
+        }
+      ]
+    },
+    {
+      "start": 98.393,
+      "end": 98.674,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 98.393,
+          "end": 98.674,
+          "score": 0.807
+        }
+      ]
+    },
+    {
+      "start": 100.457,
+      "end": 102.82,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 100.457,
+          "end": 102.82,
+          "score": 0.828
+        }
+      ]
+    },
+    {
+      "start": 104.643,
+      "end": 104.924,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 104.643,
+          "end": 104.924,
+          "score": 0.675
+        }
+      ]
+    },
+    {
+      "start": 106.326,
+      "end": 106.726,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 106.326,
+          "end": 106.726,
+          "score": 0.845
+        }
+      ]
+    },
+    {
+      "start": 107.347,
+      "end": 107.688,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 107.347,
+          "end": 107.688,
+          "score": 0.751
+        }
+      ]
+    },
+    {
+      "start": 108.629,
+      "end": 109.671,
+      "text": "Still walking.",
+      "words": [
+        {
+          "word": "Still",
+          "start": 108.629,
+          "end": 108.97,
+          "score": 0.52
+        },
+        {
+          "word": "walking.",
+          "start": 108.99,
+          "end": 109.671,
+          "score": 0.326
+        }
+      ]
+    },
+    {
+      "start": 121.261,
+      "end": 121.682,
+      "text": " Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 121.261,
+          "end": 121.682,
+          "score": 0.672
+        }
+      ]
+    },
+    {
+      "start": 123.445,
+      "end": 125.608,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 123.445,
+          "end": 125.608,
+          "score": 0.907
+        }
+      ]
+    },
+    {
+      "start": 125.628,
+      "end": 125.969,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 125.628,
+          "end": 125.969,
+          "score": 0.829
+        }
+      ]
+    },
+    {
+      "start": 128.052,
+      "end": 128.433,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 128.052,
+          "end": 128.433,
+          "score": 0.956
+        }
+      ]
+    },
+    {
+      "start": 129.695,
+      "end": 130.115,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 129.695,
+          "end": 130.115,
+          "score": 0.886
+        }
+      ]
+    },
+    {
+      "start": 131.437,
+      "end": 131.818,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 131.437,
+          "end": 131.818,
+          "score": 0.876
+        }
+      ]
+    },
+    {
+      "start": 132.92,
+      "end": 133.3,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 132.92,
+          "end": 133.3,
+          "score": 0.925
+        }
+      ]
+    },
+    {
+      "start": 134.382,
+      "end": 134.763,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 134.382,
+          "end": 134.763,
+          "score": 0.884
+        }
+      ]
+    },
+    {
+      "start": 135.864,
+      "end": 136.265,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 135.864,
+          "end": 136.265,
+          "score": 0.792
+        }
+      ]
+    },
+    {
+      "start": 137.647,
+      "end": 138.048,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 137.647,
+          "end": 138.048,
+          "score": 0.88
+        }
+      ]
+    },
+    {
+      "start": 139.45,
+      "end": 141.473,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 139.45,
+          "end": 141.473,
+          "score": 0.875
+        }
+      ]
+    },
+    {
+      "start": 142.335,
+      "end": 142.695,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 142.335,
+          "end": 142.695,
+          "score": 0.828
+        }
+      ]
+    },
+    {
+      "start": 143.076,
+      "end": 143.417,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 143.076,
+          "end": 143.417,
+          "score": 0.822
+        }
+      ]
+    },
+    {
+      "start": 143.937,
+      "end": 144.298,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 143.937,
+          "end": 144.298,
+          "score": 0.863
+        }
+      ]
+    },
+    {
+      "start": 144.959,
+      "end": 145.4,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 144.959,
+          "end": 145.4,
+          "score": 0.851
+        }
+      ]
+    },
+    {
+      "start": 146.041,
+      "end": 146.441,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 146.041,
+          "end": 146.441,
+          "score": 0.817
+        }
+      ]
+    },
+    {
+      "start": 147.103,
+      "end": 147.403,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 147.103,
+          "end": 147.403,
+          "score": 0.818
+        }
+      ]
+    },
+    {
+      "start": 148.025,
+      "end": 151.949,
+      "text": " Still idle.",
+      "words": [
+        {
+          "word": "Still",
+          "start": 148.025,
+          "end": 148.405,
+          "score": 0.894
+        },
+        {
+          "word": "idle.",
+          "start": 149.366,
+          "end": 151.949,
+          "score": 0.936
+        }
+      ]
+    },
+    {
+      "start": 151.969,
+      "end": 152.39,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 151.969,
+          "end": 152.39,
+          "score": 0.896
+        }
+      ]
+    },
+    {
+      "start": 154.472,
+      "end": 155.113,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 154.472,
+          "end": 155.113,
+          "score": 0.861
+        }
+      ]
+    },
+    {
+      "start": 155.593,
+      "end": 155.873,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 155.593,
+          "end": 155.873,
+          "score": 0.665
+        }
+      ]
+    },
+    {
+      "start": 155.934,
+      "end": 156.294,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 155.934,
+          "end": 156.294,
+          "score": 0.825
+        }
+      ]
+    },
+    {
+      "start": 156.654,
+      "end": 157.575,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 156.654,
+          "end": 157.575,
+          "score": 0.663
+        }
+      ]
+    },
+    {
+      "start": 157.595,
+      "end": 158.616,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 157.595,
+          "end": 158.616,
+          "score": 0.575
+        }
+      ]
+    },
+    {
+      "start": 158.636,
+      "end": 158.957,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 158.636,
+          "end": 158.957,
+          "score": 0.889
+        }
+      ]
+    },
+    {
+      "start": 161.56,
+      "end": 162.08,
+      "text": "Walk start.",
+      "words": [
+        {
+          "word": "Walk",
+          "start": 161.56,
+          "end": 161.76,
+          "score": 0.312
+        },
+        {
+          "word": "start.",
+          "start": 161.78,
+          "end": 162.08,
+          "score": 0.546
+        }
+      ]
+    },
+    {
+      "start": 165.484,
+      "end": 165.844,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 165.484,
+          "end": 165.844,
+          "score": 0.84
+        }
+      ]
+    },
+    {
+      "start": 166.084,
+      "end": 166.425,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 166.084,
+          "end": 166.425,
+          "score": 0.894
+        }
+      ]
+    },
+    {
+      "start": 166.705,
+      "end": 167.046,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 166.705,
+          "end": 167.046,
+          "score": 0.912
+        }
+      ]
+    },
+    {
+      "start": 167.366,
+      "end": 167.706,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 167.366,
+          "end": 167.706,
+          "score": 0.769
+        }
+      ]
+    },
+    {
+      "start": 168.067,
+      "end": 168.387,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 168.067,
+          "end": 168.387,
+          "score": 0.79
+        }
+      ]
+    },
+    {
+      "start": 168.727,
+      "end": 169.048,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 168.727,
+          "end": 169.048,
+          "score": 0.688
+        }
+      ]
+    },
+    {
+      "start": 169.428,
+      "end": 169.788,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 169.428,
+          "end": 169.788,
+          "score": 0.869
+        }
+      ]
+    },
+    {
+      "start": 170.109,
+      "end": 170.83,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 170.109,
+          "end": 170.83,
+          "score": 0.881
+        }
+      ]
+    },
+    {
+      "start": 170.85,
+      "end": 171.17,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 170.85,
+          "end": 171.17,
+          "score": 0.901
+        }
+      ]
+    },
+    {
+      "start": 173.092,
+      "end": 173.512,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 173.092,
+          "end": 173.512,
+          "score": 0.928
+        }
+      ]
+    },
+    {
+      "start": 175.415,
+      "end": 175.855,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 175.415,
+          "end": 175.855,
+          "score": 0.87
+        }
+      ]
+    },
+    {
+      "start": 177.472,
+      "end": 177.832,
+      "text": " Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 177.472,
+          "end": 177.832,
+          "score": 0.656
+        }
+      ]
+    },
+    {
+      "start": 178.473,
+      "end": 178.854,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 178.473,
+          "end": 178.854,
+          "score": 0.882
+        }
+      ]
+    },
+    {
+      "start": 179.294,
+      "end": 180.235,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 179.294,
+          "end": 180.235,
+          "score": 0.718
+        }
+      ]
+    },
+    {
+      "start": 180.255,
+      "end": 184.24,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 180.255,
+          "end": 184.24,
+          "score": 0.925
+        }
+      ]
+    },
+    {
+      "start": 186.302,
+      "end": 186.663,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 186.302,
+          "end": 186.663,
+          "score": 0.867
+        }
+      ]
+    },
+    {
+      "start": 187.083,
+      "end": 187.443,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 187.083,
+          "end": 187.443,
+          "score": 0.85
+        }
+      ]
+    },
+    {
+      "start": 192.189,
+      "end": 192.529,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 192.189,
+          "end": 192.529,
+          "score": 0.888
+        }
+      ]
+    },
+    {
+      "start": 193.731,
+      "end": 194.712,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 193.731,
+          "end": 194.712,
+          "score": 0.831
+        }
+      ]
+    },
+    {
+      "start": 194.732,
+      "end": 195.112,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 194.732,
+          "end": 195.112,
+          "score": 0.911
+        }
+      ]
+    },
+    {
+      "start": 195.813,
+      "end": 198.977,
+      "text": "Still walking.",
+      "words": [
+        {
+          "word": "Still",
+          "start": 195.813,
+          "end": 196.033,
+          "score": 0.632
+        },
+        {
+          "word": "walking.",
+          "start": 196.053,
+          "end": 198.977,
+          "score": 0.51
+        }
+      ]
+    },
+    {
+      "start": 198.997,
+      "end": 200.498,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 198.997,
+          "end": 200.498,
+          "score": 0.765
+        }
+      ]
+    },
+    {
+      "start": 200.518,
+      "end": 201.66,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 200.518,
+          "end": 201.66,
+          "score": 0.809
+        }
+      ]
+    },
+    {
+      "start": 201.68,
+      "end": 202.26,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 201.68,
+          "end": 202.26,
+          "score": 0.714
+        }
+      ]
+    },
+    {
+      "start": 202.28,
+      "end": 203.041,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 202.28,
+          "end": 203.041,
+          "score": 0.944
+        }
+      ]
+    },
+    {
+      "start": 203.061,
+      "end": 203.362,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 203.061,
+          "end": 203.362,
+          "score": 0.751
+        }
+      ]
+    },
+    {
+      "start": 203.562,
+      "end": 203.882,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 203.562,
+          "end": 203.882,
+          "score": 0.847
+        }
+      ]
+    },
+    {
+      "start": 204.403,
+      "end": 204.943,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 204.403,
+          "end": 204.943,
+          "score": 0.472
+        }
+      ]
+    },
+    {
+      "start": 204.963,
+      "end": 205.844,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 204.963,
+          "end": 205.844,
+          "score": 0.952
+        }
+      ]
+    },
+    {
+      "start": 205.864,
+      "end": 206.365,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 205.864,
+          "end": 206.365,
+          "score": 0.821
+        }
+      ]
+    },
+    {
+      "start": 208.117,
+      "end": 209.078,
+      "text": " Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 208.117,
+          "end": 209.078,
+          "score": 0.566
+        }
+      ]
+    },
+    {
+      "start": 209.098,
+      "end": 211.68,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 209.098,
+          "end": 211.68,
+          "score": 0.766
+        }
+      ]
+    },
+    {
+      "start": 211.7,
+      "end": 211.8,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 211.7,
+          "end": 211.8,
+          "score": 0.0
+        }
+      ]
+    },
+    {
+      "start": 211.82,
+      "end": 212.14,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 211.82,
+          "end": 212.14,
+          "score": 0.806
+        }
+      ]
+    },
+    {
+      "start": 212.901,
+      "end": 213.241,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 212.901,
+          "end": 213.241,
+          "score": 0.815
+        }
+      ]
+    },
+    {
+      "start": 213.802,
+      "end": 214.142,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 213.802,
+          "end": 214.142,
+          "score": 0.892
+        }
+      ]
+    },
+    {
+      "start": 214.342,
+      "end": 214.703,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 214.342,
+          "end": 214.703,
+          "score": 0.963
+        }
+      ]
+    },
+    {
+      "start": 214.983,
+      "end": 215.343,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 214.983,
+          "end": 215.343,
+          "score": 0.917
+        }
+      ]
+    },
+    {
+      "start": 216.244,
+      "end": 216.624,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 216.244,
+          "end": 216.624,
+          "score": 0.881
+        }
+      ]
+    },
+    {
+      "start": 216.845,
+      "end": 217.185,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 216.845,
+          "end": 217.185,
+          "score": 0.929
+        }
+      ]
+    },
+    {
+      "start": 217.565,
+      "end": 217.926,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 217.565,
+          "end": 217.926,
+          "score": 0.972
+        }
+      ]
+    },
+    {
+      "start": 218.926,
+      "end": 219.247,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 218.926,
+          "end": 219.247,
+          "score": 0.919
+        }
+      ]
+    },
+    {
+      "start": 221.228,
+      "end": 221.509,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 221.228,
+          "end": 221.509,
+          "score": 0.755
+        }
+      ]
+    },
+    {
+      "start": 222.369,
+      "end": 223.21,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 222.369,
+          "end": 223.21,
+          "score": 0.836
+        }
+      ]
+    },
+    {
+      "start": 223.23,
+      "end": 226.673,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 223.23,
+          "end": 226.673,
+          "score": 0.655
+        }
+      ]
+    },
+    {
+      "start": 226.693,
+      "end": 227.053,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 226.693,
+          "end": 227.053,
+          "score": 0.939
+        }
+      ]
+    },
+    {
+      "start": 227.354,
+      "end": 227.694,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 227.354,
+          "end": 227.694,
+          "score": 0.808
+        }
+      ]
+    },
+    {
+      "start": 229.215,
+      "end": 229.576,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 229.215,
+          "end": 229.576,
+          "score": 0.935
+        }
+      ]
+    },
+    {
+      "start": 230.977,
+      "end": 231.377,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 230.977,
+          "end": 231.377,
+          "score": 0.794
+        }
+      ]
+    },
+    {
+      "start": 233.479,
+      "end": 233.779,
+      "text": "Idol.",
+      "words": [
+        {
+          "word": "Idol.",
+          "start": 233.479,
+          "end": 233.779,
+          "score": 0.742
+        }
+      ]
+    },
+    {
+      "start": 235.721,
+      "end": 235.941,
+      "text": "Idol.",
+      "words": [
+        {
+          "word": "Idol.",
+          "start": 235.721,
+          "end": 235.941,
+          "score": 0.84
+        }
+      ]
+    },
+    {
+      "start": 237.783,
+      "end": 238.123,
+      "text": "Idol.",
+      "words": [
+        {
+          "word": "Idol.",
+          "start": 237.783,
+          "end": 238.123,
+          "score": 0.457
+        }
+      ]
+    },
+    {
+      "start": 240.196,
+      "end": 249.362,
+      "text": " Turn Walk Jump Turn Jump Turn Jump Turn Idle",
+      "words": [
+        {
+          "word": "Turn",
+          "start": 240.196,
+          "end": 240.577,
+          "score": 0.724
+        },
+        {
+          "word": "Walk",
+          "start": 241.52,
+          "end": 241.841,
+          "score": 0.913
+        },
+        {
+          "word": "Jump",
+          "start": 242.683,
+          "end": 242.984,
+          "score": 0.861
+        },
+        {
+          "word": "Turn",
+          "start": 243.666,
+          "end": 244.047,
+          "score": 0.919
+        },
+        {
+          "word": "Jump",
+          "start": 244.849,
+          "end": 245.13,
+          "score": 0.804
+        },
+        {
+          "word": "Turn",
+          "start": 245.952,
+          "end": 246.273,
+          "score": 0.828
+        },
+        {
+          "word": "Jump",
+          "start": 246.975,
+          "end": 247.256,
+          "score": 0.817
+        },
+        {
+          "word": "Turn",
+          "start": 247.918,
+          "end": 248.299,
+          "score": 0.867
+        },
+        {
+          "word": "Idle",
+          "start": 249.001,
+          "end": 249.362,
+          "score": 0.752
+        }
+      ]
+    },
+    {
+      "start": 251.182,
+      "end": 251.582,
+      "text": " Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 251.182,
+          "end": 251.582,
+          "score": 0.861
+        }
+      ]
+    },
+    {
+      "start": 252.463,
+      "end": 252.824,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 252.463,
+          "end": 252.824,
+          "score": 0.879
+        }
+      ]
+    },
+    {
+      "start": 254.005,
+      "end": 254.405,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 254.005,
+          "end": 254.405,
+          "score": 0.869
+        }
+      ]
+    },
+    {
+      "start": 255.266,
+      "end": 255.646,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 255.266,
+          "end": 255.646,
+          "score": 0.924
+        }
+      ]
+    },
+    {
+      "start": 256.687,
+      "end": 256.988,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 256.687,
+          "end": 256.988,
+          "score": 0.675
+        }
+      ]
+    },
+    {
+      "start": 257.008,
+      "end": 257.368,
+      "text": "Start.",
+      "words": [
+        {
+          "word": "Start.",
+          "start": 257.008,
+          "end": 257.368,
+          "score": 0.859
+        }
+      ]
+    },
+    {
+      "start": 257.668,
+      "end": 258.009,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 257.668,
+          "end": 258.009,
+          "score": 0.931
+        }
+      ]
+    },
+    {
+      "start": 258.489,
+      "end": 259.61,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 258.489,
+          "end": 259.61,
+          "score": 0.883
+        }
+      ]
+    },
+    {
+      "start": 259.63,
+      "end": 259.951,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 259.63,
+          "end": 259.951,
+          "score": 0.831
+        }
+      ]
+    },
+    {
+      "start": 261.132,
+      "end": 261.472,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 261.132,
+          "end": 261.472,
+          "score": 0.882
+        }
+      ]
+    },
+    {
+      "start": 261.993,
+      "end": 262.553,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 261.993,
+          "end": 262.553,
+          "score": 0.866
+        }
+      ]
+    },
+    {
+      "start": 262.573,
+      "end": 262.853,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 262.573,
+          "end": 262.853,
+          "score": 0.755
+        }
+      ]
+    },
+    {
+      "start": 263.214,
+      "end": 264.235,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 263.214,
+          "end": 264.235,
+          "score": 0.888
+        }
+      ]
+    },
+    {
+      "start": 264.255,
+      "end": 264.935,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 264.255,
+          "end": 264.935,
+          "score": 0.894
+        }
+      ]
+    },
+    {
+      "start": 264.955,
+      "end": 265.356,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 264.955,
+          "end": 265.356,
+          "score": 0.774
+        }
+      ]
+    },
+    {
+      "start": 265.636,
+      "end": 266.577,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 265.636,
+          "end": 266.577,
+          "score": 0.876
+        }
+      ]
+    },
+    {
+      "start": 266.597,
+      "end": 266.897,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 266.597,
+          "end": 266.897,
+          "score": 0.829
+        }
+      ]
+    },
+    {
+      "start": 267.318,
+      "end": 267.618,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 267.318,
+          "end": 267.618,
+          "score": 0.807
+        }
+      ]
+    },
+    {
+      "start": 268.059,
+      "end": 268.399,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 268.059,
+          "end": 268.399,
+          "score": 0.804
+        }
+      ]
+    },
+    {
+      "start": 268.779,
+      "end": 269.56,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 268.779,
+          "end": 269.56,
+          "score": 0.808
+        }
+      ]
+    },
+    {
+      "start": 269.58,
+      "end": 269.88,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 269.58,
+          "end": 269.88,
+          "score": 0.833
+        }
+      ]
+    },
+    {
+      "start": 270.341,
+      "end": 271.081,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 270.341,
+          "end": 271.081,
+          "score": 0.83
+        }
+      ]
+    },
+    {
+      "start": 271.101,
+      "end": 271.622,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 271.101,
+          "end": 271.622,
+          "score": 0.742
+        }
+      ]
+    },
+    {
+      "start": 271.642,
+      "end": 272.082,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 271.642,
+          "end": 272.082,
+          "score": 0.804
+        }
+      ]
+    },
+    {
+      "start": 272.102,
+      "end": 272.823,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 272.102,
+          "end": 272.823,
+          "score": 0.97
+        }
+      ]
+    },
+    {
+      "start": 272.843,
+      "end": 273.264,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 272.843,
+          "end": 273.264,
+          "score": 0.896
+        }
+      ]
+    },
+    {
+      "start": 273.704,
+      "end": 274.104,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 273.704,
+          "end": 274.104,
+          "score": 0.868
+        }
+      ]
+    },
+    {
+      "start": 274.485,
+      "end": 274.805,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 274.485,
+          "end": 274.805,
+          "score": 0.831
+        }
+      ]
+    },
+    {
+      "start": 275.205,
+      "end": 276.467,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 275.205,
+          "end": 276.467,
+          "score": 0.89
+        }
+      ]
+    },
+    {
+      "start": 276.487,
+      "end": 276.767,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 276.487,
+          "end": 276.767,
+          "score": 0.854
+        }
+      ]
+    },
+    {
+      "start": 279.515,
+      "end": 288.952,
+      "text": " Turn, walk, walk, punch, turn, punch, turn, punch, turn, punch, walk.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 279.515,
+          "end": 280.016,
+          "score": 0.877
+        },
+        {
+          "word": "walk,",
+          "start": 280.777,
+          "end": 281.078,
+          "score": 0.866
+        },
+        {
+          "word": "walk,",
+          "start": 281.959,
+          "end": 282.06,
+          "score": 0.0
+        },
+        {
+          "word": "punch,",
+          "start": 282.08,
+          "end": 283.242,
+          "score": 0.89
+        },
+        {
+          "word": "turn,",
+          "start": 283.262,
+          "end": 283.682,
+          "score": 0.932
+        },
+        {
+          "word": "punch,",
+          "start": 284.364,
+          "end": 284.804,
+          "score": 0.9
+        },
+        {
+          "word": "turn,",
+          "start": 285.285,
+          "end": 285.686,
+          "score": 0.82
+        },
+        {
+          "word": "punch,",
+          "start": 286.207,
+          "end": 286.608,
+          "score": 0.884
+        },
+        {
+          "word": "turn,",
+          "start": 287.049,
+          "end": 287.449,
+          "score": 0.766
+        },
+        {
+          "word": "punch,",
+          "start": 287.99,
+          "end": 288.571,
+          "score": 0.911
+        },
+        {
+          "word": "walk.",
+          "start": 288.591,
+          "end": 288.952,
+          "score": 0.826
+        }
+      ]
+    },
+    {
+      "start": 293.901,
+      "end": 302.957,
+      "text": "Turn, punch, punch, punch, walk, turn.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 293.901,
+          "end": 294.342,
+          "score": 0.928
+        },
+        {
+          "word": "punch,",
+          "start": 295.444,
+          "end": 295.824,
+          "score": 0.904
+        },
+        {
+          "word": "punch,",
+          "start": 297.728,
+          "end": 298.088,
+          "score": 0.942
+        },
+        {
+          "word": "punch,",
+          "start": 300.012,
+          "end": 300.372,
+          "score": 0.878
+        },
+        {
+          "word": "walk,",
+          "start": 301.414,
+          "end": 301.975,
+          "score": 0.731
+        },
+        {
+          "word": "turn.",
+          "start": 301.995,
+          "end": 302.957,
+          "score": 0.929
+        }
+      ]
+    },
+    {
+      "start": 304.372,
+      "end": 321.52,
+      "text": " Turn, turn, turn, turn, jump, jump, jump, turn, walk, jump, turn, punch, turn, punch, turn,",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 304.372,
+          "end": 304.853,
+          "score": 0.84
+        },
+        {
+          "word": "turn,",
+          "start": 305.995,
+          "end": 306.455,
+          "score": 0.863
+        },
+        {
+          "word": "turn,",
+          "start": 307.738,
+          "end": 308.198,
+          "score": 0.787
+        },
+        {
+          "word": "turn,",
+          "start": 309.2,
+          "end": 309.641,
+          "score": 0.823
+        },
+        {
+          "word": "jump,",
+          "start": 310.282,
+          "end": 310.642,
+          "score": 0.691
+        },
+        {
+          "word": "jump,",
+          "start": 311.003,
+          "end": 311.644,
+          "score": 0.67
+        },
+        {
+          "word": "jump,",
+          "start": 311.664,
+          "end": 312.004,
+          "score": 0.464
+        },
+        {
+          "word": "turn,",
+          "start": 312.746,
+          "end": 313.166,
+          "score": 0.898
+        },
+        {
+          "word": "walk,",
+          "start": 313.587,
+          "end": 313.948,
+          "score": 0.752
+        },
+        {
+          "word": "jump,",
+          "start": 314.408,
+          "end": 314.789,
+          "score": 0.488
+        },
+        {
+          "word": "turn,",
+          "start": 315.23,
+          "end": 315.61,
+          "score": 0.862
+        },
+        {
+          "word": "punch,",
+          "start": 316.913,
+          "end": 317.554,
+          "score": 0.947
+        },
+        {
+          "word": "turn,",
+          "start": 317.574,
+          "end": 317.994,
+          "score": 0.825
+        },
+        {
+          "word": "punch,",
+          "start": 318.836,
+          "end": 319.196,
+          "score": 0.914
+        },
+        {
+          "word": "turn,",
+          "start": 319.477,
+          "end": 321.52,
+          "score": 0.893
+        }
+      ]
+    },
+    {
+      "start": 330.038,
+      "end": 330.759,
+      "text": " Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 330.038,
+          "end": 330.759,
+          "score": 0.928
+        }
+      ]
+    },
+    {
+      "start": 331.62,
+      "end": 332.06,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 331.62,
+          "end": 332.06,
+          "score": 0.903
+        }
+      ]
+    },
+    {
+      "start": 333.102,
+      "end": 333.502,
+      "text": "Noise.",
+      "words": [
+        {
+          "word": "Noise.",
+          "start": 333.102,
+          "end": 333.502,
+          "score": 0.893
+        }
+      ]
+    },
+    {
+      "start": 334.784,
+      "end": 335.104,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 334.784,
+          "end": 335.104,
+          "score": 0.85
+        }
+      ]
+    },
+    {
+      "start": 337.247,
+      "end": 337.587,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 337.247,
+          "end": 337.587,
+          "score": 0.7
+        }
+      ]
+    },
+    {
+      "start": 339.91,
+      "end": 340.25,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 339.91,
+          "end": 340.25,
+          "score": 0.806
+        }
+      ]
+    },
+    {
+      "start": 342.593,
+      "end": 342.954,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 342.593,
+          "end": 342.954,
+          "score": 0.678
+        }
+      ]
+    },
+    {
+      "start": 344.936,
+      "end": 345.257,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 344.936,
+          "end": 345.257,
+          "score": 0.699
+        }
+      ]
+    },
+    {
+      "start": 347.219,
+      "end": 349.402,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 347.219,
+          "end": 349.402,
+          "score": 0.726
+        }
+      ]
+    },
+    {
+      "start": 349.422,
+      "end": 349.762,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 349.422,
+          "end": 349.762,
+          "score": 0.92
+        }
+      ]
+    },
+    {
+      "start": 351.124,
+      "end": 351.484,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 351.124,
+          "end": 351.484,
+          "score": 0.888
+        }
+      ]
+    },
+    {
+      "start": 351.945,
+      "end": 352.285,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 351.945,
+          "end": 352.285,
+          "score": 0.782
+        }
+      ]
+    },
+    {
+      "start": 354.208,
+      "end": 356.19,
+      "text": "Walk start.",
+      "words": [
+        {
+          "word": "Walk",
+          "start": 354.208,
+          "end": 354.488,
+          "score": 0.852
+        },
+        {
+          "word": "start.",
+          "start": 354.508,
+          "end": 356.19,
+          "score": 0.912
+        }
+      ]
+    },
+    {
+      "start": 356.21,
+      "end": 356.47,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 356.21,
+          "end": 356.47,
+          "score": 0.781
+        }
+      ]
+    },
+    {
+      "start": 357.512,
+      "end": 357.852,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 357.512,
+          "end": 357.852,
+          "score": 0.883
+        }
+      ]
+    },
+    {
+      "start": 360.818,
+      "end": 361.218,
+      "text": " Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 360.818,
+          "end": 361.218,
+          "score": 0.841
+        }
+      ]
+    },
+    {
+      "start": 361.519,
+      "end": 362.199,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 361.519,
+          "end": 362.199,
+          "score": 0.934
+        }
+      ]
+    },
+    {
+      "start": 362.219,
+      "end": 362.56,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 362.219,
+          "end": 362.56,
+          "score": 0.921
+        }
+      ]
+    },
+    {
+      "start": 366.924,
+      "end": 367.284,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 366.924,
+          "end": 367.284,
+          "score": 0.86
+        }
+      ]
+    },
+    {
+      "start": 367.945,
+      "end": 369.366,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 367.945,
+          "end": 369.366,
+          "score": 0.49
+        }
+      ]
+    },
+    {
+      "start": 369.386,
+      "end": 370.327,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 369.386,
+          "end": 370.327,
+          "score": 0.935
+        }
+      ]
+    },
+    {
+      "start": 370.347,
+      "end": 370.708,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 370.347,
+          "end": 370.708,
+          "score": 0.938
+        }
+      ]
+    },
+    {
+      "start": 371.809,
+      "end": 372.509,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 371.809,
+          "end": 372.509,
+          "score": 0.897
+        }
+      ]
+    },
+    {
+      "start": 372.529,
+      "end": 372.87,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 372.529,
+          "end": 372.87,
+          "score": 0.936
+        }
+      ]
+    },
+    {
+      "start": 374.131,
+      "end": 376.613,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 374.131,
+          "end": 376.613,
+          "score": 0.685
+        }
+      ]
+    },
+    {
+      "start": 376.633,
+      "end": 376.954,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 376.633,
+          "end": 376.954,
+          "score": 0.844
+        }
+      ]
+    },
+    {
+      "start": 377.574,
+      "end": 377.975,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 377.574,
+          "end": 377.975,
+          "score": 0.582
+        }
+      ]
+    },
+    {
+      "start": 379.416,
+      "end": 379.756,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 379.416,
+          "end": 379.756,
+          "score": 0.785
+        }
+      ]
+    },
+    {
+      "start": 380.817,
+      "end": 380.998,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 380.817,
+          "end": 380.998,
+          "score": 0.462
+        }
+      ]
+    },
+    {
+      "start": 381.018,
+      "end": 381.538,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 381.018,
+          "end": 381.538,
+          "score": 0.703
+        }
+      ]
+    },
+    {
+      "start": 381.878,
+      "end": 383.14,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 381.878,
+          "end": 383.14,
+          "score": 0.916
+        }
+      ]
+    },
+    {
+      "start": 383.16,
+      "end": 383.56,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 383.16,
+          "end": 383.56,
+          "score": 0.801
+        }
+      ]
+    },
+    {
+      "start": 384.081,
+      "end": 385.502,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 384.081,
+          "end": 385.502,
+          "score": 0.867
+        }
+      ]
+    },
+    {
+      "start": 385.522,
+      "end": 385.622,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 385.522,
+          "end": 385.622,
+          "score": 0.23
+        }
+      ]
+    },
+    {
+      "start": 386.343,
+      "end": 386.623,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 386.343,
+          "end": 386.623,
+          "score": 0.654
+        }
+      ]
+    },
+    {
+      "start": 388.763,
+      "end": 417.522,
+      "text": " Turn Turn Idle Idle Idle Idle Idle Punch Punch Jump Jump Punch Punch Jump Jump Punch Punch Jump Jump Walk Walk Walk",
+      "words": [
+        {
+          "word": "Turn",
+          "start": 388.763,
+          "end": 389.284,
+          "score": 0.696
+        },
+        {
+          "word": "Turn",
+          "start": 389.844,
+          "end": 390.185,
+          "score": 0.852
+        },
+        {
+          "word": "Idle",
+          "start": 392.268,
+          "end": 392.568,
+          "score": 0.508
+        },
+        {
+          "word": "Idle",
+          "start": 395.372,
+          "end": 395.672,
+          "score": 0.522
+        },
+        {
+          "word": "Idle",
+          "start": 397.895,
+          "end": 398.216,
+          "score": 0.506
+        },
+        {
+          "word": "Idle",
+          "start": 400.779,
+          "end": 401.08,
+          "score": 0.442
+        },
+        {
+          "word": "Idle",
+          "start": 403.303,
+          "end": 403.623,
+          "score": 0.489
+        },
+        {
+          "word": "Punch",
+          "start": 404.524,
+          "end": 404.885,
+          "score": 0.746
+        },
+        {
+          "word": "Punch",
+          "start": 405.145,
+          "end": 405.486,
+          "score": 0.918
+        },
+        {
+          "word": "Jump",
+          "start": 405.786,
+          "end": 406.107,
+          "score": 0.782
+        },
+        {
+          "word": "Jump",
+          "start": 406.447,
+          "end": 406.747,
+          "score": 0.832
+        },
+        {
+          "word": "Punch",
+          "start": 407.108,
+          "end": 407.448,
+          "score": 0.8
+        },
+        {
+          "word": "Punch",
+          "start": 407.729,
+          "end": 408.109,
+          "score": 0.848
+        },
+        {
+          "word": "Jump",
+          "start": 408.39,
+          "end": 408.67,
+          "score": 0.826
+        },
+        {
+          "word": "Jump",
+          "start": 409.531,
+          "end": 409.611,
+          "score": 0.0
+        },
+        {
+          "word": "Punch",
+          "start": 409.631,
+          "end": 409.992,
+          "score": 0.87
+        },
+        {
+          "word": "Punch",
+          "start": 410.272,
+          "end": 410.593,
+          "score": 0.849
+        },
+        {
+          "word": "Jump",
+          "start": 410.933,
+          "end": 411.254,
+          "score": 0.759
+        },
+        {
+          "word": "Jump",
+          "start": 411.594,
+          "end": 411.894,
+          "score": 0.68
+        },
+        {
+          "word": "Walk",
+          "start": 412.235,
+          "end": 412.535,
+          "score": 0.97
+        },
+        {
+          "word": "Walk",
+          "start": 414.718,
+          "end": 415.019,
+          "score": 0.893
+        },
+        {
+          "word": "Walk",
+          "start": 417.142,
+          "end": 417.522,
+          "score": 0.858
+        }
+      ]
+    },
+    {
+      "start": 418.919,
+      "end": 420.04,
+      "text": " Turn, walk.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 418.919,
+          "end": 419.34,
+          "score": 0.82
+        },
+        {
+          "word": "walk.",
+          "start": 419.66,
+          "end": 420.04,
+          "score": 0.869
+        }
+      ]
+    },
+    {
+      "start": 421.342,
+      "end": 422.283,
+      "text": "Turn, walk.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 421.342,
+          "end": 421.702,
+          "score": 0.882
+        },
+        {
+          "word": "walk.",
+          "start": 421.963,
+          "end": 422.283,
+          "score": 0.966
+        }
+      ]
+    },
+    {
+      "start": 423.965,
+      "end": 425.247,
+      "text": "Turn, walk.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 423.965,
+          "end": 424.406,
+          "score": 0.87
+        },
+        {
+          "word": "walk.",
+          "start": 424.866,
+          "end": 425.247,
+          "score": 0.954
+        }
+      ]
+    },
+    {
+      "start": 426.328,
+      "end": 427.41,
+      "text": "Turn, walk.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 426.328,
+          "end": 427.109,
+          "score": 0.864
+        },
+        {
+          "word": "walk.",
+          "start": 427.129,
+          "end": 427.41,
+          "score": 0.931
+        }
+      ]
+    },
+    {
+      "start": 430.974,
+      "end": 431.395,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 430.974,
+          "end": 431.395,
+          "score": 0.857
+        }
+      ]
+    },
+    {
+      "start": 434.098,
+      "end": 437.062,
+      "text": "Turn, walk.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 434.098,
+          "end": 434.479,
+          "score": 0.868
+        },
+        {
+          "word": "walk.",
+          "start": 435.64,
+          "end": 437.062,
+          "score": 0.986
+        }
+      ]
+    },
+    {
+      "start": 437.082,
+      "end": 438.684,
+      "text": "Turn, walk.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 437.082,
+          "end": 437.542,
+          "score": 0.754
+        },
+        {
+          "word": "walk.",
+          "start": 438.283,
+          "end": 438.684,
+          "score": 0.849
+        }
+      ]
+    },
+    {
+      "start": 439.565,
+      "end": 441.287,
+      "text": "Turn, punch.",
+      "words": [
+        {
+          "word": "Turn,",
+          "start": 439.565,
+          "end": 439.985,
+          "score": 0.843
+        },
+        {
+          "word": "punch.",
+          "start": 440.846,
+          "end": 441.287,
+          "score": 0.882
+        }
+      ]
+    },
+    {
+      "start": 442.008,
+      "end": 442.448,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 442.008,
+          "end": 442.448,
+          "score": 0.902
+        }
+      ]
+    },
+    {
+      "start": 443.249,
+      "end": 444.471,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 443.249,
+          "end": 444.471,
+          "score": 0.862
+        }
+      ]
+    },
+    {
+      "start": 451.606,
+      "end": 452.947,
+      "text": " Punch, idle.",
+      "words": [
+        {
+          "word": "Punch,",
+          "start": 451.606,
+          "end": 452.046,
+          "score": 0.871
+        },
+        {
+          "word": "idle.",
+          "start": 452.667,
+          "end": 452.947,
+          "score": 0.858
+        }
+      ]
+    },
+    {
+      "start": 454.068,
+      "end": 455.37,
+      "text": "Punch, idle.",
+      "words": [
+        {
+          "word": "Punch,",
+          "start": 454.068,
+          "end": 454.469,
+          "score": 0.818
+        },
+        {
+          "word": "idle.",
+          "start": 455.089,
+          "end": 455.37,
+          "score": 0.785
+        }
+      ]
+    },
+    {
+      "start": 455.85,
+      "end": 457.131,
+      "text": "Punch, idle.",
+      "words": [
+        {
+          "word": "Punch,",
+          "start": 455.85,
+          "end": 456.29,
+          "score": 0.788
+        },
+        {
+          "word": "idle.",
+          "start": 456.871,
+          "end": 457.131,
+          "score": 0.845
+        }
+      ]
+    },
+    {
+      "start": 458.312,
+      "end": 458.673,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 458.312,
+          "end": 458.673,
+          "score": 0.729
+        }
+      ]
+    },
+    {
+      "start": 459.613,
+      "end": 460.975,
+      "text": "Punch, idle.",
+      "words": [
+        {
+          "word": "Punch,",
+          "start": 459.613,
+          "end": 460.034,
+          "score": 0.814
+        },
+        {
+          "word": "idle.",
+          "start": 460.494,
+          "end": 460.975,
+          "score": 0.911
+        }
+      ]
+    },
+    {
+      "start": 460.995,
+      "end": 462.736,
+      "text": "Punch, idle.",
+      "words": [
+        {
+          "word": "Punch,",
+          "start": 460.995,
+          "end": 461.335,
+          "score": 0.808
+        },
+        {
+          "word": "idle.",
+          "start": 461.856,
+          "end": 462.736,
+          "score": 0.895
+        }
+      ]
+    },
+    {
+      "start": 462.756,
+      "end": 463.137,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 462.756,
+          "end": 463.137,
+          "score": 0.889
+        }
+      ]
+    },
+    {
+      "start": 464.618,
+      "end": 466.1,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 464.618,
+          "end": 466.1,
+          "score": 0.82
+        }
+      ]
+    },
+    {
+      "start": 466.12,
+      "end": 467.221,
+      "text": "Punch, idle.",
+      "words": [
+        {
+          "word": "Punch,",
+          "start": 466.12,
+          "end": 466.48,
+          "score": 0.868
+        },
+        {
+          "word": "idle.",
+          "start": 467.0,
+          "end": 467.221,
+          "score": 0.836
+        }
+      ]
+    },
+    {
+      "start": 467.681,
+      "end": 468.622,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 467.681,
+          "end": 468.622,
+          "score": 0.959
+        }
+      ]
+    },
+    {
+      "start": 468.642,
+      "end": 475.008,
+      "text": "Walk start.",
+      "words": [
+        {
+          "word": "Walk",
+          "start": 468.642,
+          "end": 468.922,
+          "score": 0.825
+        },
+        {
+          "word": "start.",
+          "start": 468.942,
+          "end": 475.008,
+          "score": 0.723
+        }
+      ]
+    },
+    {
+      "start": 475.028,
+      "end": 475.388,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 475.028,
+          "end": 475.388,
+          "score": 0.969
+        }
+      ]
+    },
+    {
+      "start": 476.289,
+      "end": 476.669,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 476.289,
+          "end": 476.669,
+          "score": 0.936
+        }
+      ]
+    },
+    {
+      "start": 477.57,
+      "end": 477.971,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 477.57,
+          "end": 477.971,
+          "score": 0.838
+        }
+      ]
+    },
+    {
+      "start": 478.912,
+      "end": 480.533,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 478.912,
+          "end": 480.533,
+          "score": 0.894
+        }
+      ]
+    },
+    {
+      "start": 481.643,
+      "end": 482.043,
+      "text": " Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 481.643,
+          "end": 482.043,
+          "score": 0.846
+        }
+      ]
+    },
+    {
+      "start": 490.771,
+      "end": 492.653,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 490.771,
+          "end": 492.653,
+          "score": 0.766
+        }
+      ]
+    },
+    {
+      "start": 494.415,
+      "end": 494.775,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 494.415,
+          "end": 494.775,
+          "score": 0.89
+        }
+      ]
+    },
+    {
+      "start": 495.636,
+      "end": 496.056,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 495.636,
+          "end": 496.056,
+          "score": 0.888
+        }
+      ]
+    },
+    {
+      "start": 496.617,
+      "end": 496.877,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 496.617,
+          "end": 496.877,
+          "score": 0.759
+        }
+      ]
+    },
+    {
+      "start": 498.739,
+      "end": 499.139,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 498.739,
+          "end": 499.139,
+          "score": 0.814
+        }
+      ]
+    },
+    {
+      "start": 499.639,
+      "end": 501.321,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 499.639,
+          "end": 501.321,
+          "score": 0.92
+        }
+      ]
+    },
+    {
+      "start": 501.341,
+      "end": 501.801,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 501.341,
+          "end": 501.801,
+          "score": 0.827
+        }
+      ]
+    },
+    {
+      "start": 502.402,
+      "end": 502.642,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 502.402,
+          "end": 502.642,
+          "score": 0.791
+        }
+      ]
+    },
+    {
+      "start": 504.204,
+      "end": 504.484,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 504.204,
+          "end": 504.484,
+          "score": 0.846
+        }
+      ]
+    },
+    {
+      "start": 505.525,
+      "end": 505.905,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 505.525,
+          "end": 505.905,
+          "score": 0.837
+        }
+      ]
+    },
+    {
+      "start": 507.066,
+      "end": 508.347,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 507.066,
+          "end": 508.347,
+          "score": 0.838
+        }
+      ]
+    },
+    {
+      "start": 508.367,
+      "end": 508.648,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 508.367,
+          "end": 508.648,
+          "score": 0.872
+        }
+      ]
+    },
+    {
+      "start": 510.93,
+      "end": 511.33,
+      "text": "Idle.",
+      "words": [
+        {
+          "word": "Idle.",
+          "start": 510.93,
+          "end": 511.33,
+          "score": 0.792
+        }
+      ]
+    },
+    {
+      "start": 512.913,
+      "end": 540.237,
+      "text": " Idle Idle Idle Idle Idle Punch, punch Idle Jump, walk, start Punch, punch",
+      "words": [
+        {
+          "word": "Idle",
+          "start": 512.913,
+          "end": 513.434,
+          "score": 0.441
+        },
+        {
+          "word": "Idle",
+          "start": 515.277,
+          "end": 515.597,
+          "score": 0.6
+        },
+        {
+          "word": "Idle",
+          "start": 517.681,
+          "end": 518.021,
+          "score": 0.56
+        },
+        {
+          "word": "Idle",
+          "start": 519.844,
+          "end": 520.185,
+          "score": 0.616
+        },
+        {
+          "word": "Idle",
+          "start": 522.108,
+          "end": 524.271,
+          "score": 0.644
+        },
+        {
+          "word": "Punch,",
+          "start": 524.291,
+          "end": 524.772,
+          "score": 0.894
+        },
+        {
+          "word": "punch",
+          "start": 525.193,
+          "end": 525.573,
+          "score": 0.877
+        },
+        {
+          "word": "Idle",
+          "start": 526.315,
+          "end": 526.615,
+          "score": 0.531
+        },
+        {
+          "word": "Jump,",
+          "start": 528.638,
+          "end": 528.959,
+          "score": 0.609
+        },
+        {
+          "word": "walk,",
+          "start": 529.48,
+          "end": 529.86,
+          "score": 0.85
+        },
+        {
+          "word": "start",
+          "start": 529.88,
+          "end": 530.301,
+          "score": 0.804
+        },
+        {
+          "word": "Punch,",
+          "start": 538.634,
+          "end": 538.995,
+          "score": 0.951
+        },
+        {
+          "word": "punch",
+          "start": 539.536,
+          "end": 540.237,
+          "score": 0.941
+        }
+      ]
+    },
+    {
+      "start": 545.397,
+      "end": 546.578,
+      "text": " Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 545.397,
+          "end": 546.578,
+          "score": 0.834
+        }
+      ]
+    },
+    {
+      "start": 546.598,
+      "end": 546.939,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 546.598,
+          "end": 546.939,
+          "score": 0.904
+        }
+      ]
+    },
+    {
+      "start": 547.219,
+      "end": 547.559,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 547.219,
+          "end": 547.559,
+          "score": 0.916
+        }
+      ]
+    },
+    {
+      "start": 548.32,
+      "end": 548.6,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 548.32,
+          "end": 548.6,
+          "score": 0.835
+        }
+      ]
+    },
+    {
+      "start": 549.261,
+      "end": 549.641,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 549.261,
+          "end": 549.641,
+          "score": 0.904
+        }
+      ]
+    },
+    {
+      "start": 549.821,
+      "end": 550.162,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 549.821,
+          "end": 550.162,
+          "score": 0.905
+        }
+      ]
+    },
+    {
+      "start": 550.982,
+      "end": 551.343,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 550.982,
+          "end": 551.343,
+          "score": 0.858
+        }
+      ]
+    },
+    {
+      "start": 551.903,
+      "end": 552.284,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 551.903,
+          "end": 552.284,
+          "score": 0.906
+        }
+      ]
+    },
+    {
+      "start": 552.664,
+      "end": 553.045,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 552.664,
+          "end": 553.045,
+          "score": 0.818
+        }
+      ]
+    },
+    {
+      "start": 553.065,
+      "end": 553.465,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 553.065,
+          "end": 553.465,
+          "score": 0.839
+        }
+      ]
+    },
+    {
+      "start": 553.725,
+      "end": 554.106,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 553.725,
+          "end": 554.106,
+          "score": 0.787
+        }
+      ]
+    },
+    {
+      "start": 554.306,
+      "end": 554.626,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 554.306,
+          "end": 554.626,
+          "score": 0.876
+        }
+      ]
+    },
+    {
+      "start": 555.287,
+      "end": 555.627,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 555.287,
+          "end": 555.627,
+          "score": 0.745
+        }
+      ]
+    },
+    {
+      "start": 556.488,
+      "end": 556.848,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 556.488,
+          "end": 556.848,
+          "score": 0.836
+        }
+      ]
+    },
+    {
+      "start": 557.068,
+      "end": 557.389,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 557.068,
+          "end": 557.389,
+          "score": 0.854
+        }
+      ]
+    },
+    {
+      "start": 557.849,
+      "end": 558.93,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 557.849,
+          "end": 558.93,
+          "score": 0.899
+        }
+      ]
+    },
+    {
+      "start": 558.95,
+      "end": 559.391,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 558.95,
+          "end": 559.391,
+          "score": 0.871
+        }
+      ]
+    },
+    {
+      "start": 559.911,
+      "end": 560.232,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 559.911,
+          "end": 560.232,
+          "score": 0.943
+        }
+      ]
+    },
+    {
+      "start": 560.972,
+      "end": 561.273,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 560.972,
+          "end": 561.273,
+          "score": 0.914
+        }
+      ]
+    },
+    {
+      "start": 562.073,
+      "end": 563.014,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 562.073,
+          "end": 563.014,
+          "score": 0.957
+        }
+      ]
+    },
+    {
+      "start": 563.034,
+      "end": 563.615,
+      "text": "Jump.",
+      "words": [
+        {
+          "word": "Jump.",
+          "start": 563.034,
+          "end": 563.615,
+          "score": 0.904
+        }
+      ]
+    },
+    {
+      "start": 563.635,
+      "end": 564.155,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 563.635,
+          "end": 564.155,
+          "score": 0.92
+        }
+      ]
+    },
+    {
+      "start": 564.175,
+      "end": 565.277,
+      "text": "Punch.",
+      "words": [
+        {
+          "word": "Punch.",
+          "start": 564.175,
+          "end": 565.277,
+          "score": 0.936
+        }
+      ]
+    },
+    {
+      "start": 565.297,
+      "end": 566.558,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 565.297,
+          "end": 566.558,
+          "score": 0.916
+        }
+      ]
+    },
+    {
+      "start": 566.578,
+      "end": 566.978,
+      "text": "Walk.",
+      "words": [
+        {
+          "word": "Walk.",
+          "start": 566.578,
+          "end": 566.978,
+          "score": 0.801
+        }
+      ]
+    },
+    {
+      "start": 568.32,
+      "end": 568.74,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 568.32,
+          "end": 568.74,
+          "score": 0.852
+        }
+      ]
+    },
+    {
+      "start": 570.181,
+      "end": 570.882,
+      "text": "Turn.",
+      "words": [
+        {
+          "word": "Turn.",
+          "start": 570.181,
+          "end": 570.882,
+          "score": 0.901
+        }
+      ]
+    },
+    {
+      "start": 571.773,
+      "end": 598.05,
+      "text": " Punch, punch, punch, jump, jump, punch, punch, punch, punch, walk, turn, idle, idle, jump, punch, noise, noise, noise,",
+      "words": [
+        {
+          "word": "Punch,",
+          "start": 571.773,
+          "end": 572.214,
+          "score": 0.852
+        },
+        {
+          "word": "punch,",
+          "start": 572.414,
+          "end": 572.936,
+          "score": 0.868
+        },
+        {
+          "word": "punch,",
+          "start": 572.956,
+          "end": 573.657,
+          "score": 0.867
+        },
+        {
+          "word": "jump,",
+          "start": 573.677,
+          "end": 574.92,
+          "score": 0.687
+        },
+        {
+          "word": "jump,",
+          "start": 574.96,
+          "end": 576.022,
+          "score": 0.513
+        },
+        {
+          "word": "punch,",
+          "start": 576.042,
+          "end": 576.443,
+          "score": 0.861
+        },
+        {
+          "word": "punch,",
+          "start": 576.563,
+          "end": 576.924,
+          "score": 0.883
+        },
+        {
+          "word": "punch,",
+          "start": 577.064,
+          "end": 577.425,
+          "score": 0.783
+        },
+        {
+          "word": "punch,",
+          "start": 577.626,
+          "end": 577.986,
+          "score": 0.856
+        },
+        {
+          "word": "walk,",
+          "start": 578.768,
+          "end": 579.129,
+          "score": 0.912
+        },
+        {
+          "word": "turn,",
+          "start": 585.864,
+          "end": 586.244,
+          "score": 0.861
+        },
+        {
+          "word": "idle,",
+          "start": 588.409,
+          "end": 588.75,
+          "score": 0.884
+        },
+        {
+          "word": "idle,",
+          "start": 590.313,
+          "end": 590.634,
+          "score": 0.88
+        },
+        {
+          "word": "jump,",
+          "start": 592.538,
+          "end": 592.879,
+          "score": 0.833
+        },
+        {
+          "word": "punch,",
+          "start": 593.54,
+          "end": 593.961,
+          "score": 0.791
+        },
+        {
+          "word": "noise,",
+          "start": 594.643,
+          "end": 595.184,
+          "score": 0.885
+        },
+        {
+          "word": "noise,",
+          "start": 595.825,
+          "end": 597.749,
+          "score": 0.864
+        },
+        {
+          "word": "noise,",
+          "start": 597.769,
+          "end": 598.05,
+          "score": 0.448
+        }
+      ]
+    }
+  ],
+  "word_segments": [
+    {
+      "word": "This",
+      "start": 0.453,
+      "end": 0.714,
+      "score": 0.811
+    },
+    {
+      "word": "is",
+      "start": 0.794,
+      "end": 0.874,
+      "score": 0.865
+    },
+    {
+      "word": "noise.",
+      "start": 0.954,
+      "end": 1.315,
+      "score": 0.918
+    },
+    {
+      "word": "I",
+      "start": 2.357,
+      "end": 2.417,
+      "score": 0.925
+    },
+    {
+      "word": "am",
+      "start": 2.517,
+      "end": 2.597,
+      "score": 0.97
+    },
+    {
+      "word": "playing",
+      "start": 3.419,
+      "end": 3.679,
+      "score": 0.841
+    },
+    {
+      "word": "with",
+      "start": 3.76,
+      "end": 3.84,
+      "score": 0.018
+    },
+    {
+      "word": "my",
+      "start": 3.86,
+      "end": 3.9,
+      "score": 0.152
+    },
+    {
+      "word": "laptop",
+      "start": 3.92,
+      "end": 4.381,
+      "score": 0.768
+    },
+    {
+      "word": "right",
+      "start": 4.401,
+      "end": 4.581,
+      "score": 0.583
+    },
+    {
+      "word": "now.",
+      "start": 4.641,
+      "end": 14.06,
+      "score": 0.852
+    },
+    {
+      "word": "Alright.",
+      "start": 14.08,
+      "end": 14.501,
+      "score": 0.543
+    },
+    {
+      "word": "Noise.",
+      "start": 17.046,
+      "end": 17.567,
+      "score": 0.898
+    },
+    {
+      "word": "noise",
+      "start": 47.838,
+      "end": 48.679,
+      "score": 0.918
+    },
+    {
+      "word": "turn",
+      "start": 55.368,
+      "end": 60.154,
+      "score": 0.77
+    },
+    {
+      "word": "left",
+      "start": 60.314,
+      "end": 60.595,
+      "score": 0.911
+    },
+    {
+      "word": "idle",
+      "start": 61.316,
+      "end": 61.556,
+      "score": 0.897
+    },
+    {
+      "word": "noise",
+      "start": 63.498,
+      "end": 63.719,
+      "score": 0.655
+    },
+    {
+      "word": "noise",
+      "start": 65.521,
+      "end": 65.942,
+      "score": 0.895
+    },
+    {
+      "word": "lots",
+      "start": 66.983,
+      "end": 67.163,
+      "score": 0.718
+    },
+    {
+      "word": "of",
+      "start": 67.223,
+      "end": 67.303,
+      "score": 0.718
+    },
+    {
+      "word": "noise",
+      "start": 67.343,
+      "end": 67.624,
+      "score": 0.86
+    },
+    {
+      "word": "noise",
+      "start": 68.525,
+      "end": 68.805,
+      "score": 0.891
+    },
+    {
+      "word": "noise",
+      "start": 70.207,
+      "end": 70.548,
+      "score": 0.972
+    },
+    {
+      "word": "noise",
+      "start": 71.829,
+      "end": 72.27,
+      "score": 0.803
+    },
+    {
+      "word": "noise",
+      "start": 73.872,
+      "end": 74.272,
+      "score": 0.947
+    },
+    {
+      "word": "walk",
+      "start": 75.254,
+      "end": 75.514,
+      "score": 0.906
+    },
+    {
+      "word": "start",
+      "start": 75.534,
+      "end": 76.275,
+      "score": 0.818
+    },
+    {
+      "word": "Punch.",
+      "start": 81.487,
+      "end": 82.128,
+      "score": 0.844
+    },
+    {
+      "word": "Punch.",
+      "start": 83.09,
+      "end": 83.53,
+      "score": 0.787
+    },
+    {
+      "word": "Punch.",
+      "start": 84.512,
+      "end": 84.932,
+      "score": 0.899
+    },
+    {
+      "word": "Punch.",
+      "start": 85.994,
+      "end": 86.415,
+      "score": 0.845
+    },
+    {
+      "word": "Punch.",
+      "start": 87.536,
+      "end": 87.957,
+      "score": 0.864
+    },
+    {
+      "word": "Punch.",
+      "start": 88.959,
+      "end": 89.359,
+      "score": 0.873
+    },
+    {
+      "word": "Jump.",
+      "start": 90.141,
+      "end": 90.381,
+      "score": 0.769
+    },
+    {
+      "word": "Jump.",
+      "start": 92.244,
+      "end": 92.424,
+      "score": 0.645
+    },
+    {
+      "word": "Still",
+      "start": 93.305,
+      "end": 93.446,
+      "score": 0.248
+    },
+    {
+      "word": "walking.",
+      "start": 93.466,
+      "end": 93.846,
+      "score": 0.398
+    },
+    {
+      "word": "Jump.",
+      "start": 94.227,
+      "end": 94.487,
+      "score": 0.731
+    },
+    {
+      "word": "Jump.",
+      "start": 96.27,
+      "end": 96.571,
+      "score": 0.78
+    },
+    {
+      "word": "Jump.",
+      "start": 98.393,
+      "end": 98.674,
+      "score": 0.807
+    },
+    {
+      "word": "Jump.",
+      "start": 100.457,
+      "end": 102.82,
+      "score": 0.828
+    },
+    {
+      "word": "Jump.",
+      "start": 104.643,
+      "end": 104.924,
+      "score": 0.675
+    },
+    {
+      "word": "Turn.",
+      "start": 106.326,
+      "end": 106.726,
+      "score": 0.845
+    },
+    {
+      "word": "Walk.",
+      "start": 107.347,
+      "end": 107.688,
+      "score": 0.751
+    },
+    {
+      "word": "Still",
+      "start": 108.629,
+      "end": 108.97,
+      "score": 0.52
+    },
+    {
+      "word": "walking.",
+      "start": 108.99,
+      "end": 109.671,
+      "score": 0.326
+    },
+    {
+      "word": "Jump.",
+      "start": 121.261,
+      "end": 121.682,
+      "score": 0.672
+    },
+    {
+      "word": "Jump.",
+      "start": 123.445,
+      "end": 125.608,
+      "score": 0.907
+    },
+    {
+      "word": "Jump.",
+      "start": 125.628,
+      "end": 125.969,
+      "score": 0.829
+    },
+    {
+      "word": "Turn.",
+      "start": 128.052,
+      "end": 128.433,
+      "score": 0.956
+    },
+    {
+      "word": "Turn.",
+      "start": 129.695,
+      "end": 130.115,
+      "score": 0.886
+    },
+    {
+      "word": "Turn.",
+      "start": 131.437,
+      "end": 131.818,
+      "score": 0.876
+    },
+    {
+      "word": "Turn.",
+      "start": 132.92,
+      "end": 133.3,
+      "score": 0.925
+    },
+    {
+      "word": "Turn.",
+      "start": 134.382,
+      "end": 134.763,
+      "score": 0.884
+    },
+    {
+      "word": "Turn.",
+      "start": 135.864,
+      "end": 136.265,
+      "score": 0.792
+    },
+    {
+      "word": "Turn.",
+      "start": 137.647,
+      "end": 138.048,
+      "score": 0.88
+    },
+    {
+      "word": "Turn.",
+      "start": 139.45,
+      "end": 141.473,
+      "score": 0.875
+    },
+    {
+      "word": "Punch.",
+      "start": 142.335,
+      "end": 142.695,
+      "score": 0.828
+    },
+    {
+      "word": "Punch.",
+      "start": 143.076,
+      "end": 143.417,
+      "score": 0.822
+    },
+    {
+      "word": "Punch.",
+      "start": 143.937,
+      "end": 144.298,
+      "score": 0.863
+    },
+    {
+      "word": "Punch.",
+      "start": 144.959,
+      "end": 145.4,
+      "score": 0.851
+    },
+    {
+      "word": "Punch.",
+      "start": 146.041,
+      "end": 146.441,
+      "score": 0.817
+    },
+    {
+      "word": "Punch.",
+      "start": 147.103,
+      "end": 147.403,
+      "score": 0.818
+    },
+    {
+      "word": "Still",
+      "start": 148.025,
+      "end": 148.405,
+      "score": 0.894
+    },
+    {
+      "word": "idle.",
+      "start": 149.366,
+      "end": 151.949,
+      "score": 0.936
+    },
+    {
+      "word": "Noise.",
+      "start": 151.969,
+      "end": 152.39,
+      "score": 0.896
+    },
+    {
+      "word": "Noise.",
+      "start": 154.472,
+      "end": 155.113,
+      "score": 0.861
+    },
+    {
+      "word": "Noise.",
+      "start": 155.593,
+      "end": 155.873,
+      "score": 0.665
+    },
+    {
+      "word": "Noise.",
+      "start": 155.934,
+      "end": 156.294,
+      "score": 0.825
+    },
+    {
+      "word": "Noise.",
+      "start": 156.654,
+      "end": 157.575,
+      "score": 0.663
+    },
+    {
+      "word": "Noise.",
+      "start": 157.595,
+      "end": 158.616,
+      "score": 0.575
+    },
+    {
+      "word": "Idle.",
+      "start": 158.636,
+      "end": 158.957,
+      "score": 0.889
+    },
+    {
+      "word": "Walk",
+      "start": 161.56,
+      "end": 161.76,
+      "score": 0.312
+    },
+    {
+      "word": "start.",
+      "start": 161.78,
+      "end": 162.08,
+      "score": 0.546
+    },
+    {
+      "word": "Punch.",
+      "start": 165.484,
+      "end": 165.844,
+      "score": 0.84
+    },
+    {
+      "word": "Punch.",
+      "start": 166.084,
+      "end": 166.425,
+      "score": 0.894
+    },
+    {
+      "word": "Punch.",
+      "start": 166.705,
+      "end": 167.046,
+      "score": 0.912
+    },
+    {
+      "word": "Punch.",
+      "start": 167.366,
+      "end": 167.706,
+      "score": 0.769
+    },
+    {
+      "word": "Punch.",
+      "start": 168.067,
+      "end": 168.387,
+      "score": 0.79
+    },
+    {
+      "word": "Punch.",
+      "start": 168.727,
+      "end": 169.048,
+      "score": 0.688
+    },
+    {
+      "word": "Punch.",
+      "start": 169.428,
+      "end": 169.788,
+      "score": 0.869
+    },
+    {
+      "word": "Punch.",
+      "start": 170.109,
+      "end": 170.83,
+      "score": 0.881
+    },
+    {
+      "word": "Punch.",
+      "start": 170.85,
+      "end": 171.17,
+      "score": 0.901
+    },
+    {
+      "word": "Punch.",
+      "start": 173.092,
+      "end": 173.512,
+      "score": 0.928
+    },
+    {
+      "word": "Punch.",
+      "start": 175.415,
+      "end": 175.855,
+      "score": 0.87
+    },
+    {
+      "word": "Turn.",
+      "start": 177.472,
+      "end": 177.832,
+      "score": 0.656
+    },
+    {
+      "word": "Punch.",
+      "start": 178.473,
+      "end": 178.854,
+      "score": 0.882
+    },
+    {
+      "word": "Jump.",
+      "start": 179.294,
+      "end": 180.235,
+      "score": 0.718
+    },
+    {
+      "word": "Walk.",
+      "start": 180.255,
+      "end": 184.24,
+      "score": 0.925
+    },
+    {
+      "word": "Punch.",
+      "start": 186.302,
+      "end": 186.663,
+      "score": 0.867
+    },
+    {
+      "word": "Punch.",
+      "start": 187.083,
+      "end": 187.443,
+      "score": 0.85
+    },
+    {
+      "word": "Turn.",
+      "start": 192.189,
+      "end": 192.529,
+      "score": 0.888
+    },
+    {
+      "word": "Jump.",
+      "start": 193.731,
+      "end": 194.712,
+      "score": 0.831
+    },
+    {
+      "word": "Punch.",
+      "start": 194.732,
+      "end": 195.112,
+      "score": 0.911
+    },
+    {
+      "word": "Still",
+      "start": 195.813,
+      "end": 196.033,
+      "score": 0.632
+    },
+    {
+      "word": "walking.",
+      "start": 196.053,
+      "end": 198.977,
+      "score": 0.51
+    },
+    {
+      "word": "Jump.",
+      "start": 198.997,
+      "end": 200.498,
+      "score": 0.765
+    },
+    {
+      "word": "Jump.",
+      "start": 200.518,
+      "end": 201.66,
+      "score": 0.809
+    },
+    {
+      "word": "Jump.",
+      "start": 201.68,
+      "end": 202.26,
+      "score": 0.714
+    },
+    {
+      "word": "Turn.",
+      "start": 202.28,
+      "end": 203.041,
+      "score": 0.944
+    },
+    {
+      "word": "Jump.",
+      "start": 203.061,
+      "end": 203.362,
+      "score": 0.751
+    },
+    {
+      "word": "Turn.",
+      "start": 203.562,
+      "end": 203.882,
+      "score": 0.847
+    },
+    {
+      "word": "Jump.",
+      "start": 204.403,
+      "end": 204.943,
+      "score": 0.472
+    },
+    {
+      "word": "Turn.",
+      "start": 204.963,
+      "end": 205.844,
+      "score": 0.952
+    },
+    {
+      "word": "Jump.",
+      "start": 205.864,
+      "end": 206.365,
+      "score": 0.821
+    },
+    {
+      "word": "Jump.",
+      "start": 208.117,
+      "end": 209.078,
+      "score": 0.566
+    },
+    {
+      "word": "Jump.",
+      "start": 209.098,
+      "end": 211.68,
+      "score": 0.766
+    },
+    {
+      "word": "Jump.",
+      "start": 211.7,
+      "end": 211.8,
+      "score": 0.0
+    },
+    {
+      "word": "Turn.",
+      "start": 211.82,
+      "end": 212.14,
+      "score": 0.806
+    },
+    {
+      "word": "Punch.",
+      "start": 212.901,
+      "end": 213.241,
+      "score": 0.815
+    },
+    {
+      "word": "Punch.",
+      "start": 213.802,
+      "end": 214.142,
+      "score": 0.892
+    },
+    {
+      "word": "Punch.",
+      "start": 214.342,
+      "end": 214.703,
+      "score": 0.963
+    },
+    {
+      "word": "Punch.",
+      "start": 214.983,
+      "end": 215.343,
+      "score": 0.917
+    },
+    {
+      "word": "Punch.",
+      "start": 216.244,
+      "end": 216.624,
+      "score": 0.881
+    },
+    {
+      "word": "Punch.",
+      "start": 216.845,
+      "end": 217.185,
+      "score": 0.929
+    },
+    {
+      "word": "Punch.",
+      "start": 217.565,
+      "end": 217.926,
+      "score": 0.972
+    },
+    {
+      "word": "Walk.",
+      "start": 218.926,
+      "end": 219.247,
+      "score": 0.919
+    },
+    {
+      "word": "Jump.",
+      "start": 221.228,
+      "end": 221.509,
+      "score": 0.755
+    },
+    {
+      "word": "Turn.",
+      "start": 222.369,
+      "end": 223.21,
+      "score": 0.836
+    },
+    {
+      "word": "Jump.",
+      "start": 223.23,
+      "end": 226.673,
+      "score": 0.655
+    },
+    {
+      "word": "Punch.",
+      "start": 226.693,
+      "end": 227.053,
+      "score": 0.939
+    },
+    {
+      "word": "Turn.",
+      "start": 227.354,
+      "end": 227.694,
+      "score": 0.808
+    },
+    {
+      "word": "Punch.",
+      "start": 229.215,
+      "end": 229.576,
+      "score": 0.935
+    },
+    {
+      "word": "Punch.",
+      "start": 230.977,
+      "end": 231.377,
+      "score": 0.794
+    },
+    {
+      "word": "Idol.",
+      "start": 233.479,
+      "end": 233.779,
+      "score": 0.742
+    },
+    {
+      "word": "Idol.",
+      "start": 235.721,
+      "end": 235.941,
+      "score": 0.84
+    },
+    {
+      "word": "Idol.",
+      "start": 237.783,
+      "end": 238.123,
+      "score": 0.457
+    },
+    {
+      "word": "Turn",
+      "start": 240.196,
+      "end": 240.577,
+      "score": 0.724
+    },
+    {
+      "word": "Walk",
+      "start": 241.52,
+      "end": 241.841,
+      "score": 0.913
+    },
+    {
+      "word": "Jump",
+      "start": 242.683,
+      "end": 242.984,
+      "score": 0.861
+    },
+    {
+      "word": "Turn",
+      "start": 243.666,
+      "end": 244.047,
+      "score": 0.919
+    },
+    {
+      "word": "Jump",
+      "start": 244.849,
+      "end": 245.13,
+      "score": 0.804
+    },
+    {
+      "word": "Turn",
+      "start": 245.952,
+      "end": 246.273,
+      "score": 0.828
+    },
+    {
+      "word": "Jump",
+      "start": 246.975,
+      "end": 247.256,
+      "score": 0.817
+    },
+    {
+      "word": "Turn",
+      "start": 247.918,
+      "end": 248.299,
+      "score": 0.867
+    },
+    {
+      "word": "Idle",
+      "start": 249.001,
+      "end": 249.362,
+      "score": 0.752
+    },
+    {
+      "word": "Turn.",
+      "start": 251.182,
+      "end": 251.582,
+      "score": 0.861
+    },
+    {
+      "word": "Punch.",
+      "start": 252.463,
+      "end": 252.824,
+      "score": 0.879
+    },
+    {
+      "word": "Punch.",
+      "start": 254.005,
+      "end": 254.405,
+      "score": 0.869
+    },
+    {
+      "word": "Punch.",
+      "start": 255.266,
+      "end": 255.646,
+      "score": 0.924
+    },
+    {
+      "word": "Walk.",
+      "start": 256.687,
+      "end": 256.988,
+      "score": 0.675
+    },
+    {
+      "word": "Start.",
+      "start": 257.008,
+      "end": 257.368,
+      "score": 0.859
+    },
+    {
+      "word": "Turn.",
+      "start": 257.668,
+      "end": 258.009,
+      "score": 0.931
+    },
+    {
+      "word": "Jump.",
+      "start": 258.489,
+      "end": 259.61,
+      "score": 0.883
+    },
+    {
+      "word": "Jump.",
+      "start": 259.63,
+      "end": 259.951,
+      "score": 0.831
+    },
+    {
+      "word": "Jump.",
+      "start": 261.132,
+      "end": 261.472,
+      "score": 0.882
+    },
+    {
+      "word": "Walk.",
+      "start": 261.993,
+      "end": 262.553,
+      "score": 0.866
+    },
+    {
+      "word": "Walk.",
+      "start": 262.573,
+      "end": 262.853,
+      "score": 0.755
+    },
+    {
+      "word": "Walk.",
+      "start": 263.214,
+      "end": 264.235,
+      "score": 0.888
+    },
+    {
+      "word": "Punch.",
+      "start": 264.255,
+      "end": 264.935,
+      "score": 0.894
+    },
+    {
+      "word": "Punch.",
+      "start": 264.955,
+      "end": 265.356,
+      "score": 0.774
+    },
+    {
+      "word": "Punch.",
+      "start": 265.636,
+      "end": 266.577,
+      "score": 0.876
+    },
+    {
+      "word": "Walk.",
+      "start": 266.597,
+      "end": 266.897,
+      "score": 0.829
+    },
+    {
+      "word": "Walk.",
+      "start": 267.318,
+      "end": 267.618,
+      "score": 0.807
+    },
+    {
+      "word": "Walk.",
+      "start": 268.059,
+      "end": 268.399,
+      "score": 0.804
+    },
+    {
+      "word": "Walk.",
+      "start": 268.779,
+      "end": 269.56,
+      "score": 0.808
+    },
+    {
+      "word": "Walk.",
+      "start": 269.58,
+      "end": 269.88,
+      "score": 0.833
+    },
+    {
+      "word": "Noise.",
+      "start": 270.341,
+      "end": 271.081,
+      "score": 0.83
+    },
+    {
+      "word": "Walk.",
+      "start": 271.101,
+      "end": 271.622,
+      "score": 0.742
+    },
+    {
+      "word": "Walk.",
+      "start": 271.642,
+      "end": 272.082,
+      "score": 0.804
+    },
+    {
+      "word": "Noise.",
+      "start": 272.102,
+      "end": 272.823,
+      "score": 0.97
+    },
+    {
+      "word": "Noise.",
+      "start": 272.843,
+      "end": 273.264,
+      "score": 0.896
+    },
+    {
+      "word": "Noise.",
+      "start": 273.704,
+      "end": 274.104,
+      "score": 0.868
+    },
+    {
+      "word": "Walk.",
+      "start": 274.485,
+      "end": 274.805,
+      "score": 0.831
+    },
+    {
+      "word": "Walk.",
+      "start": 275.205,
+      "end": 276.467,
+      "score": 0.89
+    },
+    {
+      "word": "Walk.",
+      "start": 276.487,
+      "end": 276.767,
+      "score": 0.854
+    },
+    {
+      "word": "Turn,",
+      "start": 279.515,
+      "end": 280.016,
+      "score": 0.877
+    },
+    {
+      "word": "walk,",
+      "start": 280.777,
+      "end": 281.078,
+      "score": 0.866
+    },
+    {
+      "word": "walk,",
+      "start": 281.959,
+      "end": 282.06,
+      "score": 0.0
+    },
+    {
+      "word": "punch,",
+      "start": 282.08,
+      "end": 283.242,
+      "score": 0.89
+    },
+    {
+      "word": "turn,",
+      "start": 283.262,
+      "end": 283.682,
+      "score": 0.932
+    },
+    {
+      "word": "punch,",
+      "start": 284.364,
+      "end": 284.804,
+      "score": 0.9
+    },
+    {
+      "word": "turn,",
+      "start": 285.285,
+      "end": 285.686,
+      "score": 0.82
+    },
+    {
+      "word": "punch,",
+      "start": 286.207,
+      "end": 286.608,
+      "score": 0.884
+    },
+    {
+      "word": "turn,",
+      "start": 287.049,
+      "end": 287.449,
+      "score": 0.766
+    },
+    {
+      "word": "punch,",
+      "start": 287.99,
+      "end": 288.571,
+      "score": 0.911
+    },
+    {
+      "word": "walk.",
+      "start": 288.591,
+      "end": 288.952,
+      "score": 0.826
+    },
+    {
+      "word": "Turn,",
+      "start": 293.901,
+      "end": 294.342,
+      "score": 0.928
+    },
+    {
+      "word": "punch,",
+      "start": 295.444,
+      "end": 295.824,
+      "score": 0.904
+    },
+    {
+      "word": "punch,",
+      "start": 297.728,
+      "end": 298.088,
+      "score": 0.942
+    },
+    {
+      "word": "punch,",
+      "start": 300.012,
+      "end": 300.372,
+      "score": 0.878
+    },
+    {
+      "word": "walk,",
+      "start": 301.414,
+      "end": 301.975,
+      "score": 0.731
+    },
+    {
+      "word": "turn.",
+      "start": 301.995,
+      "end": 302.957,
+      "score": 0.929
+    },
+    {
+      "word": "Turn,",
+      "start": 304.372,
+      "end": 304.853,
+      "score": 0.84
+    },
+    {
+      "word": "turn,",
+      "start": 305.995,
+      "end": 306.455,
+      "score": 0.863
+    },
+    {
+      "word": "turn,",
+      "start": 307.738,
+      "end": 308.198,
+      "score": 0.787
+    },
+    {
+      "word": "turn,",
+      "start": 309.2,
+      "end": 309.641,
+      "score": 0.823
+    },
+    {
+      "word": "jump,",
+      "start": 310.282,
+      "end": 310.642,
+      "score": 0.691
+    },
+    {
+      "word": "jump,",
+      "start": 311.003,
+      "end": 311.644,
+      "score": 0.67
+    },
+    {
+      "word": "jump,",
+      "start": 311.664,
+      "end": 312.004,
+      "score": 0.464
+    },
+    {
+      "word": "turn,",
+      "start": 312.746,
+      "end": 313.166,
+      "score": 0.898
+    },
+    {
+      "word": "walk,",
+      "start": 313.587,
+      "end": 313.948,
+      "score": 0.752
+    },
+    {
+      "word": "jump,",
+      "start": 314.408,
+      "end": 314.789,
+      "score": 0.488
+    },
+    {
+      "word": "turn,",
+      "start": 315.23,
+      "end": 315.61,
+      "score": 0.862
+    },
+    {
+      "word": "punch,",
+      "start": 316.913,
+      "end": 317.554,
+      "score": 0.947
+    },
+    {
+      "word": "turn,",
+      "start": 317.574,
+      "end": 317.994,
+      "score": 0.825
+    },
+    {
+      "word": "punch,",
+      "start": 318.836,
+      "end": 319.196,
+      "score": 0.914
+    },
+    {
+      "word": "turn,",
+      "start": 319.477,
+      "end": 321.52,
+      "score": 0.893
+    },
+    {
+      "word": "Noise.",
+      "start": 330.038,
+      "end": 330.759,
+      "score": 0.928
+    },
+    {
+      "word": "Noise.",
+      "start": 331.62,
+      "end": 332.06,
+      "score": 0.903
+    },
+    {
+      "word": "Noise.",
+      "start": 333.102,
+      "end": 333.502,
+      "score": 0.893
+    },
+    {
+      "word": "Idle.",
+      "start": 334.784,
+      "end": 335.104,
+      "score": 0.85
+    },
+    {
+      "word": "Idle.",
+      "start": 337.247,
+      "end": 337.587,
+      "score": 0.7
+    },
+    {
+      "word": "Idle.",
+      "start": 339.91,
+      "end": 340.25,
+      "score": 0.806
+    },
+    {
+      "word": "Idle.",
+      "start": 342.593,
+      "end": 342.954,
+      "score": 0.678
+    },
+    {
+      "word": "Idle.",
+      "start": 344.936,
+      "end": 345.257,
+      "score": 0.699
+    },
+    {
+      "word": "Idle.",
+      "start": 347.219,
+      "end": 349.402,
+      "score": 0.726
+    },
+    {
+      "word": "Turn.",
+      "start": 349.422,
+      "end": 349.762,
+      "score": 0.92
+    },
+    {
+      "word": "Turn.",
+      "start": 351.124,
+      "end": 351.484,
+      "score": 0.888
+    },
+    {
+      "word": "Idle.",
+      "start": 351.945,
+      "end": 352.285,
+      "score": 0.782
+    },
+    {
+      "word": "Walk",
+      "start": 354.208,
+      "end": 354.488,
+      "score": 0.852
+    },
+    {
+      "word": "start.",
+      "start": 354.508,
+      "end": 356.19,
+      "score": 0.912
+    },
+    {
+      "word": "Jump.",
+      "start": 356.21,
+      "end": 356.47,
+      "score": 0.781
+    },
+    {
+      "word": "Jump.",
+      "start": 357.512,
+      "end": 357.852,
+      "score": 0.883
+    },
+    {
+      "word": "Punch.",
+      "start": 360.818,
+      "end": 361.218,
+      "score": 0.841
+    },
+    {
+      "word": "Punch.",
+      "start": 361.519,
+      "end": 362.199,
+      "score": 0.934
+    },
+    {
+      "word": "Punch.",
+      "start": 362.219,
+      "end": 362.56,
+      "score": 0.921
+    },
+    {
+      "word": "Turn.",
+      "start": 366.924,
+      "end": 367.284,
+      "score": 0.86
+    },
+    {
+      "word": "Jump.",
+      "start": 367.945,
+      "end": 369.366,
+      "score": 0.49
+    },
+    {
+      "word": "Punch.",
+      "start": 369.386,
+      "end": 370.327,
+      "score": 0.935
+    },
+    {
+      "word": "Punch.",
+      "start": 370.347,
+      "end": 370.708,
+      "score": 0.938
+    },
+    {
+      "word": "Turn.",
+      "start": 371.809,
+      "end": 372.509,
+      "score": 0.897
+    },
+    {
+      "word": "Walk.",
+      "start": 372.529,
+      "end": 372.87,
+      "score": 0.936
+    },
+    {
+      "word": "Jump.",
+      "start": 374.131,
+      "end": 376.613,
+      "score": 0.685
+    },
+    {
+      "word": "Walk.",
+      "start": 376.633,
+      "end": 376.954,
+      "score": 0.844
+    },
+    {
+      "word": "Jump.",
+      "start": 377.574,
+      "end": 377.975,
+      "score": 0.582
+    },
+    {
+      "word": "Turn.",
+      "start": 379.416,
+      "end": 379.756,
+      "score": 0.785
+    },
+    {
+      "word": "Walk.",
+      "start": 380.817,
+      "end": 380.998,
+      "score": 0.462
+    },
+    {
+      "word": "Jump.",
+      "start": 381.018,
+      "end": 381.538,
+      "score": 0.703
+    },
+    {
+      "word": "Walk.",
+      "start": 381.878,
+      "end": 383.14,
+      "score": 0.916
+    },
+    {
+      "word": "Turn.",
+      "start": 383.16,
+      "end": 383.56,
+      "score": 0.801
+    },
+    {
+      "word": "Walk.",
+      "start": 384.081,
+      "end": 385.502,
+      "score": 0.867
+    },
+    {
+      "word": "Walk.",
+      "start": 385.522,
+      "end": 385.622,
+      "score": 0.23
+    },
+    {
+      "word": "Walk.",
+      "start": 386.343,
+      "end": 386.623,
+      "score": 0.654
+    },
+    {
+      "word": "Turn",
+      "start": 388.763,
+      "end": 389.284,
+      "score": 0.696
+    },
+    {
+      "word": "Turn",
+      "start": 389.844,
+      "end": 390.185,
+      "score": 0.852
+    },
+    {
+      "word": "Idle",
+      "start": 392.268,
+      "end": 392.568,
+      "score": 0.508
+    },
+    {
+      "word": "Idle",
+      "start": 395.372,
+      "end": 395.672,
+      "score": 0.522
+    },
+    {
+      "word": "Idle",
+      "start": 397.895,
+      "end": 398.216,
+      "score": 0.506
+    },
+    {
+      "word": "Idle",
+      "start": 400.779,
+      "end": 401.08,
+      "score": 0.442
+    },
+    {
+      "word": "Idle",
+      "start": 403.303,
+      "end": 403.623,
+      "score": 0.489
+    },
+    {
+      "word": "Punch",
+      "start": 404.524,
+      "end": 404.885,
+      "score": 0.746
+    },
+    {
+      "word": "Punch",
+      "start": 405.145,
+      "end": 405.486,
+      "score": 0.918
+    },
+    {
+      "word": "Jump",
+      "start": 405.786,
+      "end": 406.107,
+      "score": 0.782
+    },
+    {
+      "word": "Jump",
+      "start": 406.447,
+      "end": 406.747,
+      "score": 0.832
+    },
+    {
+      "word": "Punch",
+      "start": 407.108,
+      "end": 407.448,
+      "score": 0.8
+    },
+    {
+      "word": "Punch",
+      "start": 407.729,
+      "end": 408.109,
+      "score": 0.848
+    },
+    {
+      "word": "Jump",
+      "start": 408.39,
+      "end": 408.67,
+      "score": 0.826
+    },
+    {
+      "word": "Jump",
+      "start": 409.531,
+      "end": 409.611,
+      "score": 0.0
+    },
+    {
+      "word": "Punch",
+      "start": 409.631,
+      "end": 409.992,
+      "score": 0.87
+    },
+    {
+      "word": "Punch",
+      "start": 410.272,
+      "end": 410.593,
+      "score": 0.849
+    },
+    {
+      "word": "Jump",
+      "start": 410.933,
+      "end": 411.254,
+      "score": 0.759
+    },
+    {
+      "word": "Jump",
+      "start": 411.594,
+      "end": 411.894,
+      "score": 0.68
+    },
+    {
+      "word": "Walk",
+      "start": 412.235,
+      "end": 412.535,
+      "score": 0.97
+    },
+    {
+      "word": "Walk",
+      "start": 414.718,
+      "end": 415.019,
+      "score": 0.893
+    },
+    {
+      "word": "Walk",
+      "start": 417.142,
+      "end": 417.522,
+      "score": 0.858
+    },
+    {
+      "word": "Turn,",
+      "start": 418.919,
+      "end": 419.34,
+      "score": 0.82
+    },
+    {
+      "word": "walk.",
+      "start": 419.66,
+      "end": 420.04,
+      "score": 0.869
+    },
+    {
+      "word": "Turn,",
+      "start": 421.342,
+      "end": 421.702,
+      "score": 0.882
+    },
+    {
+      "word": "walk.",
+      "start": 421.963,
+      "end": 422.283,
+      "score": 0.966
+    },
+    {
+      "word": "Turn,",
+      "start": 423.965,
+      "end": 424.406,
+      "score": 0.87
+    },
+    {
+      "word": "walk.",
+      "start": 424.866,
+      "end": 425.247,
+      "score": 0.954
+    },
+    {
+      "word": "Turn,",
+      "start": 426.328,
+      "end": 427.109,
+      "score": 0.864
+    },
+    {
+      "word": "walk.",
+      "start": 427.129,
+      "end": 427.41,
+      "score": 0.931
+    },
+    {
+      "word": "Walk.",
+      "start": 430.974,
+      "end": 431.395,
+      "score": 0.857
+    },
+    {
+      "word": "Turn,",
+      "start": 434.098,
+      "end": 434.479,
+      "score": 0.868
+    },
+    {
+      "word": "walk.",
+      "start": 435.64,
+      "end": 437.062,
+      "score": 0.986
+    },
+    {
+      "word": "Turn,",
+      "start": 437.082,
+      "end": 437.542,
+      "score": 0.754
+    },
+    {
+      "word": "walk.",
+      "start": 438.283,
+      "end": 438.684,
+      "score": 0.849
+    },
+    {
+      "word": "Turn,",
+      "start": 439.565,
+      "end": 439.985,
+      "score": 0.843
+    },
+    {
+      "word": "punch.",
+      "start": 440.846,
+      "end": 441.287,
+      "score": 0.882
+    },
+    {
+      "word": "Punch.",
+      "start": 442.008,
+      "end": 442.448,
+      "score": 0.902
+    },
+    {
+      "word": "Punch.",
+      "start": 443.249,
+      "end": 444.471,
+      "score": 0.862
+    },
+    {
+      "word": "Punch,",
+      "start": 451.606,
+      "end": 452.046,
+      "score": 0.871
+    },
+    {
+      "word": "idle.",
+      "start": 452.667,
+      "end": 452.947,
+      "score": 0.858
+    },
+    {
+      "word": "Punch,",
+      "start": 454.068,
+      "end": 454.469,
+      "score": 0.818
+    },
+    {
+      "word": "idle.",
+      "start": 455.089,
+      "end": 455.37,
+      "score": 0.785
+    },
+    {
+      "word": "Punch,",
+      "start": 455.85,
+      "end": 456.29,
+      "score": 0.788
+    },
+    {
+      "word": "idle.",
+      "start": 456.871,
+      "end": 457.131,
+      "score": 0.845
+    },
+    {
+      "word": "Jump.",
+      "start": 458.312,
+      "end": 458.673,
+      "score": 0.729
+    },
+    {
+      "word": "Punch,",
+      "start": 459.613,
+      "end": 460.034,
+      "score": 0.814
+    },
+    {
+      "word": "idle.",
+      "start": 460.494,
+      "end": 460.975,
+      "score": 0.911
+    },
+    {
+      "word": "Punch,",
+      "start": 460.995,
+      "end": 461.335,
+      "score": 0.808
+    },
+    {
+      "word": "idle.",
+      "start": 461.856,
+      "end": 462.736,
+      "score": 0.895
+    },
+    {
+      "word": "Turn.",
+      "start": 462.756,
+      "end": 463.137,
+      "score": 0.889
+    },
+    {
+      "word": "Jump.",
+      "start": 464.618,
+      "end": 466.1,
+      "score": 0.82
+    },
+    {
+      "word": "Punch,",
+      "start": 466.12,
+      "end": 466.48,
+      "score": 0.868
+    },
+    {
+      "word": "idle.",
+      "start": 467.0,
+      "end": 467.221,
+      "score": 0.836
+    },
+    {
+      "word": "Turn.",
+      "start": 467.681,
+      "end": 468.622,
+      "score": 0.959
+    },
+    {
+      "word": "Walk",
+      "start": 468.642,
+      "end": 468.922,
+      "score": 0.825
+    },
+    {
+      "word": "start.",
+      "start": 468.942,
+      "end": 475.008,
+      "score": 0.723
+    },
+    {
+      "word": "Punch.",
+      "start": 475.028,
+      "end": 475.388,
+      "score": 0.969
+    },
+    {
+      "word": "Punch.",
+      "start": 476.289,
+      "end": 476.669,
+      "score": 0.936
+    },
+    {
+      "word": "Punch.",
+      "start": 477.57,
+      "end": 477.971,
+      "score": 0.838
+    },
+    {
+      "word": "Punch.",
+      "start": 478.912,
+      "end": 480.533,
+      "score": 0.894
+    },
+    {
+      "word": "Punch.",
+      "start": 481.643,
+      "end": 482.043,
+      "score": 0.846
+    },
+    {
+      "word": "Punch.",
+      "start": 490.771,
+      "end": 492.653,
+      "score": 0.766
+    },
+    {
+      "word": "Jump.",
+      "start": 494.415,
+      "end": 494.775,
+      "score": 0.89
+    },
+    {
+      "word": "Jump.",
+      "start": 495.636,
+      "end": 496.056,
+      "score": 0.888
+    },
+    {
+      "word": "Idle.",
+      "start": 496.617,
+      "end": 496.877,
+      "score": 0.759
+    },
+    {
+      "word": "Punch.",
+      "start": 498.739,
+      "end": 499.139,
+      "score": 0.814
+    },
+    {
+      "word": "Idle.",
+      "start": 499.639,
+      "end": 501.321,
+      "score": 0.92
+    },
+    {
+      "word": "Jump.",
+      "start": 501.341,
+      "end": 501.801,
+      "score": 0.827
+    },
+    {
+      "word": "Idle.",
+      "start": 502.402,
+      "end": 502.642,
+      "score": 0.791
+    },
+    {
+      "word": "Idle.",
+      "start": 504.204,
+      "end": 504.484,
+      "score": 0.846
+    },
+    {
+      "word": "Turn.",
+      "start": 505.525,
+      "end": 505.905,
+      "score": 0.837
+    },
+    {
+      "word": "Punch.",
+      "start": 507.066,
+      "end": 508.347,
+      "score": 0.838
+    },
+    {
+      "word": "Idle.",
+      "start": 508.367,
+      "end": 508.648,
+      "score": 0.872
+    },
+    {
+      "word": "Idle.",
+      "start": 510.93,
+      "end": 511.33,
+      "score": 0.792
+    },
+    {
+      "word": "Idle",
+      "start": 512.913,
+      "end": 513.434,
+      "score": 0.441
+    },
+    {
+      "word": "Idle",
+      "start": 515.277,
+      "end": 515.597,
+      "score": 0.6
+    },
+    {
+      "word": "Idle",
+      "start": 517.681,
+      "end": 518.021,
+      "score": 0.56
+    },
+    {
+      "word": "Idle",
+      "start": 519.844,
+      "end": 520.185,
+      "score": 0.616
+    },
+    {
+      "word": "Idle",
+      "start": 522.108,
+      "end": 524.271,
+      "score": 0.644
+    },
+    {
+      "word": "Punch,",
+      "start": 524.291,
+      "end": 524.772,
+      "score": 0.894
+    },
+    {
+      "word": "punch",
+      "start": 525.193,
+      "end": 525.573,
+      "score": 0.877
+    },
+    {
+      "word": "Idle",
+      "start": 526.315,
+      "end": 526.615,
+      "score": 0.531
+    },
+    {
+      "word": "Jump,",
+      "start": 528.638,
+      "end": 528.959,
+      "score": 0.609
+    },
+    {
+      "word": "walk,",
+      "start": 529.48,
+      "end": 529.86,
+      "score": 0.85
+    },
+    {
+      "word": "start",
+      "start": 529.88,
+      "end": 530.301,
+      "score": 0.804
+    },
+    {
+      "word": "Punch,",
+      "start": 538.634,
+      "end": 538.995,
+      "score": 0.951
+    },
+    {
+      "word": "punch",
+      "start": 539.536,
+      "end": 540.237,
+      "score": 0.941
+    },
+    {
+      "word": "Jump.",
+      "start": 545.397,
+      "end": 546.578,
+      "score": 0.834
+    },
+    {
+      "word": "Turn.",
+      "start": 546.598,
+      "end": 546.939,
+      "score": 0.904
+    },
+    {
+      "word": "Walk.",
+      "start": 547.219,
+      "end": 547.559,
+      "score": 0.916
+    },
+    {
+      "word": "Jump.",
+      "start": 548.32,
+      "end": 548.6,
+      "score": 0.835
+    },
+    {
+      "word": "Punch.",
+      "start": 549.261,
+      "end": 549.641,
+      "score": 0.904
+    },
+    {
+      "word": "Punch.",
+      "start": 549.821,
+      "end": 550.162,
+      "score": 0.905
+    },
+    {
+      "word": "Turn.",
+      "start": 550.982,
+      "end": 551.343,
+      "score": 0.858
+    },
+    {
+      "word": "Walk.",
+      "start": 551.903,
+      "end": 552.284,
+      "score": 0.906
+    },
+    {
+      "word": "Jump.",
+      "start": 552.664,
+      "end": 553.045,
+      "score": 0.818
+    },
+    {
+      "word": "Punch.",
+      "start": 553.065,
+      "end": 553.465,
+      "score": 0.839
+    },
+    {
+      "word": "Punch.",
+      "start": 553.725,
+      "end": 554.106,
+      "score": 0.787
+    },
+    {
+      "word": "Punch.",
+      "start": 554.306,
+      "end": 554.626,
+      "score": 0.876
+    },
+    {
+      "word": "Jump.",
+      "start": 555.287,
+      "end": 555.627,
+      "score": 0.745
+    },
+    {
+      "word": "Punch.",
+      "start": 556.488,
+      "end": 556.848,
+      "score": 0.836
+    },
+    {
+      "word": "Punch.",
+      "start": 557.068,
+      "end": 557.389,
+      "score": 0.854
+    },
+    {
+      "word": "Jump.",
+      "start": 557.849,
+      "end": 558.93,
+      "score": 0.899
+    },
+    {
+      "word": "Turn.",
+      "start": 558.95,
+      "end": 559.391,
+      "score": 0.871
+    },
+    {
+      "word": "Walk.",
+      "start": 559.911,
+      "end": 560.232,
+      "score": 0.943
+    },
+    {
+      "word": "Walk.",
+      "start": 560.972,
+      "end": 561.273,
+      "score": 0.914
+    },
+    {
+      "word": "Walk.",
+      "start": 562.073,
+      "end": 563.014,
+      "score": 0.957
+    },
+    {
+      "word": "Jump.",
+      "start": 563.034,
+      "end": 563.615,
+      "score": 0.904
+    },
+    {
+      "word": "Punch.",
+      "start": 563.635,
+      "end": 564.155,
+      "score": 0.92
+    },
+    {
+      "word": "Punch.",
+      "start": 564.175,
+      "end": 565.277,
+      "score": 0.936
+    },
+    {
+      "word": "Turn.",
+      "start": 565.297,
+      "end": 566.558,
+      "score": 0.916
+    },
+    {
+      "word": "Walk.",
+      "start": 566.578,
+      "end": 566.978,
+      "score": 0.801
+    },
+    {
+      "word": "Turn.",
+      "start": 568.32,
+      "end": 568.74,
+      "score": 0.852
+    },
+    {
+      "word": "Turn.",
+      "start": 570.181,
+      "end": 570.882,
+      "score": 0.901
+    },
+    {
+      "word": "Punch,",
+      "start": 571.773,
+      "end": 572.214,
+      "score": 0.852
+    },
+    {
+      "word": "punch,",
+      "start": 572.414,
+      "end": 572.936,
+      "score": 0.868
+    },
+    {
+      "word": "punch,",
+      "start": 572.956,
+      "end": 573.657,
+      "score": 0.867
+    },
+    {
+      "word": "jump,",
+      "start": 573.677,
+      "end": 574.92,
+      "score": 0.687
+    },
+    {
+      "word": "jump,",
+      "start": 574.96,
+      "end": 576.022,
+      "score": 0.513
+    },
+    {
+      "word": "punch,",
+      "start": 576.042,
+      "end": 576.443,
+      "score": 0.861
+    },
+    {
+      "word": "punch,",
+      "start": 576.563,
+      "end": 576.924,
+      "score": 0.883
+    },
+    {
+      "word": "punch,",
+      "start": 577.064,
+      "end": 577.425,
+      "score": 0.783
+    },
+    {
+      "word": "punch,",
+      "start": 577.626,
+      "end": 577.986,
+      "score": 0.856
+    },
+    {
+      "word": "walk,",
+      "start": 578.768,
+      "end": 579.129,
+      "score": 0.912
+    },
+    {
+      "word": "turn,",
+      "start": 585.864,
+      "end": 586.244,
+      "score": 0.861
+    },
+    {
+      "word": "idle,",
+      "start": 588.409,
+      "end": 588.75,
+      "score": 0.884
+    },
+    {
+      "word": "idle,",
+      "start": 590.313,
+      "end": 590.634,
+      "score": 0.88
+    },
+    {
+      "word": "jump,",
+      "start": 592.538,
+      "end": 592.879,
+      "score": 0.833
+    },
+    {
+      "word": "punch,",
+      "start": 593.54,
+      "end": 593.961,
+      "score": 0.791
+    },
+    {
+      "word": "noise,",
+      "start": 594.643,
+      "end": 595.184,
+      "score": 0.885
+    },
+    {
+      "word": "noise,",
+      "start": 595.825,
+      "end": 597.749,
+      "score": 0.864
+    },
+    {
+      "word": "noise,",
+      "start": 597.769,
+      "end": 598.05,
+      "score": 0.448
+    }
+  ]
+}
