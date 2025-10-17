@@ -63,38 +63,41 @@ import wave
 
 # Sensor types to collect
 SENSORS_TO_COLLECT = [
-    "rotation_vector",      # Composite orientation sensor
+    "rotation_vector",  # Composite orientation sensor
     "linear_acceleration",  # Linear acceleration (gravity removed)
-    "gyroscope"            # Angular velocity
+    "gyroscope",  # Angular velocity
 ]
 
 # Gesture durations (seconds)
 GESTURE_DURATIONS = {
-    'jump': 0.3,
-    'punch': 0.3,
-    'turn': 0.5,
-    'noise': 1.0,
-    'walk': None  # Default state, no fixed duration
+    "jump": 0.3,
+    "punch": 0.3,
+    "turn": 0.5,
+    "noise": 1.0,
+    "walk": None,  # Default state, no fixed duration
 }
 
 # Default recording duration
 DEFAULT_DURATION_SEC = 600  # 10 minutes
 
+
 # ANSI Color codes
 class Colors:
-    GREEN = '\033[92m'
-    RED = '\033[91m'
-    YELLOW = '\033[93m'
-    BLUE = '\033[94m'
-    CYAN = '\033[96m'
-    RESET = '\033[0m'
-    BOLD = '\033[1m'
+    GREEN = "\033[92m"
+    RED = "\033[91m"
+    YELLOW = "\033[93m"
+    BLUE = "\033[94m"
+    CYAN = "\033[96m"
+    RESET = "\033[0m"
+    BOLD = "\033[1m"
 
 
 # ==================== DATA STRUCTURES ====================
 
+
 class GestureLabel:
     """Represents a labeled gesture in the recording"""
+
     def __init__(self, timestamp, gesture, duration):
         self.timestamp = timestamp
         self.gesture = gesture
@@ -106,7 +109,7 @@ class ContinuousDataCollector:
 
     def __init__(self, session_name=None, duration_sec=DEFAULT_DURATION_SEC):
         # Generate timestamp prefix for session organization
-        self.timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         # Session name with timestamp prefix if user provided name
         if session_name:
@@ -166,10 +169,16 @@ class ContinuousDataCollector:
         try:
             self.sock.bind((listen_ip, listen_port))
             self.sock.setblocking(False)
-            print(f"{Colors.GREEN}✓ Listening on {listen_ip}:{listen_port}{Colors.RESET}")
+            print(
+                f"{Colors.GREEN}✓ Listening on {listen_ip}:{listen_port}{Colors.RESET}"
+            )
         except OSError as e:
-            print(f"{Colors.RED}ERROR: Could not bind to {listen_ip}:{listen_port}{Colors.RESET}")
-            print(f"{Colors.YELLOW}Make sure no other listener is running!{Colors.RESET}")
+            print(
+                f"{Colors.RED}ERROR: Could not bind to {listen_ip}:{listen_port}{Colors.RESET}"
+            )
+            print(
+                f"{Colors.YELLOW}Make sure no other listener is running!{Colors.RESET}"
+            )
             raise e
 
         return True
@@ -188,7 +197,9 @@ class ContinuousDataCollector:
         print(f"{Colors.BOLD}{Colors.YELLOW}CONNECTION CHECK{Colors.RESET}")
         print(f"{Colors.YELLOW}{'='*70}{Colors.RESET}")
         print(f"{Colors.BLUE}Checking if watch is sending data...{Colors.RESET}")
-        print(f"{Colors.YELLOW}Please make sure streaming is ON in your watch app.{Colors.RESET}\n")
+        print(
+            f"{Colors.YELLOW}Please make sure streaming is ON in your watch app.{Colors.RESET}\n"
+        )
 
         start_time = time.time()
         last_update = 0
@@ -219,7 +230,9 @@ class ContinuousDataCollector:
                         print()  # New line
                         print(f"\n{Colors.GREEN}{'='*70}{Colors.RESET}")
                         print(f"{Colors.GREEN}✓ Connection verified!{Colors.RESET}")
-                        print(f"{Colors.GREEN}  Received {packet_count} valid packets from watch{Colors.RESET}")
+                        print(
+                            f"{Colors.GREEN}  Received {packet_count} valid packets from watch{Colors.RESET}"
+                        )
                         print(f"{Colors.GREEN}{'='*70}{Colors.RESET}\n")
                         self.last_data_time = time.time()
                         # Flush remaining packets in buffer
@@ -237,18 +250,28 @@ class ContinuousDataCollector:
         print(f"{Colors.RED}❌ CONNECTION TIMEOUT{Colors.RESET}")
 
         if packet_count > 0:
-            print(f"{Colors.YELLOW}⚠️  Received {packet_count} packets but stream seems intermittent{Colors.RESET}")
-            print(f"{Colors.YELLOW}   This might work - trying to continue...{Colors.RESET}")
+            print(
+                f"{Colors.YELLOW}⚠️  Received {packet_count} packets but stream seems intermittent{Colors.RESET}"
+            )
+            print(
+                f"{Colors.YELLOW}   This might work - trying to continue...{Colors.RESET}"
+            )
             print(f"{Colors.RED}{'='*70}{Colors.RESET}\n")
             self._flush_socket()
             return True  # Allow continuation with partial connection
         else:
             print(f"{Colors.RED}   No sensor data received from watch!{Colors.RESET}")
             print(f"{Colors.YELLOW}   Please ensure:{Colors.RESET}")
-            print(f"{Colors.BLUE}   1. Watch app is open and streaming is ON{Colors.RESET}")
-            print(f"{Colors.BLUE}   2. Watch shows 'Connected!' status (green){Colors.RESET}")
+            print(
+                f"{Colors.BLUE}   1. Watch app is open and streaming is ON{Colors.RESET}"
+            )
+            print(
+                f"{Colors.BLUE}   2. Watch shows 'Connected!' status (green){Colors.RESET}"
+            )
             print(f"{Colors.BLUE}   3. Both devices on same WiFi network{Colors.RESET}")
-            print(f"{Colors.BLUE}   4. Server IP matches: {self.config['network']['listen_ip']}{Colors.RESET}")
+            print(
+                f"{Colors.BLUE}   4. Server IP matches: {self.config['network']['listen_ip']}{Colors.RESET}"
+            )
             print(f"{Colors.RED}{'='*70}{Colors.RESET}\n")
             return False
 
@@ -319,7 +342,9 @@ class ContinuousDataCollector:
     def record_sensor_data(self):
         """Main recording loop for sensor data and audio"""
         print(f"\n{Colors.RED}{Colors.BOLD}🔴 RECORDING STARTED{Colors.RESET}")
-        print(f"{Colors.YELLOW}🎤 Audio recording active - speak commands naturally!{Colors.RESET}\n")
+        print(
+            f"{Colors.YELLOW}🎤 Audio recording active - speak commands naturally!{Colors.RESET}\n"
+        )
 
         self.recording = True
         self.start_time = time.time()
@@ -334,7 +359,7 @@ class ContinuousDataCollector:
             samplerate=self.audio_sample_rate,
             channels=1,
             callback=self.audio_callback,
-            dtype='float32'
+            dtype="float32",
         )
         audio_stream.start()
 
@@ -360,7 +385,7 @@ class ContinuousDataCollector:
                     # Create record
                     record = {
                         "timestamp": time.time() - self.start_time,
-                        "sensor": sensor_type
+                        "sensor": sensor_type,
                     }
 
                     # Flatten sensor values
@@ -388,15 +413,21 @@ class ContinuousDataCollector:
 
             # Check connection
             if time.time() - last_data_time > 2.0:
-                print(f"\r{Colors.RED}⚠️  WARNING: No data received for 2 seconds! Check watch connection.{Colors.RESET}")
+                print(
+                    f"\r{Colors.RED}⚠️  WARNING: No data received for 2 seconds! Check watch connection.{Colors.RESET}"
+                )
 
         self.recording = False
         audio_stream.stop()
         audio_stream.close()
 
         print(f"\n\n{Colors.GREEN}✓ Recording complete!{Colors.RESET}")
-        print(f"{Colors.BLUE}Captured {len(self.sensor_data)} sensor data points{Colors.RESET}")
-        print(f"{Colors.BLUE}Recorded {len(self.audio_data)} audio chunks{Colors.RESET}")
+        print(
+            f"{Colors.BLUE}Captured {len(self.sensor_data)} sensor data points{Colors.RESET}"
+        )
+        print(
+            f"{Colors.BLUE}Recorded {len(self.audio_data)} audio chunks{Colors.RESET}"
+        )
 
     def _display_status(self, elapsed, remaining, progress_pct, data_points):
         """Display recording status"""
@@ -438,7 +469,7 @@ class ContinuousDataCollector:
                 fieldnames.update(record.keys())
             fieldnames = sorted(list(fieldnames))
 
-            with open(sensor_file, 'w', newline='') as csvfile:
+            with open(sensor_file, "w", newline="") as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
                 writer.writerows(self.sensor_data)
@@ -455,7 +486,7 @@ class ContinuousDataCollector:
             audio_array = np.concatenate(self.audio_data, axis=0)
 
             # Save high-quality version (44.1kHz) - sounds natural
-            with wave.open(audio_file, 'wb') as wf:
+            with wave.open(audio_file, "wb") as wf:
                 wf.setnchannels(1)  # Mono
                 wf.setsampwidth(2)  # 16-bit
                 wf.setframerate(self.audio_sample_rate)
@@ -468,6 +499,7 @@ class ContinuousDataCollector:
             # Downsample to 16kHz for Whisper transcription
             try:
                 from scipy import signal
+
                 # Calculate exact number of samples needed to maintain duration
                 # Duration = num_samples / sample_rate
                 # So: num_samples_16k = duration * 16000
@@ -476,44 +508,55 @@ class ContinuousDataCollector:
 
                 # Use signal.resample for exact duration preservation
                 audio_downsampled = signal.resample(
-                    audio_array.flatten(),
-                    target_num_samples
+                    audio_array.flatten(), target_num_samples
                 )
 
                 # Save 16kHz version for Whisper
-                with wave.open(audio_file_whisper, 'wb') as wf:
+                with wave.open(audio_file_whisper, "wb") as wf:
                     wf.setnchannels(1)
                     wf.setsampwidth(2)
                     wf.setframerate(self.whisper_sample_rate)
                     audio_int16_whisper = (audio_downsampled * 32767).astype(np.int16)
                     wf.writeframes(audio_int16_whisper.tobytes())
 
-                print(f"{Colors.GREEN}✓ Audio for Whisper (16kHz): {audio_file_whisper}{Colors.RESET}")
-                print(f"{Colors.CYAN}💡 Use *_16k.wav file for Whisper transcription{Colors.RESET}")
+                print(
+                    f"{Colors.GREEN}✓ Audio for Whisper (16kHz): {audio_file_whisper}{Colors.RESET}"
+                )
+                print(
+                    f"{Colors.CYAN}💡 Use *_16k.wav file for Whisper transcription{Colors.RESET}"
+                )
 
             except ImportError:
-                print(f"{Colors.YELLOW}⚠️  scipy not installed - skipping 16kHz version{Colors.RESET}")
+                print(
+                    f"{Colors.YELLOW}⚠️  scipy not installed - skipping 16kHz version{Colors.RESET}"
+                )
                 print(f"{Colors.YELLOW}   Install: pip install scipy{Colors.RESET}")
-                print(f"{Colors.YELLOW}   Or use ffmpeg: ffmpeg -i {audio_file} -ar 16000 {audio_file_whisper}{Colors.RESET}")
+                print(
+                    f"{Colors.YELLOW}   Or use ffmpeg: ffmpeg -i {audio_file} -ar 16000 {audio_file_whisper}{Colors.RESET}"
+                )
 
         # Save session metadata
         metadata_file = os.path.join(self.output_dir, "metadata.json")
-        actual_duration = self.sensor_data[-1]['timestamp'] if self.sensor_data else 0
-        audio_duration = len(np.concatenate(self.audio_data)) / self.audio_sample_rate if self.audio_data else 0
+        actual_duration = self.sensor_data[-1]["timestamp"] if self.sensor_data else 0
+        audio_duration = (
+            len(np.concatenate(self.audio_data)) / self.audio_sample_rate
+            if self.audio_data
+            else 0
+        )
 
         metadata = {
-            'session_name': self.session_name,
-            'recording_date': datetime.now().isoformat(),
-            'duration_sec': self.duration_sec,
-            'actual_duration_sec': actual_duration,
-            'audio_duration_sec': audio_duration,
-            'sensor_data_points': len(self.sensor_data),
-            'audio_sample_rate': self.audio_sample_rate,
-            'audio_chunks': len(self.audio_data),
-            'sensors_collected': SENSORS_TO_COLLECT
+            "session_name": self.session_name,
+            "recording_date": datetime.now().isoformat(),
+            "duration_sec": self.duration_sec,
+            "actual_duration_sec": actual_duration,
+            "audio_duration_sec": audio_duration,
+            "sensor_data_points": len(self.sensor_data),
+            "audio_sample_rate": self.audio_sample_rate,
+            "audio_chunks": len(self.audio_data),
+            "sensors_collected": SENSORS_TO_COLLECT,
         }
 
-        with open(metadata_file, 'w') as f:
+        with open(metadata_file, "w") as f:
             json.dump(metadata, f, indent=2)
 
         print(f"{Colors.GREEN}✓ Metadata saved: {metadata_file}{Colors.RESET}")
@@ -568,7 +611,7 @@ Check the generated `labels.csv` file for accuracy.
 ---
 Generated by continuous_data_collector.py
 """
-        with open(readme_file, 'w') as f:
+        with open(readme_file, "w") as f:
             f.write(readme_content)
 
         print(f"{Colors.GREEN}✓ README saved: {readme_file}{Colors.RESET}")
@@ -578,7 +621,9 @@ Generated by continuous_data_collector.py
         print(f"  {Colors.BLUE}• Session: {self.session_name}{Colors.RESET}")
         print(f"  {Colors.BLUE}• Sensor duration: {actual_duration:.1f}s{Colors.RESET}")
         print(f"  {Colors.BLUE}• Audio duration: {audio_duration:.1f}s{Colors.RESET}")
-        print(f"  {Colors.BLUE}• Sensor data points: {len(self.sensor_data)}{Colors.RESET}")
+        print(
+            f"  {Colors.BLUE}• Sensor data points: {len(self.sensor_data)}{Colors.RESET}"
+        )
         print(f"  {Colors.BLUE}• Audio chunks: {len(self.audio_data)}{Colors.RESET}")
 
         print(f"\n{Colors.BOLD}🎤 Next Steps:{Colors.RESET}")
@@ -595,10 +640,11 @@ Generated by continuous_data_collector.py
 
 # ==================== MAIN ====================
 
+
 def parse_arguments():
     """Parse command-line arguments"""
     parser = argparse.ArgumentParser(
-        description='Continuous gesture data collector with audio recording for Phase V CNN/LSTM training',
+        description="Continuous gesture data collector with audio recording for Phase V CNN/LSTM training",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -615,20 +661,18 @@ During recording (speak naturally):
   "noise" = Unintentional movement
   "walk start" = Begin walking
   "walk" = Walking state
-        """
+        """,
     )
 
     parser.add_argument(
-        '--duration',
+        "--duration",
         type=int,
         default=DEFAULT_DURATION_SEC,
-        help=f'Recording duration in seconds (default: {DEFAULT_DURATION_SEC})'
+        help=f"Recording duration in seconds (default: {DEFAULT_DURATION_SEC})",
     )
 
     parser.add_argument(
-        '--session',
-        type=str,
-        help='Session name (default: auto-generated timestamp)'
+        "--session", type=str, help="Session name (default: auto-generated timestamp)"
     )
 
     return parser.parse_args()
@@ -640,8 +684,7 @@ def main():
 
     # Create collector
     collector = ContinuousDataCollector(
-        session_name=args.session,
-        duration_sec=args.duration
+        session_name=args.session, duration_sec=args.duration
     )
 
     try:
@@ -649,13 +692,17 @@ def main():
         collector.setup()
         collector.display_instructions()
 
-        input(f"\n{Colors.BOLD}{Colors.GREEN}Press [Enter] to start recording...{Colors.RESET}")
+        input(
+            f"\n{Colors.BOLD}{Colors.GREEN}Press [Enter] to start recording...{Colors.RESET}"
+        )
 
         print(f"{Colors.YELLOW}📱 Checking watch connection...{Colors.RESET}")
 
         # Check connection before starting
         if not collector.check_connection(timeout=15):
-            print(f"\n{Colors.RED}❌ Cannot start recording - no connection to watch{Colors.RESET}")
+            print(
+                f"\n{Colors.RED}❌ Cannot start recording - no connection to watch{Colors.RESET}"
+            )
             print(f"{Colors.YELLOW}� Troubleshooting steps:{Colors.RESET}")
             print(f"  1. Open the watch app")
             print(f"  2. Toggle streaming ON")
@@ -663,8 +710,12 @@ def main():
             print(f"  4. Try running this script again")
             return
 
-        print(f"{Colors.YELLOW}🎤 Microphone will start recording in 3 seconds...{Colors.RESET}")
-        print(f"{Colors.GREEN}✓ Watch connection verified - ready to record!{Colors.RESET}")
+        print(
+            f"{Colors.YELLOW}🎤 Microphone will start recording in 3 seconds...{Colors.RESET}"
+        )
+        print(
+            f"{Colors.GREEN}✓ Watch connection verified - ready to record!{Colors.RESET}"
+        )
         time.sleep(3)
 
         # Record
@@ -679,13 +730,16 @@ def main():
     except KeyboardInterrupt:
         print(f"\n\n{Colors.YELLOW}⚠️  Recording interrupted by user{Colors.RESET}")
         if collector.sensor_data:
-            save = input(f"{Colors.YELLOW}Save partial recording? (y/n): {Colors.RESET}")
-            if save.lower() == 'y':
+            save = input(
+                f"{Colors.YELLOW}Save partial recording? (y/n): {Colors.RESET}"
+            )
+            if save.lower() == "y":
                 collector.save_data()
 
     except Exception as e:
         print(f"\n{Colors.RED}❌ ERROR: {e}{Colors.RESET}")
         import traceback
+
         traceback.print_exc()
 
     finally:

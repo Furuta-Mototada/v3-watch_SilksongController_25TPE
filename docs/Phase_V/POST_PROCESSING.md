@@ -76,9 +76,9 @@ Use the provided bash script to process all sessions:
 cd src
 
 # Basic usage with default settings (large-v3 model)
-python whisperx_transcribe.py \
-  --audio data/continuous/20251017_143022_game_01/audio_16k.wav \
-  --output data/continuous/20251017_143022_game_01/whisperx_output.json
+python3.11 whisperx_transcribe.py \
+  --audio data/continuous/20251017_125600_session/audio_16k.wav \
+  --output data/continuous/20251017_125600_session/whisperx_output.json
 
 # Advanced: Enable preprocessing and diarization
 python whisperx_transcribe.py \
