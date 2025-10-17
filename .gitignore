@@ -46,7 +46,7 @@ tmp/
 *.bak
 
 # Training data (ML datasets - can be large)
-# training_data/
+training_data
 data/
 
 # ML Models (serialized models can be large)
@@ -57,3 +57,4 @@ models/*.h5
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
+
