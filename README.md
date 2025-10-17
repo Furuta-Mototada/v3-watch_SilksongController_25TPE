@@ -24,6 +24,15 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
     </a>
   </div>
 
+<div>
+    <a href="https://www.loom.com/share/db304cbfea1d4fa4914256f097d4a166">
+      <p>v3 cnn - how im collecting data - Watch Video</p>
+    </a>
+    <a href="https://www.loom.com/share/db304cbfea1d4fa4914256f097d4a166">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/db304cbfea1d4fa4914256f097d4a166-b2ff6573e4a9ecc7-full-play.gif">
+    </a>
+  </div>
+
 ## 🎮 Features
 
 ![Hornet from Hollowknight: Silksong Colors](distribution.png)
@@ -270,6 +279,7 @@ python src/align_voice_labels.py \
 **Problem**: Real-time Whisper processing requires significant CPU resources
 
 **Solution**: Retrospective processing allows:
+
 - No performance impact during gameplay
 - Use powerful WhisperX models with forced alignment
 - Research-grade word-level timestamp granularity
