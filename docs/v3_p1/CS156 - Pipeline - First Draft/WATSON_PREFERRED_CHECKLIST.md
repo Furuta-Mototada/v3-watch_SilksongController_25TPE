@@ -233,7 +233,7 @@ Your EMG bike signal project has built-in excellence potential:
 
 ## 🎓 Key Takeaway from Watson Preferred Session
 
-> "Don't worry about winning everything. You got plenty of time for that. You got many races to run. Just make sure this one is a nice, solid one that you're proud of."
+> "Don't worry about winning everything. You got plenty of time for that. You got many races to run. Just make sure this one is a Noice, solid one that you're proud of."
 >
 > — Professor Watson
 
@@ -252,7 +252,7 @@ The data collection script (`data_collector.py`) you now have provides the found
 #### OCT 17 FEEDBACK TA
 "Great work on completing all the extension questions so far!
 
-Nice start to your assignment! I can see many ways to develop this project and I like the use of GroupKFold to avoid overfitting. I'd recommend adding baseline models such as RSME/ Logistic Regression to show model improvement.
+Noice start to your assignment! I can see many ways to develop this project and I like the use of GroupKFold to avoid overfitting. I'd recommend adding baseline models such as RSME/ Logistic Regression to show model improvement.
 
 I'd also add a short "how it works” section for each model - what function/decision rule it learns, the objective/loss it minimizes (and how it’s optimized), and how key hyperparameters control regularization - the math behind it."
 4#cs156-MLDevelopment
