@@ -1,0 +1,15 @@
+{
+  "session_name": "20251017_125600_session",
+  "recording_date": "2025-10-17T13:06:31.337920",
+  "duration_sec": 600,
+  "actual_duration_sec": 599.9942989349365,
+  "audio_duration_sec": 599.512358276644,
+  "sensor_data_points": 86237,
+  "audio_sample_rate": 44100,
+  "audio_chunks": 75755,
+  "sensors_collected": [
+    "rotation_vector",
+    "linear_acceleration",
+    "gyroscope"
+  ]
+}
