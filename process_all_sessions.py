@@ -39,15 +39,16 @@ def process_session(session_dir):
     """Process a single session directory"""
     session_name = os.path.basename(session_dir)
 
-    # Find WhisperX output file
-    whisperx_files = [f for f in os.listdir(session_dir) if 'whisperx_output.json' in f]
+    # Find WhisperX output file (support multiple naming patterns)
+    whisperx_files = [f for f in os.listdir(session_dir)
+                      if ('whisperx_output.json' in f or
+                          (f.endswith('.json') and session_name in f and
+                           f != 'metadata.json'))]
 
     if not whisperx_files:
-        return None, f"No WhisperX output file found"
+        return None, "No WhisperX output file found"
 
-    whisperx_file = os.path.join(session_dir, whisperx_files[0])
-
-    # Load WhisperX data
+    whisperx_file = os.path.join(session_dir, whisperx_files[0])    # Load WhisperX data
     print(f"\n📂 Processing: {session_name}")
     print(f"   WhisperX file: {whisperx_files[0]}")
 
