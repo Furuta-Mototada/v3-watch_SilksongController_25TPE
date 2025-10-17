@@ -77,8 +77,10 @@ def extract_gesture_commands(whisper_data):
                     # WhisperX uses 'score', standard Whisper uses 'probability'
                     confidence = word_info.get('score', word_info.get('probability', 1.0))
 
-                    # Check for gesture keywords
+                    # Check for gesture keywords (skip 'walk' - handled separately)
                     for gesture, duration in GESTURE_KEYWORDS.items():
+                        if gesture == 'walk':
+                            continue  # Skip walk, handled below
                         if gesture in word:
                             commands.append({
                                 'timestamp': timestamp,
