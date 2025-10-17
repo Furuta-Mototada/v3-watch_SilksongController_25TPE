@@ -42,7 +42,7 @@
     {
       "start": 5.38,
       "end": 34.392,
-      "text": " walk to the left walk jump strike punch punch punch idle walk start walk walk walk walk jump punch punch punch punch punch walk walk walk idle noise noise this is noise noise and then i punch walk start walk walk walk jump punch punch up punch punch punch",
+      "text": " walk to the left walk jump punch punch punch punch idle walk start walk walk walk walk jump punch punch punch punch punch walk walk walk idle noise noise this is noise noise and then i punch walk start walk walk walk jump punch punch up punch punch punch",
       "words": [
         {
           "word": "walk",
@@ -81,7 +81,7 @@
           "score": 0.884
         },
         {
-          "word": "strike",
+          "word": "punch",
           "start": 8.243,
           "end": 8.584,
           "score": 0.841
@@ -5763,7 +5763,7 @@
       "score": 0.884
     },
     {
-      "word": "strike",
+      "word": "punch",
       "start": 8.243,
       "end": 8.584,
       "score": 0.841
