@@ -95,9 +95,30 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             saveIpAddress()
         }
 
+        // Set up auto-fill button (for when keyboard can't type periods)
+        val autoFillButton: Button = findViewById(R.id.btn_autofill_ip)
+        autoFillButton.setOnClickListener {
+            if (currentServerIP.isNotEmpty() && currentServerIP != "192.168.10.234") {
+                // We have a discovered IP - use it
+                ipAddressEditText.setText(currentServerIP)
+                saveIpAddress()
+                Toast.makeText(
+                    this,
+                    "✅ Auto-detected IP filled: $currentServerIP",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "⏳ Waiting for auto-discovery... Manual entry required.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
         // Initialize NSD Manager
         nsdManager = getSystemService(Context.NSD_SERVICE) as NsdManager
-        
+
         // Start service discovery
         startServiceDiscovery()
 
@@ -287,14 +308,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 Log.d("NSD", "Service discovery started")
                 isDiscovering = true
                 runOnUiThread {
-                    connectionStatusTextView.text = "Searching..."
+                    connectionStatusTextView.text = "🔍 Searching for server..."
                     connectionStatusTextView.setTextColor(getColor(android.R.color.holo_orange_light))
                 }
             }
 
             override fun onServiceFound(serviceInfo: NsdServiceInfo) {
                 Log.d("NSD", "Service found: ${serviceInfo.serviceName}")
-                if (serviceInfo.serviceType == SERVICE_TYPE && 
+                if (serviceInfo.serviceType == SERVICE_TYPE &&
                     serviceInfo.serviceName.contains("SilksongController")) {
                     // Resolve the service to get IP and port
                     resolveService(serviceInfo)
@@ -304,9 +325,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             override fun onServiceLost(serviceInfo: NsdServiceInfo) {
                 Log.d("NSD", "Service lost: ${serviceInfo.serviceName}")
                 runOnUiThread {
-                    connectionStatusTextView.text = "Connection Lost"
+                    connectionStatusTextView.text = "⚠️ Server disconnected"
                     connectionStatusTextView.setTextColor(getColor(android.R.color.holo_red_light))
                 }
+
+                // Auto-retry discovery after 3 seconds
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    Log.d("NSD", "Auto-retrying service discovery after connection lost...")
+                    if (!isDiscovering) {
+                        startServiceDiscovery()
+                    }
+                }, 3000)
             }
 
             override fun onDiscoveryStopped(serviceType: String) {
@@ -316,6 +345,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
             override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
                 Log.e("NSD", "Discovery failed: Error code: $errorCode")
+                runOnUiThread {
+                    connectionStatusTextView.text = "❌ Discovery failed - use manual IP"
+                    connectionStatusTextView.setTextColor(getColor(android.R.color.holo_red_light))
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Auto-discovery failed. Please enter IP manually.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
                 nsdManager.stopServiceDiscovery(this)
                 isDiscovering = false
             }
@@ -339,30 +377,48 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         resolveListener = object : NsdManager.ResolveListener {
             override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
                 Log.e("NSD", "Resolve failed: $errorCode")
+
+                // Retry resolve on FAILURE_ALREADY_ACTIVE
+                if (errorCode == NsdManager.FAILURE_ALREADY_ACTIVE) {
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        Log.d("NSD", "Retrying resolve after FAILURE_ALREADY_ACTIVE...")
+                        try {
+                            nsdManager.resolveService(serviceInfo, this)
+                        } catch (e: Exception) {
+                            Log.e("NSD", "Failed to retry resolve", e)
+                        }
+                    }, 1000)
+                }
             }
 
             override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
                 Log.d("NSD", "Service resolved: ${serviceInfo.serviceName}")
-                
+
                 val host = serviceInfo.host
                 val port = serviceInfo.port
-                
+
                 // Update IP address
                 currentServerIP = host.hostAddress ?: currentServerIP
-                
+
                 runOnUiThread {
                     // Update UI
-                    connectionStatusTextView.text = "Connected!"
+                    connectionStatusTextView.text = "✅ Connected!"
                     connectionStatusTextView.setTextColor(getColor(android.R.color.holo_green_light))
                     ipAddressEditText.setText(currentServerIP)
                     updateIpStatusDisplay()
-                    
+
+                    // Auto-save discovered IP
+                    with(sharedPreferences.edit()) {
+                        putString(IP_ADDRESS_KEY, currentServerIP)
+                        apply()
+                    }
+
                     Toast.makeText(
                         this@MainActivity,
-                        "Found server at $currentServerIP:$port",
+                        "✅ Server found: $currentServerIP:$port",
                         Toast.LENGTH_LONG
                     ).show()
-                    
+
                     Log.d("NSD", "Server IP: $currentServerIP, Port: $port")
                 }
             }
