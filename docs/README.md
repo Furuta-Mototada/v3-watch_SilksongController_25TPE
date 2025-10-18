@@ -8,8 +8,16 @@ Welcome to the Silksong Motion Controller documentation. This project has evolve
 
 ### For Assignment Reference
 
+**⚡ [BUTTON_PROTOCOL_QUICK_START.md](BUTTON_PROTOCOL_QUICK_START.md)** ← **START HERE**  
+Quick reference guide with visual diagrams and implementation checklist:
+- Requirements addressed from problem statement
+- Data flow diagrams
+- 15-minute collection session timeline
+- MVP implementation checklist
+- Success criteria
+
 **🎯 [BUTTON_DATA_COLLECTION_PROTOCOL.md](BUTTON_DATA_COLLECTION_PROTOCOL.md)**  
-Complete specification for the button-based data collection protocol. Essential reading for:
+Complete specification for the button-based data collection protocol (20 pages). Essential reading for:
 - Understanding the press-and-hold interaction model
 - Implementing the Android_2_Grid app
 - Setting up the three-stage pipeline (Watch → Phone → MacBook)
