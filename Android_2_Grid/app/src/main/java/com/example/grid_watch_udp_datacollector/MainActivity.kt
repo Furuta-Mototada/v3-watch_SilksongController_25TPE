@@ -53,8 +53,8 @@ fun DataCollectorScreen(viewModel: DataCollectorViewModel = viewModel()) {
             TopAppBar(
                 title = { Text("Button Data Collector") },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White
                 )
             )
         }
@@ -63,76 +63,85 @@ fun DataCollectorScreen(viewModel: DataCollectorViewModel = viewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // IP Configuration Section
-            IpConfigSection(viewModel)
+            // Button Grid - Takes up entire first screen
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(16.dp)
+            ) {
+                ButtonGrid(
+                    viewModel = viewModel,
+                    onVibrate = { duration ->
+                        if (vibrator.hasVibrator()) {
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)
+                            )
+                        }
+                    }
+                )
+            }
 
-            // Connection Status
-            Text(
-                text = viewModel.connectionStatus.value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (viewModel.connectionStatus.value.startsWith("Connected"))
-                    Color(0xFF4CAF50) else Color(0xFFF44336),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
+            // Everything else below (user can scroll down)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Connection Status
+                Text(
+                    text = viewModel.connectionStatus.value,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (viewModel.connectionStatus.value.startsWith("Connected"))
+                        Color(0xFF4CAF50) else Color(0xFFF44336),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                // IP Configuration Section
+                IpConfigSection(viewModel)
 
-            // Button Grid
-            ButtonGrid(
-                viewModel = viewModel,
-                onVibrate = { duration ->
-                    if (vibrator.hasVibrator()) {
-                        vibrator.vibrate(
-                            VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)
+                // Action Buttons Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Test Connection Button
+                    Button(
+                        onClick = { viewModel.testConnection() },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2C2C2C) // Dark gray
+                        )
+                    ) {
+                        Text(
+                            text = "Connect",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White.copy(alpha = 0.9f)
                         )
                     }
-                }
-            )
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Action Buttons Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Test Connection Button
-                Button(
-                    onClick = { viewModel.testConnection() },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2C2C2C) // Dark gray
-                    )
-                ) {
-                    Text(
-                        text = "Connect",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White.copy(alpha = 0.9f)
-                    )
-                }
-
-                // Reset Button
-                Button(
-                    onClick = { viewModel.resetCounts() },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF6B6B) // Soft red
-                    )
-                ) {
-                    Text(
-                        text = "Reset",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    // Reset Button
+                    Button(
+                        onClick = { viewModel.resetCounts() },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFFF6B6B) // Soft red
+                        )
+                    ) {
+                        Text(
+                            text = "Reset",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
             }
         }

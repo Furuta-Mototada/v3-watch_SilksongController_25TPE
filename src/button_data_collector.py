@@ -43,7 +43,7 @@ class ButtonDataCollector:
         self.noise_buffer = []
         self.baseline_noise_captured = skip_noise  # Skip if flag set
         self.baseline_noise_duration = 30  # seconds
-        self.noise_start_time = None
+        self.noise_start_time = time.time()  # Initialize immediately
 
         # Lock for thread safety
         self.lock = threading.Lock()
@@ -187,7 +187,7 @@ class ButtonDataCollector:
             self.last_watch_data = time.time()
 
             sensor_entry = {
-                'timestamp': msg.get('timestamp_ns', time.time() * 1e9),
+                'timestamp': msg.get('timestamp_ns', msg.get('timestamp', time.time() * 1e9)),
                 'sensor': msg.get('sensor', 'unknown'),
                 'accel_x': msg.get('accel_x', 0.0),
                 'accel_y': msg.get('accel_y', 0.0),
@@ -198,15 +198,15 @@ class ButtonDataCollector:
                 'rot_x': msg.get('rot_x', 0.0),
                 'rot_y': msg.get('rot_y', 0.0),
                 'rot_z': msg.get('rot_z', 0.0),
-                'rot_w': msg.get('rot_w', 0.0)
+                'rot_w': msg.get('rot_w', 1.0)
             }
 
             # Add to main buffer
             with self.lock:
                 self.sensor_buffer.append(sensor_entry)
 
-            # Capture baseline noise (first 30 seconds)
-            if not self.baseline_noise_captured:
+            # Capture baseline noise (first 30 seconds after noise_start_time)
+            if not self.baseline_noise_captured and self.noise_start_time:
                 elapsed = time.time() - self.noise_start_time
                 if elapsed <= self.baseline_noise_duration:
                     # Still in baseline capture window
@@ -216,13 +216,35 @@ class ButtonDataCollector:
                     if int(elapsed) % 5 == 0 and len(self.noise_buffer) % 250 == 0:
                         print(f"   📊 Baseline: {int(elapsed)}s / {self.baseline_noise_duration}s ({len(self.noise_buffer)} samples)")
                 else:
-                    # Baseline complete
+                    # Baseline complete - save noise data immediately
                     self.baseline_noise_captured = True
-                    print(f"✅ Baseline noise captured ({len(self.noise_buffer)} samples)")
+                    samples = len(self.noise_buffer)
+                    print(f"✅ Baseline noise captured ({samples} samples)")
+
+                    # Save baseline noise to file immediately
+                    if samples > 0:
+                        baseline_file = self.output_dir / f"baseline_noise_{int(time.time())}.csv"
+                        with open(baseline_file, 'w', newline='', encoding='utf-8') as f:
+                            writer = csv.writer(f)
+                            writer.writerow([
+                                'timestamp', 'sensor',
+                                'accel_x', 'accel_y', 'accel_z',
+                                'gyro_x', 'gyro_y', 'gyro_z',
+                                'rot_x', 'rot_y', 'rot_z', 'rot_w'
+                            ])
+                            for entry in self.noise_buffer:
+                                writer.writerow([
+                                    entry['timestamp'], entry['sensor'],
+                                    entry['accel_x'], entry['accel_y'], entry['accel_z'],
+                                    entry['gyro_x'], entry['gyro_y'], entry['gyro_z'],
+                                    entry['rot_x'], entry['rot_y'], entry['rot_z'], entry['rot_w']
+                                ])
+                        print(f"   💾 Baseline saved to {baseline_file.name}")
+
                     print("✋ Ready for button presses...\n")
 
             # If no button pressed (default NOISE state), continue collecting noise
-            elif self.active_recording is None:
+            elif self.active_recording is None and not self.skip_noise:
                 self.noise_buffer.append(sensor_entry)
 
     def handle_label_event(self, msg, addr):
