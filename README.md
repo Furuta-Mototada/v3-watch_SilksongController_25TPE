@@ -12,6 +12,41 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
 
 **⚠️ Academic Context**: This is a **first draft** machine learning pipeline for educational purposes. The focus is on demonstrating ML fundamentals (data collection, feature engineering, model training, deployment) rather than achieving production-ready performance. Second and final draft iterations will follow.
 
+---
+
+## 🆕 NEW: Button Data Collection with Dashboard
+
+**Having trouble collecting data?** We've added a comprehensive data collection system with real-time verification:
+
+📊 **[Quick Start Guide](DASHBOARD_QUICK_START.md)** - Get started with the new dashboard in 5 minutes
+
+🔧 **[Troubleshooting Guide](DATA_COLLECTION_VERIFICATION.md)** - Step-by-step verification and problem solving
+
+🤝 **[App Coordination Guide](ANDROID_COORDINATION_GUIDE.md)** - How Watch and Phone apps work together
+
+### Quick Commands
+
+```bash
+# Start the real-time dashboard (RECOMMENDED)
+cd src
+python data_collection_dashboard.py
+
+# Verify data quality after collection
+python src/inspect_csv_data.py data/button_collected/*.csv
+
+# Test watch connection separately
+python src/test_connection.py
+```
+
+**Key Features**:
+- ✅ Real-time sensor data visualization
+- ✅ Live connection status for Watch and Phone apps
+- ✅ Data rate monitoring
+- ✅ CSV quality inspector
+- ✅ Comprehensive troubleshooting
+
+---
+
 ## 📹 Demo Videos
 
 **Watch Data Transmission**: [Loom Video](https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf) - NSD discovery and UDP streaming  
