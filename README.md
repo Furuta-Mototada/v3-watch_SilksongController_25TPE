@@ -143,15 +143,20 @@ python src/continuous_data_collector.py --duration 600 --session gameplay_01
 **Challenges**: Voice-motion coordination, noisy labels (see brainstorming doc)  
 **Location**: `docs/Phase_V/`
 
-### Phase VI: Alternative Approaches *(Proposed)*
-Exploring button-grid Android app for more controlled data collection. See design thinking and expert perspectives in:
+### Phase VI: Button Data Collection *(Proposed)*
+Alternative data collection approach using button-grid Android app for more controlled, precise labeling.
 
-📄 **`docs/ALTERNATIVE_DATA_COLLECTION_BRAINSTORM.md`**
+📄 **`docs/BUTTON_DATA_COLLECTION_PROTOCOL.md`** - Complete implementation specification
+- Press-and-hold interaction model with exact timestamps
+- 2x3 button grid layout with real-time count display
+- Dual classifier architecture (walk/idle vs. actions)
+- Three-stage streaming pipeline (Watch → Phone → MacBook)
+- Data integrity and noise handling strategies
+- MVP implementation guide and testing protocol
 
-This document includes:
+📄 **`docs/ALTERNATIVE_DATA_COLLECTION_BRAINSTORM.md`** - Design thinking and expert analysis
 - Analysis of current data quality issues
 - Expert panel discussion (Ng, Li, Jordan, Norman, Ries)
-- Button grid app specification
 - Trade-offs: organic vs. controlled data collection
 - Recommendations for academic pipeline drafts
 
@@ -175,7 +180,8 @@ This document includes:
 - **`docs/Phase_III/`** - SVM training pipeline (archived)
 - **`docs/Phase_IV/`** - Multi-threaded controller architecture (current)
 - **`docs/Phase_V/`** - Voice-labeled data collection (current)
-- **`docs/ALTERNATIVE_DATA_COLLECTION_BRAINSTORM.md`** - Future improvements
+- **`docs/BUTTON_DATA_COLLECTION_PROTOCOL.md`** - Button grid protocol specification (proposed)
+- **`docs/ALTERNATIVE_DATA_COLLECTION_BRAINSTORM.md`** - Design exploration and expert analysis
 - **`docs/CHRONOLOGICAL_NARRATIVE.md`** - Complete project history
 - **`docs/archive/`** - Historical troubleshooting guides and training docs
 
