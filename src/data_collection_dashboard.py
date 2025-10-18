@@ -298,7 +298,7 @@ class DataCollectionDashboard:
                             print(f"\n🚀 Collection started!")
                             if not self.skip_noise:
                                 print(f"📊 Capturing {self.baseline_noise_duration}s baseline noise...")
-                            
+
                             ready_to_start = True
                             self.collection_started = True
                             self.noise_start_time = time.time()
@@ -391,7 +391,7 @@ class DataCollectionDashboard:
                 self.latest_rotation['y'] = values.get('y', msg.get('rot_y', 0.0))
                 self.latest_rotation['z'] = values.get('z', msg.get('rot_z', 0.0))
                 self.latest_rotation['w'] = values.get('w', msg.get('rot_w', 1.0))
-                rot_x, rot_y, rot_z, rot_w = (self.latest_rotation['x'], self.latest_rotation['y'], 
+                rot_x, rot_y, rot_z, rot_w = (self.latest_rotation['x'], self.latest_rotation['y'],
                                               self.latest_rotation['z'], self.latest_rotation['w'])
             else:
                 rot_x = msg.get('rot_x', 0.0)
@@ -458,29 +458,40 @@ class DataCollectionDashboard:
                 }
 
         elif event == 'end':
+            # Check recording state with lock
             with self.lock:
                 if not self.active_recording or self.active_recording['action'] != action:
                     return
 
-                duration_ms = timestamp - self.active_recording['start_time']
-                duration_sec = duration_ms / 1000.0
+                # Copy recording info before releasing lock
+                recording_info = {
+                    'action': action,
+                    'start_time': self.active_recording['start_time'],
+                    'end_time': timestamp,
+                    'count': msg.get('count', 0)
+                }
 
-                filename = self.save_recording(
-                    action=action,
-                    start_time=self.active_recording['start_time'],
-                    end_time=timestamp,
-                    count=msg.get('count', 0)
-                )
-
-                self.action_counts[action] = self.action_counts.get(action, 0) + 1
-                self.total_recordings += 1
+                # Clear active recording immediately so UI updates
                 self.active_recording = None
+
+            # Save recording WITHOUT holding the lock (this takes time)
+            self.save_recording(
+                action=recording_info['action'],
+                start_time=recording_info['start_time'],
+                end_time=recording_info['end_time'],
+                count=recording_info['count']
+            )
+
+            # Update stats
+            self.action_counts[action] = self.action_counts.get(action, 0) + 1
+            self.total_recordings += 1
 
     def save_recording(self, action, start_time, end_time, count):
         """Save recording to CSV file"""
         filename = f"{action}_{start_time}_to_{end_time}.csv"
         filepath = self.output_dir / filename
 
+        # Copy data from buffer quickly with lock held
         with self.lock:
             start_ns = start_time * 1_000_000
             end_ns = end_time * 1_000_000
@@ -489,6 +500,7 @@ class DataCollectionDashboard:
                 if start_ns <= entry['timestamp'] <= end_ns
             ]
 
+        # Write to file WITHOUT lock (this is the slow part)
         self._save_csv(filepath, recording_data)
         return filename
 

@@ -20,10 +20,10 @@ IMPORTANT: Data Format
     - linear_acceleration (accel_x, accel_y, accel_z)
     - gyroscope (gyro_x, gyro_y, gyro_z)
     - rotation_vector (rot_x, rot_y, rot_z, rot_w)
-    
+
     The CSV files store each packet as a row with the sensor type.
     This is CORRECT behavior - each row has non-zero values only for its sensor type.
-    
+
     To verify data quality, use: python src/inspect_csv_data.py <csv_file>
 """
 
@@ -489,11 +489,11 @@ class ButtonDataCollector:
         """Print current collection progress"""
         print(f"\n📊 Progress: {self.total_recordings} total recordings")
 
-        # Print counts in grid format
-        print("   WALK: {walk:2d}  IDLE: {idle:2d}".format(**self.action_counts))
-        print("  PUNCH: {punch:2d}  JUMP: {jump:2d}".format(**self.action_counts))
-        print("  TURN_L: {turn_left:2d}  TURN_R: {turn_right:2d}".format(**self.action_counts))
-        print("  NOISE: {noise:2d}\n".format(**self.action_counts))
+        # Print counts in grid format (with defaults for missing keys)
+        print(f"   WALK: {self.action_counts.get('walk', 0):2d}  IDLE: {self.action_counts.get('idle', 0):2d}")
+        print(f"  PUNCH: {self.action_counts.get('punch', 0):2d}  JUMP: {self.action_counts.get('jump', 0):2d}")
+        print(f"  TURN_L: {self.action_counts.get('turn_left', 0):2d}  TURN_R: {self.action_counts.get('turn_right', 0):2d}")
+        print(f"  NOISE: {self.action_counts.get('noise', 0):2d}\n")
 
     def print_statistics(self):
         """Print final session statistics"""
