@@ -36,16 +36,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DataCollectorScreen(viewModel: DataCollectorViewModel = viewModel()) {
     val context = LocalContext.current
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    
+
     // Initialize ViewModel with context
     LaunchedEffect(Unit) {
         viewModel.initialize(context)
     }
-    
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -67,19 +68,19 @@ fun DataCollectorScreen(viewModel: DataCollectorViewModel = viewModel()) {
         ) {
             // IP Configuration Section
             IpConfigSection(viewModel)
-            
+
             // Connection Status
             Text(
                 text = viewModel.connectionStatus.value,
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (viewModel.connectionStatus.value.startsWith("Connected")) 
+                color = if (viewModel.connectionStatus.value.startsWith("Connected"))
                     Color(0xFF4CAF50) else Color(0xFFF44336),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             // Button Grid
             ButtonGrid(
                 viewModel = viewModel,
@@ -91,9 +92,9 @@ fun DataCollectorScreen(viewModel: DataCollectorViewModel = viewModel()) {
                     }
                 }
             )
-            
+
             Spacer(modifier = Modifier.weight(1f))
-            
+
             // Reset Button
             Button(
                 onClick = { viewModel.resetCounts() },
@@ -112,7 +113,7 @@ fun DataCollectorScreen(viewModel: DataCollectorViewModel = viewModel()) {
 fun IpConfigSection(viewModel: DataCollectorViewModel) {
     var ipInput by remember { mutableStateOf(viewModel.serverIP.value) }
     var showDialog by remember { mutableStateOf(false) }
-    
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -126,7 +127,7 @@ fun IpConfigSection(viewModel: DataCollectorViewModel) {
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
-            
+
             Button(
                 onClick = { showDialog = true },
                 modifier = Modifier.fillMaxWidth()
@@ -135,7 +136,7 @@ fun IpConfigSection(viewModel: DataCollectorViewModel) {
             }
         }
     }
-    
+
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -191,7 +192,7 @@ fun ButtonGrid(viewModel: DataCollectorViewModel, onVibrate: (Long) -> Unit) {
                 modifier = Modifier.weight(1f)
             )
         }
-        
+
         // Row 2: PUNCH, JUMP
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -210,7 +211,7 @@ fun ButtonGrid(viewModel: DataCollectorViewModel, onVibrate: (Long) -> Unit) {
                 modifier = Modifier.weight(1f)
             )
         }
-        
+
         // Row 3: TURN_LEFT, TURN_RIGHT
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -242,12 +243,12 @@ fun ActionButton(
     val count = viewModel.actionCounts[action] ?: 0
     val isRecording = viewModel.recordingAction.value == action
     val countColor = viewModel.getCountColor(count)
-    
+
     val backgroundColor = when {
         isRecording -> Color(0xFF4CAF50) // Green when recording
         else -> Color(0xFF757575) // Gray when not recording
     }
-    
+
     Card(
         modifier = modifier
             .aspectRatio(1f)
@@ -257,10 +258,10 @@ fun ActionButton(
                         // Button pressed
                         viewModel.onButtonPressed(action)
                         onVibrate(50) // Short vibration
-                        
+
                         // Wait for release
                         tryAwaitRelease()
-                        
+
                         // Button released
                         viewModel.onButtonReleased(action)
                         onVibrate(100) // Longer vibration on release
@@ -285,9 +286,9 @@ fun ActionButton(
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = "Count: $count",
                 fontSize = 14.sp,
