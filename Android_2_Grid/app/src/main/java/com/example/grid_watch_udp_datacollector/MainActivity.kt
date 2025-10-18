@@ -95,15 +95,25 @@ fun DataCollectorScreen(viewModel: DataCollectorViewModel = viewModel()) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Reset Button
+            // Reset Button - Vibrant and prominent
             Button(
                 onClick = { viewModel.resetCounts() },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
+                    containerColor = Color(0xFFE91E63) // Hot pink
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 12.dp
                 )
             ) {
-                Text("Reset All Counts")
+                Text(
+                    text = "🔄 RESET ALL COUNTS",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -244,9 +254,18 @@ fun ActionButton(
     val isRecording = viewModel.recordingAction.value == action
     val countColor = viewModel.getCountColor(count)
 
+    // Vibrant color palette based on action type
     val backgroundColor = when {
-        isRecording -> Color(0xFF4CAF50) // Green when recording
-        else -> Color(0xFF757575) // Gray when not recording
+        isRecording -> Color(0xFF00E676) // Bright neon green when recording
+        else -> when (action) {
+            "WALK" -> Color(0xFF2196F3) // Bright blue
+            "IDLE" -> Color(0xFF9C27B0) // Purple
+            "PUNCH" -> Color(0xFFFF5722) // Deep orange/red
+            "JUMP" -> Color(0xFFFFEB3B) // Yellow
+            "TURN_LEFT" -> Color(0xFF00BCD4) // Cyan
+            "TURN_RIGHT" -> Color(0xFFFF4081) // Pink
+            else -> Color(0xFF607D8B) // Blue-gray fallback
+        }
     }
 
     Card(
@@ -268,7 +287,7 @@ fun ActionButton(
                     }
                 )
             },
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isRecording) 8.dp else 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isRecording) 8.dp else 4.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Column(
@@ -282,7 +301,7 @@ fun ActionButton(
                 text = action.replace("_", " "),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = if (action == "JUMP") Color.Black else Color.White, // Black text for yellow button
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp
             )
@@ -292,7 +311,7 @@ fun ActionButton(
             Text(
                 text = "Count: $count",
                 fontSize = 14.sp,
-                color = countColor,
+                color = if (action == "JUMP") Color.Black else countColor,
                 fontWeight = FontWeight.Bold
             )
         }
