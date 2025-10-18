@@ -33,6 +33,28 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
     </a>
   </div>
 
+## 🚨 Model Only Predicts "Walk"? READ THIS FIRST!
+
+If your trained model has **77-78% accuracy but 0% recall for jump/punch/turn/noise**, you have a class imbalance issue. This is common and easily fixable!
+
+**Quick Fix (30 minutes):**
+- Your Colab notebook already has the solution (class weight softening)
+- Just retrain: Runtime → Restart runtime → Run all cells
+- Expected result: All gestures working with 85-90% accuracy
+
+**Documentation:**
+- 😓 **Tired? Quick fix:** [WHEN_YOURE_TIRED.md](WHEN_YOURE_TIRED.md)
+- 🎯 **Want details:** [START_HERE.md](START_HERE.md)
+- 📊 **Full guide:** [LEVEL_THE_PLAYING_FIELD.md](LEVEL_THE_PLAYING_FIELD.md)
+- 📈 **Before/after:** [BEFORE_AFTER_RESULTS.md](BEFORE_AFTER_RESULTS.md)
+
+**Automated tools:**
+```bash
+python fix_class_imbalance.py --export  # Get ready-to-paste code
+```
+
+---
+
 ## 🎮 Features
 
 ![Hornet from Hollowknight: Silksong Colors](distribution.png)
