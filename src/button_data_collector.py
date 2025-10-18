@@ -186,19 +186,54 @@ class ButtonDataCollector:
             # Sensor data - parse and buffer
             self.last_watch_data = time.time()
 
+            # Parse sensor values (handle both formats)
+            values = msg.get('values', {})
+
+            # Extract acceleration (linear_acceleration sensor)
+            if msg.get('sensor') == 'linear_acceleration':
+                accel_x = values.get('x', msg.get('accel_x', 0.0))
+                accel_y = values.get('y', msg.get('accel_y', 0.0))
+                accel_z = values.get('z', msg.get('accel_z', 0.0))
+            else:
+                accel_x = msg.get('accel_x', 0.0)
+                accel_y = msg.get('accel_y', 0.0)
+                accel_z = msg.get('accel_z', 0.0)
+
+            # Extract gyroscope
+            if msg.get('sensor') == 'gyroscope':
+                gyro_x = values.get('x', msg.get('gyro_x', 0.0))
+                gyro_y = values.get('y', msg.get('gyro_y', 0.0))
+                gyro_z = values.get('z', msg.get('gyro_z', 0.0))
+            else:
+                gyro_x = msg.get('gyro_x', 0.0)
+                gyro_y = msg.get('gyro_y', 0.0)
+                gyro_z = msg.get('gyro_z', 0.0)
+
+            # Extract rotation (rotation_vector sensor)
+            if msg.get('sensor') == 'rotation_vector':
+                rot_x = values.get('x', msg.get('rot_x', 0.0))
+                rot_y = values.get('y', msg.get('rot_y', 0.0))
+                rot_z = values.get('z', msg.get('rot_z', 0.0))
+                rot_w = values.get('w', msg.get('rot_w', 1.0))
+            else:
+                rot_x = msg.get('rot_x', 0.0)
+                rot_y = msg.get('rot_y', 0.0)
+                rot_z = msg.get('rot_z', 0.0)
+                rot_w = msg.get('rot_w', 1.0)
+
             sensor_entry = {
                 'timestamp': msg.get('timestamp_ns', msg.get('timestamp', time.time() * 1e9)),
                 'sensor': msg.get('sensor', 'unknown'),
-                'accel_x': msg.get('accel_x', 0.0),
-                'accel_y': msg.get('accel_y', 0.0),
-                'accel_z': msg.get('accel_z', 0.0),
-                'gyro_x': msg.get('gyro_x', 0.0),
-                'gyro_y': msg.get('gyro_y', 0.0),
-                'gyro_z': msg.get('gyro_z', 0.0),
-                'rot_x': msg.get('rot_x', 0.0),
-                'rot_y': msg.get('rot_y', 0.0),
-                'rot_z': msg.get('rot_z', 0.0),
-                'rot_w': msg.get('rot_w', 1.0)
+                'accel_x': accel_x,
+                'accel_y': accel_y,
+                'accel_z': accel_z,
+                'gyro_x': gyro_x,
+                'gyro_y': gyro_y,
+                'gyro_z': gyro_z,
+                'rot_x': rot_x,
+                'rot_y': rot_y,
+                'rot_z': rot_z,
+                'rot_w': rot_w
             }
 
             # Add to main buffer
@@ -252,6 +287,14 @@ class ButtonDataCollector:
         action = msg.get('action')
         event = msg.get('event')
         timestamp = msg.get('timestamp_ms')
+
+        # Update phone connection status
+        self.last_phone_data = time.time()
+
+        # Handle test ping
+        if event == 'ping':
+            print(f"📱 Test ping received from {addr[0]}")
+            return
 
         if event == 'start':
             with self.lock:
@@ -317,24 +360,24 @@ class ButtonDataCollector:
                 if start_ns <= entry['timestamp'] <= end_ns
             ]
 
-        # Save to CSV
+        # Save to CSV with corrected column order (matches old format)
         with open(filepath, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow([
-                'timestamp', 'sensor',
                 'accel_x', 'accel_y', 'accel_z',
                 'gyro_x', 'gyro_y', 'gyro_z',
-                'rot_x', 'rot_y', 'rot_z', 'rot_w'
+                'rot_w', 'rot_x', 'rot_y', 'rot_z',
+                'sensor', 'timestamp'
             ])
 
-            # Write sensor data
+            # Write sensor data with correct order
             for entry in recording_data:
                 writer.writerow([
-                    entry['timestamp'],
-                    entry['sensor'],
                     entry['accel_x'], entry['accel_y'], entry['accel_z'],
                     entry['gyro_x'], entry['gyro_y'], entry['gyro_z'],
-                    entry['rot_x'], entry['rot_y'], entry['rot_z'], entry['rot_w']
+                    entry['rot_w'], entry['rot_x'], entry['rot_y'], entry['rot_z'],
+                    entry['sensor'],
+                    entry['timestamp']
                 ])
 
         print(f"   💾 Saved {len(recording_data)} sensor samples to {filename}")
@@ -403,26 +446,26 @@ class ButtonDataCollector:
         return segments
 
     def _save_noise_segment(self, filename, segment):
-        """Save a noise segment to CSV"""
+        """Save a noise segment to CSV with corrected column order"""
         filepath = self.output_dir / filename
 
         with open(filepath, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow([
-                'timestamp', 'sensor',
                 'accel_x', 'accel_y', 'accel_z',
                 'gyro_x', 'gyro_y', 'gyro_z',
-                'rot_x', 'rot_y', 'rot_z', 'rot_w'
+                'rot_w', 'rot_x', 'rot_y', 'rot_z',
+                'sensor', 'timestamp'
             ])
 
-            # Write actual sensor data
+            # Write actual sensor data with correct order
             for entry in segment:
                 writer.writerow([
-                    entry['timestamp'],
-                    entry['sensor'],
                     entry['accel_x'], entry['accel_y'], entry['accel_z'],
                     entry['gyro_x'], entry['gyro_y'], entry['gyro_z'],
-                    entry['rot_x'], entry['rot_y'], entry['rot_z'], entry['rot_w']
+                    entry['rot_w'], entry['rot_x'], entry['rot_y'], entry['rot_z'],
+                    entry['sensor'],
+                    entry['timestamp']
                 ])
 
     def print_progress(self):

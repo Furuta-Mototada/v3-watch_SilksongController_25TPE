@@ -317,12 +317,14 @@ fun ActionButton(
                         viewModel.onButtonPressed(action)
                         onVibrate(50) // Short vibration
 
-                        // Wait for release
-                        tryAwaitRelease()
+                        // Wait for release (non-blocking)
+                        val released = tryAwaitRelease()
 
                         // Button released
-                        viewModel.onButtonReleased(action)
-                        onVibrate(100) // Longer vibration on release
+                        if (released) {
+                            viewModel.onButtonReleased(action)
+                            onVibrate(100) // Longer vibration on release
+                        }
                     }
                 )
             },

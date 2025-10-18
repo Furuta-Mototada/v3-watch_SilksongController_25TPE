@@ -146,7 +146,7 @@ class DataCollectorViewModel : ViewModel() {
         // Send a test ping message to verify connection
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val testMessage = """{"type":"test_ping","timestamp_ms":${System.currentTimeMillis()}}"""
+                val testMessage = """{"type":"label_event","action":"test","event":"ping","timestamp_ms":${System.currentTimeMillis()}}"""
                 sendUdpMessage(testMessage)
                 viewModelScope.launch(Dispatchers.Main) {
                     connectionStatus.value = "Test ping sent to ${serverIP.value}"
