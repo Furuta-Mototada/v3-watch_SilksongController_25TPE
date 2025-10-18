@@ -4,7 +4,10 @@ Button Data Collector - Python Backend
 Receives UDP label events from Android button grid app and saves labeled sensor data.
 
 Usage:
-    python button_data_collector.py
+    python button_data_collector.py [--skip-noise]
+
+Options:
+    --skip-noise    Skip baseline noise capture (for testing)
 
 Requirements:
     - Watch app streaming sensor data on port 12345
@@ -16,6 +19,7 @@ import json
 import socket
 import threading
 import time
+import sys
 from collections import deque
 from datetime import datetime
 from pathlib import Path
@@ -23,10 +27,11 @@ import csv
 
 
 class ButtonDataCollector:
-    def __init__(self, udp_port=12345, output_dir="data/button_collected"):
+    def __init__(self, udp_port=12345, output_dir="data/button_collected", skip_noise=False):
         self.udp_port = udp_port
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.skip_noise = skip_noise
 
         # Buffer for sensor data (keep last 30 seconds at 50Hz = 1500 samples)
         self.sensor_buffer = deque(maxlen=1500)
@@ -36,7 +41,7 @@ class ButtonDataCollector:
 
         # Noise capture
         self.noise_buffer = []
-        self.baseline_noise_captured = False
+        self.baseline_noise_captured = skip_noise  # Skip if flag set
         self.baseline_noise_duration = 30  # seconds
         self.noise_start_time = None
 
@@ -122,8 +127,13 @@ class ButtonDataCollector:
                             input()
 
                             print(f"\n🚀 Collection started!")
-                            print(f"�🔇 DEFAULT STATE: NOISE MODE (all data labeled as noise unless button pressed)")
-                            print(f"📊 Capturing {self.baseline_noise_duration}s baseline noise...\n")
+                            
+                            if not self.skip_noise:
+                                print(f" DEFAULT STATE: NOISE MODE (all data labeled as noise unless button pressed)")
+                                print(f"📊 Capturing {self.baseline_noise_duration}s baseline noise...\n")
+                            else:
+                                print(f"⚡ SKIP NOISE MODE: Noise capture disabled for testing")
+                                print(f"✋ Ready for button presses immediately!\n")
 
                             ready_to_start = True
                             self.noise_start_time = time.time()
@@ -160,7 +170,8 @@ class ButtonDataCollector:
 
         except KeyboardInterrupt:
             print("\n\n🛑 Stopping data collector...")
-            self.segment_and_save_noise()
+            if not self.skip_noise:
+                self.segment_and_save_noise()
             self.print_statistics()
         finally:
             sock.close()
@@ -421,7 +432,10 @@ class ButtonDataCollector:
 
 def main():
     """Main entry point"""
-    collector = ButtonDataCollector()
+    # Parse command line arguments
+    skip_noise = '--skip-noise' in sys.argv
+    
+    collector = ButtonDataCollector(skip_noise=skip_noise)
 
     print("""
 ╔═══════════════════════════════════════════════════════════╗
@@ -435,8 +449,14 @@ Instructions:
 4. Press and hold buttons while performing gestures
 5. Watch this console for confirmation messages
 
+Options:
+  --skip-noise    Skip baseline noise capture (for testing)
+
 Press Ctrl+C to stop and see statistics.
 """)
+
+    if skip_noise:
+        print("⚡ SKIP NOISE MODE ENABLED - Noise capture will be skipped\n")
 
     try:
         collector.start()

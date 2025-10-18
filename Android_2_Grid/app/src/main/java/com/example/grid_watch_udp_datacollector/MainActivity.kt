@@ -95,25 +95,45 @@ fun DataCollectorScreen(viewModel: DataCollectorViewModel = viewModel()) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Reset Button - Vibrant and prominent
-            Button(
-                onClick = { viewModel.resetCounts() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFE91E63) // Hot pink
-                ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 12.dp
-                )
+            // Action Buttons Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = "🔄 RESET ALL COUNTS",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                // Test Connection Button
+                Button(
+                    onClick = { viewModel.testConnection() },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF2C2C2C) // Dark gray
+                    )
+                ) {
+                    Text(
+                        text = "Connect",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White.copy(alpha = 0.9f)
+                    )
+                }
+
+                // Reset Button
+                Button(
+                    onClick = { viewModel.resetCounts() },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF6B6B) // Soft red
+                    )
+                ) {
+                    Text(
+                        text = "Reset",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
     }
@@ -252,20 +272,30 @@ fun ActionButton(
 ) {
     val count = viewModel.actionCounts[action] ?: 0
     val isRecording = viewModel.recordingAction.value == action
-    val countColor = viewModel.getCountColor(count)
 
-    // Vibrant color palette based on action type
+    // Dark sophisticated color palette inspired by banking app
     val backgroundColor = when {
-        isRecording -> Color(0xFF00E676) // Bright neon green when recording
+        isRecording -> Color(0xFF1E1E1E) // Very dark gray when recording
         else -> when (action) {
-            "WALK" -> Color(0xFF2196F3) // Bright blue
-            "IDLE" -> Color(0xFF9C27B0) // Purple
-            "PUNCH" -> Color(0xFFFF5722) // Deep orange/red
-            "JUMP" -> Color(0xFFFFEB3B) // Yellow
-            "TURN_LEFT" -> Color(0xFF00BCD4) // Cyan
-            "TURN_RIGHT" -> Color(0xFFFF4081) // Pink
-            else -> Color(0xFF607D8B) // Blue-gray fallback
+            "WALK" -> Color(0xFF2C2C2C) // Dark charcoal
+            "IDLE" -> Color(0xFF2E2E2E) // Dark gray
+            "PUNCH" -> Color(0xFF3A2B2B) // Dark brown-red
+            "JUMP" -> Color(0xFF2F2F2F) // Dark neutral
+            "TURN_LEFT" -> Color(0xFF2A2D2E) // Dark blue-gray
+            "TURN_RIGHT" -> Color(0xFF302A2E) // Dark purple-gray
+            else -> Color(0xFF2B2B2B) // Dark fallback
         }
+    }
+
+    // Subtle accent colors for recording state
+    val accentColor = when (action) {
+        "WALK" -> Color(0xFF4A90E2) // Soft blue
+        "IDLE" -> Color(0xFF9B9B9B) // Light gray
+        "PUNCH" -> Color(0xFFE74C3C) // Soft red
+        "JUMP" -> Color(0xFFF39C12) // Soft orange
+        "TURN_LEFT" -> Color(0xFF3498DB) // Light blue
+        "TURN_RIGHT" -> Color(0xFFE91E63) // Soft pink
+        else -> Color(0xFF95A5A6) // Gray accent
     }
 
     Card(
@@ -287,33 +317,46 @@ fun ActionButton(
                     }
                 )
             },
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isRecording) 8.dp else 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isRecording) 8.dp else 2.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text(
-                text = action.replace("_", " "),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (action == "JUMP") Color.Black else Color.White, // Black text for yellow button
-                textAlign = TextAlign.Center,
-                lineHeight = 20.sp
-            )
+            // Subtle gradient overlay when recording
+            if (isRecording) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(accentColor.copy(alpha = 0.2f))
+                )
+            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = action.replace("_", " "),
+                    fontSize = 16.sp,
+                    fontWeight = if (isRecording) FontWeight.Bold else FontWeight.Medium,
+                    color = if (isRecording) accentColor else Color.White.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center,
+                    lineHeight = 18.sp
+                )
 
-            Text(
-                text = "Count: $count",
-                fontSize = 14.sp,
-                color = if (action == "JUMP") Color.Black else countColor,
-                fontWeight = FontWeight.Bold
-            )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "$count",
+                    fontSize = 24.sp,
+                    color = if (isRecording) accentColor else Color.White.copy(alpha = 0.6f),
+                    fontWeight = FontWeight.Light
+                )
+            }
         }
     }
 }

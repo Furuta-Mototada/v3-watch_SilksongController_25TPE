@@ -142,6 +142,21 @@ class DataCollectorViewModel : ViewModel() {
         }
     }
     
+    fun testConnection() {
+        // Send a test ping message to verify connection
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val testMessage = """{"type":"test_ping","timestamp_ms":${System.currentTimeMillis()}}"""
+                sendUdpMessage(testMessage)
+                viewModelScope.launch(Dispatchers.Main) {
+                    connectionStatus.value = "Test ping sent to ${serverIP.value}"
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("DataCollector", "Test connection failed", e)
+            }
+        }
+    }
+    
     private fun isValidIpAddress(ip: String): Boolean {
         return try {
             val parts = ip.split(".")
