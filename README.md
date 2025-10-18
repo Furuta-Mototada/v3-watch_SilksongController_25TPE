@@ -1,317 +1,209 @@
-# Silksong Motion Controller v3 - Pixel Watch Edition
+# Silksong Motion Controller - Machine Learning Pipeline (First Draft)
 
-Control Hollow Knight: Silksong using motion gestures from a Pixel Watch! This project uses real-time sensor data (accelerometer, gyroscope, rotation vector, step detector) streamed over UDP from an Android Wear OS app to a Python controller that simulates keyboard inputs.
+**Course**: CS156 Machine Learning  
+**Project**: Motion Gesture Recognition for Game Control  
+**Hardware**: Pixel Watch (Wear OS) + Python Controller
+
+Control Hollow Knight: Silksong using motion gestures from a smartwatch. This project demonstrates a complete machine learning pipeline from data collection through model deployment, using real-time IMU sensor data streamed over UDP.
 
 Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController_25TPE)
 
-<div>
-    <a href="https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf">
-      <p>1 - Watch Data Transmitted! - Watch Video</p>
-    </a>
-    <a href="https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf">
-      <img style="max-width:100vw;" src="https://cdn.loom.com/sessions/thumbnails/175721940a354cb98fe0ec2a13e2bddf-3d20da5d3c764dc4-full-play.gif">
-    </a>
-  </div>
+---
 
-![data collection complete oct 14 2025](telegram-cloud-photo-size-5-6300675731876416733-y-1.jpg)
+**⚠️ Academic Context**: This is a **first draft** machine learning pipeline for educational purposes. The focus is on demonstrating ML fundamentals (data collection, feature engineering, model training, deployment) rather than achieving production-ready performance. Second and final draft iterations will follow.
 
-<div>
-    <a href="https://www.loom.com/share/dfb0398e038c409084696484e159a588">
-      <p>SVM Live Demo (Bad Performance)- Watch Video</p>
-    </a>
-    <a href="https://www.loom.com/share/dfb0398e038c409084696484e159a588">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/dfb0398e038c409084696484e159a588-cd70ba8caabdfa18-full-play.gif">
-    </a>
-  </div>
+## 📹 Demo Videos
 
-<div>
-    <a href="https://www.loom.com/share/db304cbfea1d4fa4914256f097d4a166">
-      <p>v3 cnn - how im collecting data - Watch Video</p>
-    </a>
-    <a href="https://www.loom.com/share/db304cbfea1d4fa4914256f097d4a166">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/db304cbfea1d4fa4914256f097d4a166-b2ff6573e4a9ecc7-full-play.gif">
-    </a>
-  </div>
+**Watch Data Transmission**: [Loom Video](https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf) - NSD discovery and UDP streaming  
+**SVM Controller Demo**: [Loom Video](https://www.loom.com/share/dfb0398e038c409084696484e159a588) - Phase III real-time gesture recognition  
+**Voice-Labeled Data Collection**: [Loom Video](https://www.loom.com/share/db304cbfea1d4fa4914256f097d4a166) - Phase V collection process
 
-## 🎮 Features
+## 🎓 Learning Objectives
 
-![Hornet from Hollowknight: Silksong Colors](distribution.png)
+This project demonstrates:
 
-- **Motion-based game control**: Walk, jump, attack, and turn using natural body movements
-- **Pixel Watch integration**: Wear OS app captures sensor data from your smartwatch
-- **Automatic device discovery**: "Magic link" feature - no manual IP configuration needed! 🎯
-- **Real-time UDP streaming**: Low-latency sensor data transmission
-- **Configurable thresholds**: Calibrate sensitivity for different play styles
-- **Cross-platform Python backend**: Works on Windows, macOS, and Linux
+1. **Data Collection**: Voice-labeled continuous recording with WhisperX post-processing
+2. **Feature Engineering**: Time-series features from IMU data (accel, gyro, rotation)
+3. **Model Training**: SVM (local) and CNN-LSTM (Colab) architectures
+4. **Real-time Deployment**: Multi-threaded Python controller with <500ms latency
+5. **Iteration & Design Thinking**: Documented exploration of data collection methods
+
+## 🎮 Key Features
+
+- **Smartwatch Sensors**: Accelerometer, gyroscope, rotation vector, step detector
+- **Automatic Discovery**: NSD (Network Service Discovery) - no manual IP setup
+- **Real-time UDP Streaming**: ~50Hz sensor data transmission
+- **ML-Powered Gestures**: Walk, jump, attack, turn detection via trained models
+- **Voice-Labeled Training Data**: Natural gameplay with retrospective labeling
 
 ## 📁 Project Structure
 
 ```text
 v3-watch_SilksongController_25TPE/
-├── Android/                    # Wear OS Android app
-│   └── app/
-│       ├── build.gradle.kts   # Android build configuration
-│       └── src/main/
-│           ├── AndroidManifest.xml
-│           └── java/com/cvk/silksongcontroller/
-│               └── MainActivity.kt
-├── src/                       # Python source code
-│   ├── udp_listener.py       # Main controller logic
-│   ├── network_utils.py      # UDP network handling
-│   ├── calibrate.py          # Calibration tool
-│   ├── data_collector.py     # Phase II: ML training data collection
-│   └── feature_extractor.py  # Phase III: Feature engineering module
-├── models/                    # Trained ML models (Phase III output)
-│   ├── gesture_classifier.pkl
-│   ├── feature_scaler.pkl
-│   └── README.md
-├── docs/                      # Documentation
-│   ├── Phase_II/             # Data collection guides
-│   └── Phase_III/            # ML pipeline documentation
-├── installer/                # Installation scripts and templates
-│   ├── INSTALLATION_GUIDE.md
-│   ├── run_controller.sh/bat
-│   └── run_calibration.sh/bat
-├── CS156_Silksong_Watch.ipynb # Phase III: ML Pipeline Notebook
-├── config.json              # Runtime configuration
-└── requirements.txt         # Python dependencies (includes ML libs)
+├── Android/                         # Wear OS app (streams sensor data via UDP)
+│   └── app/src/main/java/com/cvk/silksongcontroller/
+│       └── MainActivity.kt          # Sensor streaming + NSD discovery
+├── src/                             # Python ML pipeline
+│   ├── udp_listener.py             # Real-time gesture controller (Phase IV)
+│   ├── continuous_data_collector.py # Voice-labeled data collection (Phase V)
+│   ├── feature_extractor.py        # Feature engineering (~60 features)
+│   ├── data/                       # Training data
+│   │   ├── continuous/             # Voice-labeled sessions
+│   │   └── archive/                # Historical data + scripts
+│   └── models/                     # ML model code
+│       └── cnn_lstm_model.py       # Deep learning architecture
+├── notebooks/                       # Jupyter notebooks for training
+│   ├── watson_Colab_CNN_LSTM_Training.ipynb  # Colab training pipeline
+│   └── archive/                    # Previous training experiments
+├── models/                          # Trained model artifacts (generated)
+│   ├── README.md                   # Model documentation
+│   └── archive/                    # Previous model versions
+├── docs/                            # Documentation organized by phase
+│   ├── Phase_II/                   # Manual data collection
+│   ├── Phase_III/                  # SVM training (local)
+│   ├── Phase_IV/                   # Multi-threaded ML controller
+│   ├── Phase_V/                    # Voice-labeled collection + WhisperX
+│   ├── ALTERNATIVE_DATA_COLLECTION_BRAINSTORM.md  # Future improvements
+│   ├── CHRONOLOGICAL_NARRATIVE.md  # Project history
+│   └── archive/                    # Historical docs and troubleshooting
+├── config.json                      # Runtime configuration
+└── requirements.txt                 # Python dependencies
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Hardware**: Pixel Watch or compatible Wear OS device
+- **Hardware**: Pixel Watch (Wear OS)
 - **Software**:
-  - Android Studio (for building the watch app)
-  - Python 3.8+ (for the controller)
-  - Hollow Knight: Silksong (game)
+  - Python 3.8+ with pip
+  - Android Studio (for watch app)
+  - Google Colab (for CNN-LSTM training)
 
 ### Installation
 
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/CarlKho-Minerva/v3-watch_SilksongController_25TPE.git
-   cd v3-watch_SilksongController_25TPE
-   ```
-
-2. **Install Python dependencies**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Build and install the Android app**
-   - Open `Android/` folder in Android Studio
-   - Build and deploy to your Pixel Watch
-   - ✨ The app will automatically discover your computer on the network!
-
-4. **Run calibration**
-
-   ```bash
-   python src/calibrate.py
-   ```
-
-5. **Start the controller**
-
-   ```bash
-   python src/udp_listener.py
-   ```
-
-See `installer/INSTALLATION_GUIDE.md` for detailed setup instructions.
-
-## 🌟 Automatic Connection
-
-The controller features **automatic device discovery** using Network Service Discovery (NSD):
-
-1. **Start the Python controller** - it automatically advertises itself on your local network
-2. **Launch the watch app** - watch the connection status at the top:
-   - 🟠 "Searching..." - discovering services
-   - 🟢 "Connected!" - server found and ready
-3. **Start playing!** - no manual IP configuration needed
-
-The watch app will automatically find your computer if both devices are on the same WiFi network. Manual IP entry is still available as a fallback option.
-
-## ⚙️ Configuration
-
-Edit `config.json` to adjust:
-
-- **Network settings**: IP address and port
-- **Thresholds**: Sensitivity for gestures (punch, jump, turn, walk)
-- **Keyboard mappings**: Custom key bindings
-
-## 📊 Phase II: Machine Learning Data Collection
-
-In addition to real-time gesture control, this project includes a guided data collection system for training ML models:
-
 ```bash
-python src/data_collector.py
-```
+# 1. Clone repository
+git clone https://github.com/CarlKho-Minerva/v3-watch_SilksongController_25TPE.git
+cd v3-watch_SilksongController_25TPE
 
-This tool:
-
-- Guides you through structured gesture recording sessions
-- Defines clear physical stances (Combat, Neutral, Travel)
-- Records labeled IMU sensor data for 8 different gestures
-- Exports training data in ML-ready CSV format
-- Takes ~20-30 minutes for a complete session
-
-**Use Cases**:
-
-- Train personalized gesture recognition models
-- Build more robust classifiers than threshold-based detection
-- Research and experimentation with IMU gesture recognition
-- Create custom gesture sets
-
-See `docs/Phase_II/DATA_COLLECTION_GUIDE.md` for full documentation.
-
-## 🤖 Phase III: Machine Learning Pipeline
-
-Transform collected sensor data into a trained gesture recognition model using a comprehensive Jupyter Notebook:
-
-```bash
-# Install ML dependencies
+# 2. Install Python dependencies
 pip install -r requirements.txt
 
-# Run the ML pipeline notebook
-jupyter notebook CS156_Silksong_Watch.ipynb
-```
+# 3. Build Android app (see Android Studio instructions in installer/INSTALLATION_GUIDE.md)
 
-**The notebook includes:**
-
-- ✅ Data loading and exploration
-- ✅ Feature engineering (~60+ features from time-series data)
-- ✅ Model training (SVM with RBF kernel + Random Forest)
-- ✅ Hyperparameter tuning via GridSearchCV
-- ✅ Model evaluation and validation
-- ✅ Model serialization for deployment
-
-**Output Models:**
-
-- `models/gesture_classifier.pkl` - Trained SVM classifier
-- `models/feature_scaler.pkl` - Feature normalization scaler
-- `models/feature_names.pkl` - Feature reference list
-- `models/model_metadata.json` - Performance metrics
-
-**Performance Targets:**
-
-- Test accuracy: >85%
-- Real-time latency: <100ms
-- Confidence threshold: 0.7 (70%)
-
-See `docs/Phase_III/README.md` for complete ML pipeline documentation.
-
-## 🚀 Phase IV: Multi-Threaded ML Controller ✅ **COMPLETE**
-
-**Fully ML-powered** gesture recognition system with decoupled architecture for low-latency real-time performance:
-
-### Architecture
-
-**Collector Thread** → **Predictor Thread** → **Actor Thread**
-
-1. **Collector**: Reads UDP sensor data at network speed, no processing delay
-2. **Predictor**: Runs ML inference continuously on 0.3s micro-windows
-3. **Actor**: Executes keyboard actions with confidence gating (5 consecutive predictions)
-
-### Key Features
-
-- **Micro-Windows**: 0.3s windows instead of 2.5s for <500ms latency
-- **Continuous Prediction**: No fixed intervals, predicts as fast as CPU allows
-- **Confidence Gating**: Requires 5 consecutive matching predictions for stable state changes
-- **Thread-Safe Queues**: Producer-consumer pattern eliminates bottlenecks
-- **All ML**: Jump, punch, turn, and walk all handled by ML model
-
-### Performance
-
-- **Latency**: <500ms (down from 1+ second)
-- **Responsiveness**: Near real-time gesture detection
-- **CPU**: ~30-40% single-core usage
-
-See `docs/Phase_IV/README.md` for complete documentation.
-
-## 🎙️ Phase V: Voice-Controlled Data Collection + WhisperX Post-Processing
-
-**Continuous motion data collection** using voice commands with retrospective WhisperX processing:
-
-### Features
-
-- **Audio Recording**: Records audio alongside sensor data during gameplay
-- **WhisperX Post-Processing**: Research-grade word segmentation with forced alignment
-- **Automated Workflow**: One-command processing with `process_transcripts.sh`
-- **Natural Gameplay**: No performance impact during recording
-- **Word-Level Timestamps**: Precise alignment of voice commands to sensor data
-- **Hands-Free**: Maintain natural motion while playing Hollow Knight: Silksong
-
-### Quick Start
-
-```bash
-# Install dependencies
-pip install whisperx sounddevice numpy librosa soundfile
-
-# 1. Record session (5-10 minutes)
+# 4. Run the controller
 cd src
-python continuous_data_collector.py --duration 600 --session gameplay_01
-
-# 2. Automated post-processing (WhisperX + alignment)
-cd ..
-./process_transcripts.sh YYYYMMDD_HHMMSS_gameplay_01
-
-# That's it! Your labeled training data is ready.
+python udp_listener.py
 ```
 
-### Manual Post-Processing (Alternative)
+The watch app will automatically discover your computer via NSD - no manual IP configuration needed!
 
+## 📊 Machine Learning Pipeline Overview
+
+This project evolved through multiple phases, demonstrating different approaches to gesture recognition:
+
+### Phase II: Manual Data Collection *(Archived)*
+Guided recording system with predefined physical stances and gesture prompts. Provided foundational understanding of IMU data structure.
+
+**Status**: Superseded by Phase V voice-labeled approach  
+**Location**: `docs/Phase_II/` and `docs/archive/`
+
+### Phase III: SVM Classifier *(Archived)*
+Traditional ML pipeline using hand-engineered features (~60 features from time/frequency domains) with SVM classification.
+
+**Notebook**: `notebooks/archive/CS156_Silksong_Watch.ipynb`  
+**Features**: Time-domain stats, FFT features, magnitude calculations  
+**Performance**: ~70-75% accuracy on test set  
+**Location**: `docs/Phase_III/`
+
+### Phase IV: Multi-Threaded Controller ✅ **(Current)**
+Real-time ML deployment with decoupled architecture for low-latency performance.
+
+**Architecture**: Collector → Predictor → Actor (three threads with queues)  
+**Latency**: <500ms using 0.3s micro-windows  
+**Confidence Gating**: 5 consecutive predictions for state changes  
+**Code**: `src/udp_listener.py`
+
+See `docs/Phase_IV/README.md` for architecture details.
+
+### Phase V: Voice-Labeled Data Collection ✅ **(Current)**
+Natural gameplay recording with voice commands, retrospectively processed using WhisperX for word-level timestamp alignment.
+
+**Workflow**:
 ```bash
-# Step 1: WhisperX transcription with forced alignment
-python src/whisperx_transcribe.py \
-  --audio src/data/continuous/SESSION/audio_16k.wav \
-  --model large-v3
+# 1. Record session (natural gameplay + voice labels)
+python src/continuous_data_collector.py --duration 600 --session gameplay_01
 
-# Step 2: Align voice commands to sensor data
-python src/align_voice_labels.py \
-  --session SESSION \
-  --whisper src/data/continuous/SESSION/SESSION_whisperx.json
+# 2. Post-process with WhisperX
+./process_transcripts.sh YYYYMMDD_HHMMSS_gameplay_01
 ```
 
-### Why Post-Processing?
+**Advantages**: Hands-free, natural motion, word-level timestamps  
+**Challenges**: Voice-motion coordination, noisy labels (see brainstorming doc)  
+**Location**: `docs/Phase_V/`
 
-**Problem**: Real-time Whisper processing requires significant CPU resources
+### Phase VI: Alternative Approaches *(Proposed)*
+Exploring button-grid Android app for more controlled data collection. See design thinking and expert perspectives in:
 
-**Solution**: Retrospective processing allows:
+📄 **`docs/ALTERNATIVE_DATA_COLLECTION_BRAINSTORM.md`**
 
-- No performance impact during gameplay
-- Use powerful WhisperX models with forced alignment
-- Research-grade word-level timestamp granularity
-- Re-process with different parameters
-- Natural, reactive gameplay
+This document includes:
+- Analysis of current data quality issues
+- Expert panel discussion (Ng, Li, Jordan, Norman, Ries)
+- Button grid app specification
+- Trade-offs: organic vs. controlled data collection
+- Recommendations for academic pipeline drafts
 
-### Documentation
+## 💾 Current Data Status
 
-- **Quick Start**: `docs/Phase_V/QUICK_REFERENCE.md` - Commands and workflow
-- **Full Guide**: `docs/Phase_V/POST_PROCESSING.md` - Complete documentation
-- **Data Collection**: `docs/Phase_V/DATA_COLLECTION_GUIDE.md` - Recording best practices
-- **WhisperX**: `docs/Phase_V/WhisperX/WHISPERX_GUIDE.md` - WhisperX details
+**Collected Sessions**: 5 voice-labeled gameplay sessions (archived in `src/data/archive/`)
+- Session duration: 5-10 minutes each
+- Gestures: walk, punch, jump, turn, idle
+- Format: CSV sensor data + audio recordings + WhisperX transcriptions
 
-## 🔧 Development
+**Known Issues**:
+- Labels are noisy (voice-motion coordination challenges)
+- Walk vs. non-walk classification has unclear boundaries
+- Action transitions are difficult to isolate cleanly
 
-### Android Package
+**Recommendation**: Use existing data to demonstrate the complete pipeline in first draft, acknowledge data quality limitations in write-up. For second draft, consider implementing button-grid collection method (see brainstorming doc).
 
-The Android app uses package name: `com.cvk.silksongcontroller`
+## 📚 Documentation Structure
 
-To modify the Android app:
+- **`docs/Phase_II/`** - Manual data collection (archived approach)
+- **`docs/Phase_III/`** - SVM training pipeline (archived)
+- **`docs/Phase_IV/`** - Multi-threaded controller architecture (current)
+- **`docs/Phase_V/`** - Voice-labeled data collection (current)
+- **`docs/ALTERNATIVE_DATA_COLLECTION_BRAINSTORM.md`** - Future improvements
+- **`docs/CHRONOLOGICAL_NARRATIVE.md`** - Complete project history
+- **`docs/archive/`** - Historical troubleshooting guides and training docs
 
-1. Open `Android/` in Android Studio
-2. Main code is in `Android/app/src/main/java/com/cvk/silksongcontroller/MainActivity.kt`
-3. Edit layouts in `Android/app/src/main/res/layout/`
+## 🔧 Development Notes
 
-### Python Controller
+**Android App**: 
+- Package: `com.cvk.silksongcontroller`
+- Main code: `Android/app/src/main/java/com/cvk/silksongcontroller/MainActivity.kt`
+- Streams sensor data over UDP with NSD discovery
 
-Main entry point: `src/udp_listener.py`
+**Python Controller**:
+- Entry point: `src/udp_listener.py` (Phase IV multi-threaded architecture)
+- Data collection: `src/continuous_data_collector.py` (Phase V voice labeling)
+- Feature extraction: `src/feature_extractor.py` (~60 engineered features)
 
-- Receives UDP packets from watch
-- Processes sensor data to detect gestures
-- Simulates keyboard inputs
+**Training**:
+- Local SVM: `notebooks/archive/CS156_Silksong_Watch.ipynb`
+- Colab CNN-LSTM: `notebooks/watson_Colab_CNN_LSTM_Training.ipynb`
+
+## 🎓 Academic Context
+
+This project is part of CS156 Machine Learning coursework, demonstrating:
+- Complete ML pipeline implementation
+- Design thinking and iteration (documented in brainstorming doc)
+- Trade-off analysis (data quality vs. collection methodology)
+- Real-world deployment considerations
+
+**Note**: This is a **first draft** pipeline. Emphasis is on demonstrating understanding of ML fundamentals rather than achieving state-of-the-art performance. Future drafts will iterate on data quality and model architecture.
 
 ## 📝 License
 
@@ -319,4 +211,8 @@ MIT License - see LICENSE file for details
 
 ## 🙏 Acknowledgments
 
-Based on the original v2 SilksongController project with enhancements for Pixel Watch compatibility and improved gesture recognition.
+Built on [V2 SilksongController](https://github.com/CarlKho-Minerva/v2_SilksongController_25TPE) with significant enhancements:
+- Pixel Watch integration with NSD discovery
+- ML-powered gesture recognition (SVM and CNN-LSTM)
+- Voice-labeled data collection pipeline
+- Multi-threaded real-time controller architecture
