@@ -454,7 +454,7 @@ class DataCollectionDashboard:
                 self.active_recording = {
                     'action': action,
                     'start_time': timestamp,
-                    'start_index': len(self.sensor_buffer)
+                    'start_buffer_snapshot': list(self.sensor_buffer)  # Snapshot current buffer
                 }
 
         elif event == 'end':
@@ -491,14 +491,24 @@ class DataCollectionDashboard:
         filename = f"{action}_{start_time}_to_{end_time}.csv"
         filepath = self.output_dir / filename
 
-        # Copy data from buffer quickly with lock held
+        # Calculate gesture duration in seconds
+        duration_ms = end_time - start_time
+        duration_sec = duration_ms / 1000.0
+
+        # Save buffer data with some padding (0.5s before + duration + 0.5s after)
+        # At 50Hz, each second = ~50 samples
+        padding_samples = 25  # 0.5 seconds at 50Hz
+        gesture_samples = int(duration_sec * 50)
+        total_samples = gesture_samples + (2 * padding_samples)
+
+        # Copy most recent N samples from buffer
         with self.lock:
-            start_ns = start_time * 1_000_000
-            end_ns = end_time * 1_000_000
-            recording_data = [
-                entry for entry in self.sensor_buffer
-                if start_ns <= entry['timestamp'] <= end_ns
-            ]
+            # Take the last N samples (most recent data)
+            buffer_list = list(self.sensor_buffer)
+            if len(buffer_list) >= total_samples:
+                recording_data = buffer_list[-total_samples:]
+            else:
+                recording_data = buffer_list
 
         # Write to file WITHOUT lock (this is the slow part)
         self._save_csv(filepath, recording_data)
