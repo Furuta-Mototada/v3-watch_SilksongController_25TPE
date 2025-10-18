@@ -13,6 +13,18 @@ Requirements:
     - Watch app streaming sensor data on port 12345
     - Button app sending label events on port 12345
     - All devices on same WiFi network
+
+IMPORTANT: Data Format
+    Each UDP packet contains ONE sensor reading (not all three sensors).
+    Watch app sends separate packets for:
+    - linear_acceleration (accel_x, accel_y, accel_z)
+    - gyroscope (gyro_x, gyro_y, gyro_z)
+    - rotation_vector (rot_x, rot_y, rot_z, rot_w)
+    
+    The CSV files store each packet as a row with the sensor type.
+    This is CORRECT behavior - each row has non-zero values only for its sensor type.
+    
+    To verify data quality, use: python src/inspect_csv_data.py <csv_file>
 """
 
 import json
@@ -187,43 +199,48 @@ class ButtonDataCollector:
             self.last_watch_data = time.time()
 
             # Parse sensor values (handle both formats)
+            # Note: Each packet contains ONE sensor type, not all three!
+            # We store each sensor reading separately with its timestamp
             values = msg.get('values', {})
+            sensor_type = msg.get('sensor', 'unknown')
+            timestamp = msg.get('timestamp_ns', msg.get('timestamp', time.time() * 1e9))
 
-            # Extract acceleration (linear_acceleration sensor)
-            if msg.get('sensor') == 'linear_acceleration':
+            # Initialize all sensor values to 0 (only the relevant sensor will have data)
+            accel_x = accel_y = accel_z = 0.0
+            gyro_x = gyro_y = gyro_z = 0.0
+            rot_x = rot_y = rot_z = 0.0
+            rot_w = 1.0
+
+            # Extract values based on sensor type
+            if sensor_type == 'linear_acceleration':
                 accel_x = values.get('x', msg.get('accel_x', 0.0))
                 accel_y = values.get('y', msg.get('accel_y', 0.0))
                 accel_z = values.get('z', msg.get('accel_z', 0.0))
-            else:
-                accel_x = msg.get('accel_x', 0.0)
-                accel_y = msg.get('accel_y', 0.0)
-                accel_z = msg.get('accel_z', 0.0)
-
-            # Extract gyroscope
-            if msg.get('sensor') == 'gyroscope':
+            elif sensor_type == 'gyroscope':
                 gyro_x = values.get('x', msg.get('gyro_x', 0.0))
                 gyro_y = values.get('y', msg.get('gyro_y', 0.0))
                 gyro_z = values.get('z', msg.get('gyro_z', 0.0))
-            else:
-                gyro_x = msg.get('gyro_x', 0.0)
-                gyro_y = msg.get('gyro_y', 0.0)
-                gyro_z = msg.get('gyro_z', 0.0)
-
-            # Extract rotation (rotation_vector sensor)
-            if msg.get('sensor') == 'rotation_vector':
+            elif sensor_type == 'rotation_vector':
                 rot_x = values.get('x', msg.get('rot_x', 0.0))
                 rot_y = values.get('y', msg.get('rot_y', 0.0))
                 rot_z = values.get('z', msg.get('rot_z', 0.0))
                 rot_w = values.get('w', msg.get('rot_w', 1.0))
             else:
+                # Fallback to flat format (old watch app)
+                accel_x = msg.get('accel_x', 0.0)
+                accel_y = msg.get('accel_y', 0.0)
+                accel_z = msg.get('accel_z', 0.0)
+                gyro_x = msg.get('gyro_x', 0.0)
+                gyro_y = msg.get('gyro_y', 0.0)
+                gyro_z = msg.get('gyro_z', 0.0)
                 rot_x = msg.get('rot_x', 0.0)
                 rot_y = msg.get('rot_y', 0.0)
                 rot_z = msg.get('rot_z', 0.0)
                 rot_w = msg.get('rot_w', 1.0)
 
             sensor_entry = {
-                'timestamp': msg.get('timestamp_ns', msg.get('timestamp', time.time() * 1e9)),
-                'sensor': msg.get('sensor', 'unknown'),
+                'timestamp': timestamp,
+                'sensor': sensor_type,
                 'accel_x': accel_x,
                 'accel_y': accel_y,
                 'accel_z': accel_z,
