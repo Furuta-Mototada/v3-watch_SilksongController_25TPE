@@ -127,7 +127,7 @@ class ButtonDataCollector:
                             input()
 
                             print(f"\n🚀 Collection started!")
-                            
+
                             if not self.skip_noise:
                                 print(f" DEFAULT STATE: NOISE MODE (all data labeled as noise unless button pressed)")
                                 print(f"📊 Capturing {self.baseline_noise_duration}s baseline noise...\n")
@@ -434,7 +434,7 @@ def main():
     """Main entry point"""
     # Parse command line arguments
     skip_noise = '--skip-noise' in sys.argv
-    
+
     collector = ButtonDataCollector(skip_noise=skip_noise)
 
     print("""
