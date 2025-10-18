@@ -200,40 +200,81 @@ Classifier 1  Classifier 2
 - Typing on keyboard
 - etc.
 
+### Default State: NOISE Mode
+
+**Critical Policy**: The system operates in **NOISE mode by default**:
+- If no button is pressed-and-held, ALL incoming UDP sensor data is labeled as "noise" continuously
+- Only when a button is pressed does labeling switch to that specific action
+- Upon button release, system immediately returns to NOISE mode
+- This ensures comprehensive noise data collection during natural pauses in data collection
+
 ### Collection Strategy
 
-**During Session Start:**
-- App auto-captures first 30 seconds as baseline noise
-- User performs natural non-gameplay movements
-- System chunks into training segments
+**Automatic Baseline Capture (Session Start):**
+1. System auto-captures first **30 seconds** as baseline noise
+2. User performs natural non-gameplay movements during this period
+3. Display countdown: "Capturing baseline noise: 27s remaining..."
+4. After 30s, baseline complete and ready for button presses
 
-**Auto-Segmentation:**
+**Continuous Noise Collection:**
+- Between button presses: All sensor data labeled as noise
+- During gameplay pauses: Natural noise data captured
+- No manual "noise button" needed - it's the default state
+
+**Post-Collection Segmentation:**
+After data collection ends, noise data is processed:
+
 ```python
-# Noise is chopped into fixed-duration segments
-def segment_noise_data(noise_session, target_duration=1.0):
+def segment_and_save_noise(noise_buffer):
     """
-    Chop continuous noise recording into 1-second segments
-    to match action gesture durations
+    Segment continuous noise into fixed-duration chunks for training.
+    Includes timestamp integrity validation and random sampling.
     """
-    segments = []
-    for i in range(0, len(noise_session), int(50 * target_duration)):
-        segment = noise_session[i:i+int(50 * target_duration)]
-        if len(segment) == int(50 * target_duration):
-            segments.append(segment)
-    return segments
+    # 1. Validate timestamp integrity
+    valid_noise = [s for s in noise_buffer if s['timestamp'] and s['data']]
+    
+    # 2. Segment for locomotion classifier (5-second chunks)
+    locomotion_segments = segment_noise(valid_noise, duration_sec=5.0)
+    
+    # 3. Segment for action classifier (1-second chunks)
+    action_segments = segment_noise(valid_noise, duration_sec=1.0)
+    
+    # 4. Randomly select exactly 30 samples per classifier
+    selected_locomotion = random.sample(locomotion_segments, 30)
+    selected_action = random.sample(action_segments, 30)
+    
+    # 5. Save segments
+    save_segments(selected_locomotion, "noise_locomotion_seg_")
+    save_segments(selected_action, "noise_action_seg_")
 ```
 
 **Alignment Logic:**
-- For **Locomotion Classifier**: Chop noise into 5-second chunks (match walk/idle duration)
-- For **Action Classifier**: Chop noise into 1-second chunks (match punch/jump duration)
+- For **Locomotion Classifier**: Chop noise into **5-second chunks** (match walk/idle duration)
+- For **Action Classifier**: Chop noise into **1-second chunks** (match punch/jump duration)
+- **Exactly 30 noise samples per classifier** to avoid class dominance
+- Random sampling from available segments ensures diversity
+
+**Timestamp Integrity Validation:**
+Before segmentation, validate each sample:
+- Has valid timestamp field
+- Has complete sensor data
+- Timestamps are monotonically increasing
+- No gaps larger than 100ms (2 missed packets)
 
 **Storage Format:**
 ```
-noise_20251018_session_start_seg_001.csv
-noise_20251018_session_start_seg_002.csv
+noise_locomotion_seg_001.csv  (5 seconds @ 50Hz = 250 samples)
+noise_locomotion_seg_002.csv
 ...
-noise_20251018_session_start_seg_030.csv
+noise_locomotion_seg_030.csv
+
+noise_action_seg_001.csv      (1 second @ 50Hz = 50 samples)
+noise_action_seg_002.csv
+...
+noise_action_seg_030.csv
 ```
+
+**Total Noise Samples**: 60 files (30 locomotion + 30 action)
 
 ## Data Pipeline Architecture
 

@@ -23,7 +23,7 @@
 
 ✅ **2x3 Grid**: "Let's do a two by three now getting rid of dash and noise" → Walk, Idle, Punch, Jump, Turn Left, Turn Right
 
-✅ **Noise Handling**: "For noise we just chop them up so just so everything would be aligned"
+✅ **Noise Handling**: Default NOISE state captures all data when no button pressed. 30s baseline at start, then continuous noise collection between button presses. Post-collection: randomly chop into 5s (locomotion) and 1s (action) segments, exactly 30 samples per classifier to avoid class dominance
 
 ✅ **Three-Stage Pipeline**: "Pixel watch data streaming to macbook by... streaming to phone" → Watch → Phone → MacBook
 
@@ -183,18 +183,20 @@ Both run in parallel for <500ms total latency.
 
 | Time   | Activity                        | Count Goal | Duration   |
 |--------|---------------------------------|------------|------------|
-| 0:00   | Setup & Noise Baseline          | N/A        | 1 min      |
-| 1:00   | **WALK** samples                | 35×        | ~3 min     |
-| 1:00   | **IDLE** samples                | 35×        | ~3 min     |
-| 4:00   | **PUNCH** samples               | 40×        | ~1.5 min   |
-| 5:30   | **JUMP** samples                | 40×        | ~1.5 min   |
-| 7:00   | **TURN_LEFT** samples           | 40×        | ~1 min     |
-| 8:00   | **TURN_RIGHT** samples          | 40×        | ~1 min     |
-| 9:00   | Verification & Buffer           | N/A        | ~1 min     |
+| 0:00   | **AUTO: 30s Baseline Noise**    | Auto       | 0.5 min    |
+| 0:30   | **WALK** samples                | 35×        | ~3 min     |
+| 3:30   | **IDLE** samples                | 35×        | ~3 min     |
+| 6:30   | **PUNCH** samples               | 40×        | ~1.5 min   |
+| 8:00   | **JUMP** samples                | 40×        | ~1.5 min   |
+| 9:30   | **TURN_LEFT** samples           | 40×        | ~1 min     |
+| 10:30  | **TURN_RIGHT** samples          | 40×        | ~1 min     |
+| 11:30  | Verification & Buffer           | N/A        | ~0.5 min   |
 
-**Total**: ~10 minutes active collection + 5 min buffer
+**Total**: ~12 minutes (30s auto-noise + 11min collection + 30s buffer)
 
-**Result**: 230 labeled samples ready for training
+**Result**: 230 gesture samples + 60 noise segments (30 locomotion + 30 action) ready for training
+
+**Note**: Noise is collected continuously in gaps between button presses (default NOISE state)
 
 ---
 
@@ -214,7 +216,14 @@ src/data/button_collected/
 ├── punch_1697654815000_to_1697654815891.csv
 ├── punch_1697654816500_to_1697654817123.csv
 ├── ...
-└── noise_session_start_seg_001.csv
+├── noise_locomotion_seg_001.csv  (5s chunks for walk/idle classifier)
+├── noise_locomotion_seg_002.csv
+├── ...
+├── noise_locomotion_seg_030.csv
+├── noise_action_seg_001.csv      (1s chunks for punch/jump/turn classifier)
+├── noise_action_seg_002.csv
+├── ...
+└── noise_action_seg_030.csv
 ```
 
 ### CSV Format (Same as Voice-Labeled)

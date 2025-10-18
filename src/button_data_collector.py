@@ -31,8 +31,14 @@ class ButtonDataCollector:
         # Buffer for sensor data (keep last 30 seconds at 50Hz = 1500 samples)
         self.sensor_buffer = deque(maxlen=1500)
         
-        # Currently recording action
+        # Currently recording action (None means NOISE mode - default state)
         self.active_recording = None
+        
+        # Noise capture
+        self.noise_buffer = []
+        self.baseline_noise_captured = False
+        self.baseline_noise_duration = 30  # seconds
+        self.noise_start_time = None
         
         # Lock for thread safety
         self.lock = threading.Lock()
@@ -40,7 +46,8 @@ class ButtonDataCollector:
         # Statistics
         self.action_counts = {
             'walk': 0, 'idle': 0, 'punch': 0,
-            'jump': 0, 'turn_left': 0, 'turn_right': 0
+            'jump': 0, 'turn_left': 0, 'turn_right': 0,
+            'noise': 0  # Track noise segments
         }
         
         # Session info
@@ -53,7 +60,11 @@ class ButtonDataCollector:
         print(f"📁 Output directory: {self.output_dir.absolute()}")
         print(f"🌐 Listening on UDP port {self.udp_port}")
         print(f"⏰ Session start: {self.session_start.strftime('%Y-%m-%d %H:%M:%S')}")
-        print("\n✋ Waiting for button presses from Android app...\n")
+        print(f"\n🔇 DEFAULT STATE: NOISE MODE (all data labeled as noise unless button pressed)")
+        print(f"📊 Capturing {self.baseline_noise_duration}s baseline noise at session start...\n")
+        
+        # Start baseline noise capture
+        self.noise_start_time = time.time()
         
         # Create UDP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -76,6 +87,7 @@ class ButtonDataCollector:
                     
         except KeyboardInterrupt:
             print("\n\n🛑 Stopping data collector...")
+            self.segment_and_save_noise()
             self.print_statistics()
         finally:
             sock.close()
@@ -87,9 +99,32 @@ class ButtonDataCollector:
         if msg_type == 'label_event':
             self.handle_label_event(msg, addr)
         elif msg.get('sensor'):
-            # Sensor data - add to buffer
+            # Sensor data - add to buffer and handle noise capture
             # For MVP, we're not processing sensor data yet
             # In production, parse and add to sensor_buffer
+            
+            # Capture baseline noise (first 30 seconds)
+            if not self.baseline_noise_captured:
+                elapsed = time.time() - self.noise_start_time
+                if elapsed <= self.baseline_noise_duration:
+                    # Still in baseline capture window
+                    self.noise_buffer.append({
+                        'timestamp': msg.get('timestamp_ns', time.time() * 1e9),
+                        'data': msg
+                    })
+                else:
+                    # Baseline complete
+                    self.baseline_noise_captured = True
+                    print(f"✅ Baseline noise captured ({len(self.noise_buffer)} samples)")
+                    print("✋ Ready for button presses...\n")
+            
+            # If no button pressed (default NOISE state), continue collecting noise
+            elif self.active_recording is None:
+                self.noise_buffer.append({
+                    'timestamp': msg.get('timestamp_ns', time.time() * 1e9),
+                    'data': msg
+                })
+            
             pass
     
     def handle_label_event(self, msg, addr):
@@ -167,6 +202,88 @@ class ButtonDataCollector:
         
         return filename
     
+    def segment_and_save_noise(self):
+        """Segment noise buffer into fixed-size chunks and save exactly 30 per classifier"""
+        import random
+        
+        if not self.noise_buffer:
+            print("⚠️  No noise data collected")
+            return
+        
+        print(f"\n🔇 Processing noise data ({len(self.noise_buffer)} samples)...")
+        
+        # Validate timestamp integrity
+        valid_noise = []
+        for sample in self.noise_buffer:
+            if sample.get('timestamp') and sample.get('data'):
+                valid_noise.append(sample)
+        
+        print(f"✅ Validated {len(valid_noise)} noise samples with timestamp integrity")
+        
+        # Segment for locomotion classifier (5-second chunks)
+        locomotion_segments = self._segment_noise(valid_noise, duration_sec=5.0, samples_per_sec=50)
+        
+        # Segment for action classifier (1-second chunks)
+        action_segments = self._segment_noise(valid_noise, duration_sec=1.0, samples_per_sec=50)
+        
+        # Randomly select exactly 30 samples per classifier
+        if len(locomotion_segments) >= 30:
+            selected_locomotion = random.sample(locomotion_segments, 30)
+            print(f"📦 Selected 30 locomotion noise segments (5s each) from {len(locomotion_segments)} available")
+        else:
+            selected_locomotion = locomotion_segments
+            print(f"⚠️  Only {len(locomotion_segments)} locomotion segments available (need 30)")
+        
+        if len(action_segments) >= 30:
+            selected_action = random.sample(action_segments, 30)
+            print(f"📦 Selected 30 action noise segments (1s each) from {len(action_segments)} available")
+        else:
+            selected_action = action_segments
+            print(f"⚠️  Only {len(action_segments)} action segments available (need 30)")
+        
+        # Save locomotion noise segments
+        for i, segment in enumerate(selected_locomotion, 1):
+            filename = f"noise_locomotion_seg_{i:03d}.csv"
+            self._save_noise_segment(filename, segment)
+        
+        # Save action noise segments
+        for i, segment in enumerate(selected_action, 1):
+            filename = f"noise_action_seg_{i:03d}.csv"
+            self._save_noise_segment(filename, segment)
+        
+        self.action_counts['noise'] = len(selected_locomotion) + len(selected_action)
+        print(f"✅ Saved {self.action_counts['noise']} noise segments")
+    
+    def _segment_noise(self, noise_data, duration_sec, samples_per_sec):
+        """Segment noise data into fixed-duration chunks"""
+        segment_size = int(duration_sec * samples_per_sec)
+        segments = []
+        
+        for i in range(0, len(noise_data) - segment_size + 1, segment_size):
+            segment = noise_data[i:i + segment_size]
+            if len(segment) == segment_size:
+                segments.append(segment)
+        
+        return segments
+    
+    def _save_noise_segment(self, filename, segment):
+        """Save a noise segment to CSV"""
+        filepath = self.output_dir / filename
+        
+        with open(filepath, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                'timestamp', 'sensor',
+                'accel_x', 'accel_y', 'accel_z',
+                'gyro_x', 'gyro_y', 'gyro_z',
+                'rot_x', 'rot_y', 'rot_z', 'rot_w'
+            ])
+            
+            # Write placeholder data (in production, use actual sensor data)
+            for sample in segment:
+                timestamp = sample.get('timestamp', 0)
+                writer.writerow([timestamp, 'noise', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    
     def print_progress(self):
         """Print current collection progress"""
         print(f"\n📊 Progress: {self.total_recordings} total recordings")
@@ -174,7 +291,8 @@ class ButtonDataCollector:
         # Print counts in grid format
         print("   WALK: {walk:2d}  IDLE: {idle:2d}".format(**self.action_counts))
         print("  PUNCH: {punch:2d}  JUMP: {jump:2d}".format(**self.action_counts))
-        print("  TURN_L: {turn_left:2d}  TURN_R: {turn_right:2d}\n".format(**self.action_counts))
+        print("  TURN_L: {turn_left:2d}  TURN_R: {turn_right:2d}".format(**self.action_counts))
+        print("  NOISE: {noise:2d}\n".format(**self.action_counts))
     
     def print_statistics(self):
         """Print final session statistics"""
