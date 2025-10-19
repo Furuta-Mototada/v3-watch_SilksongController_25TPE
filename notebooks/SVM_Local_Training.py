@@ -24,7 +24,7 @@ Usage:
 # No GPU required, training takes 5-15 minutes.
 # 
 # ## Setup Requirements:
-# 1. ✅ Organized data in `data/organized_training/`
+# 1. ✅ Merged sensor data in `data/merged_training/`
 # 2. ✅ Python packages: scikit-learn, pandas, numpy, joblib
 # 
 # ## Parallel Two-Classifier Architecture:
@@ -62,7 +62,7 @@ np.random.seed(RANDOM_SEED)
 
 # Paths (adjust if needed)
 PROJECT_ROOT = Path(__file__).parent.parent if __file__ else Path.cwd().parent
-DATA_DIR = PROJECT_ROOT / "data" / "organized_training"
+DATA_DIR = PROJECT_ROOT / "data" / "merged_training"
 MODEL_OUTPUT_DIR = PROJECT_ROOT / "models"
 MODEL_OUTPUT_DIR.mkdir(exist_ok=True)
 
