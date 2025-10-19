@@ -1,7 +1,7 @@
 # Silksong Motion Controller - Machine Learning Pipeline (First Draft)
 
-**Course**: CS156 Machine Learning  
-**Project**: Motion Gesture Recognition for Game Control  
+**Course**: CS156 Machine Learning
+**Project**: Motion Gesture Recognition for Game Control
 **Hardware**: Pixel Watch (Wear OS) + Python Controller
 
 Control Hollow Knight: Silksong using motion gestures from a smartwatch. This project demonstrates a complete machine learning pipeline from data collection through model deployment, using real-time IMU sensor data streamed over UDP.
@@ -49,6 +49,7 @@ python udp_listener.py
 ```
 
 **Key Features**:
+
 - ✅ Real-time sensor data visualization
 - ✅ Live connection status for Watch and Phone apps
 - ✅ Data rate monitoring
@@ -59,9 +60,41 @@ python udp_listener.py
 
 ## 📹 Demo Videos
 
-**Watch Data Transmission**: [Loom Video](https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf) - NSD discovery and UDP streaming  
-**SVM Controller Demo**: [Loom Video](https://www.loom.com/share/dfb0398e038c409084696484e159a588) - Phase III real-time gesture recognition  
-**Voice-Labeled Data Collection**: [Loom Video](https://www.loom.com/share/db304cbfea1d4fa4914256f097d4a166) - Phase V collection process
+<div>
+    <a href="https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf">
+      <p>Watch Data Transmission - NSD discovery and UDP streaming</p>
+    </a>
+    <a href="https://www.loom.com/share/175721940a354cb98fe0ec2a13e2bddf">
+      <img style="max-width:100vw;" src="https://cdn.loom.com/sessions/thumbnails/175721940a354cb98fe0ec2a13e2bddf-3d20da5d3c764dc4-full-play.gif">
+    </a>
+  </div>
+
+<div>
+    <a href="https://www.loom.com/share/dfb0398e038c409084696484e159a588">
+      <p>SVM Controller Demo - Phase III real-time gesture recognition</p>
+    </a>
+    <a href="https://www.loom.com/share/dfb0398e038c409084696484e159a588">
+      <img style="max-width:100vw;" src="https://cdn.loom.com/sessions/thumbnails/dfb0398e038c409084696484e159a588-cd70ba8caabdfa18-full-play.gif">
+    </a>
+  </div>
+
+<div>
+    <a href="https://www.loom.com/share/db304cbfea1d4fa4914256f097d4a166">
+      <p>Voice-Labeled Data Collection - Phase V collection process</p>
+    </a>
+    <a href="https://www.loom.com/share/db304cbfea1d4fa4914256f097d4a166">
+      <img style="max-width:100vw;" src="https://cdn.loom.com/sessions/thumbnails/db304cbfea1d4fa4914256f097d4a166-b2ff6573e4a9ecc7-full-play.gif">
+    </a>
+  </div>
+
+<div>
+    <a href="https://www.loom.com/share/2916e39c95144d83a64ec4251d7f6b09">
+      <p>Watch -> Phone -> Controlled Labelled Data Collection - Phase VI collection process</p>
+    </a>
+    <a href="https://www.loom.com/share/2916e39c95144d83a64ec4251d7f6b09">
+      <img style="max-width:100vw;" src="https://cdn.loom.com/sessions/thumbnails/2916e39c95144d83a64ec4251d7f6b09-160e2311f16f0b7e-full-play.gif">
+    </a>
+  </div>
 
 ## 🎓 Learning Objectives
 
@@ -178,44 +211,51 @@ The watch app will automatically discover your computer via NSD - no manual IP c
 This project evolved through multiple phases, demonstrating different approaches to gesture recognition:
 
 ### Phase II: Manual Data Collection ✅
+
 Button-based and guided recording system for collecting labeled gesture samples.
 
-**Tools**: 
+**Tools**:
+
 - `src/phase_ii_manual_collection/button_data_collector.py` - Simplified one-button UI
 - `src/phase_ii_manual_collection/data_collection_dashboard.py` - Real-time monitoring
 - `src/phase_ii_manual_collection/data_collector.py` - Original guided collector
 
-**Output**: CSV files in `data/phase_ii_button_collected/`  
+**Output**: CSV files in `data/phase_ii_button_collected/`
 **Documentation**: `src/phase_ii_manual_collection/README.md`
 
 ### Phase III: SVM Classifier ✅
+
 Traditional ML pipeline using hand-engineered features (~60 features from time/frequency domains) with SVM classification.
 
-**Training**: Google Colab notebook with SVM option  
-**Notebook**: `notebooks/Silksong_Complete_Training_Colab.ipynb`  
-**Features**: Time-domain stats, FFT features, magnitude calculations  
-**Performance**: 85-95% accuracy on test set  
+**Training**: Google Colab notebook with SVM option
+**Notebook**: `notebooks/Silksong_Complete_Training_Colab.ipynb`
+**Features**: Time-domain stats, FFT features, magnitude calculations
+**Performance**: 85-95% accuracy on test set
 **Guide**: `docs/COLAB_TRAINING_GUIDE.md`
 
 ### Phase IV: Multi-Threaded Controller ✅ **(Current Production)**
+
 Real-time ML deployment with decoupled architecture for low-latency performance.
 
-**Architecture**: Collector → Predictor → Actor (three threads with queues)  
-**Latency**: <500ms using 0.3s micro-windows  
-**Confidence Gating**: 5 consecutive predictions for state changes  
+**Architecture**: Collector → Predictor → Actor (three threads with queues)
+**Latency**: <500ms using 0.3s micro-windows
+**Confidence Gating**: 5 consecutive predictions for state changes
 **Code**: `src/phase_iv_ml_controller/udp_listener.py`
 
 See `src/phase_iv_ml_controller/README.md` for architecture details.
 
 ### Phase V: Voice-Labeled Data Collection ✅ **(Advanced)**
+
 Natural gameplay recording with voice commands, retrospectively processed using WhisperX for word-level timestamp alignment.
 
 **Tools**:
+
 - `src/phase_v_voice_collection/continuous_data_collector.py` - Natural gameplay recording
 - `src/phase_v_voice_collection/whisperx_transcribe.py` - Audio transcription
 - `src/phase_v_voice_collection/align_voice_labels.py` - Label alignment
 
 **Workflow**:
+
 ```bash
 # 1. Record session (natural gameplay + voice labels)
 cd src/phase_v_voice_collection
@@ -228,14 +268,16 @@ python whisperx_transcribe.py --audio ../../data/phase_v_continuous/SESSION/audi
 python align_voice_labels.py --session_dir ../../data/phase_v_continuous/SESSION/
 ```
 
-**Advantages**: Hands-free, natural motion, word-level timestamps, captures transitions  
-**Use Case**: Training CNN-LSTM models with large datasets  
+**Advantages**: Hands-free, natural motion, word-level timestamps, captures transitions
+**Use Case**: Training CNN-LSTM models with large datasets
 **Documentation**: `src/phase_v_voice_collection/README.md`
 
 ### Phase VI: Button Data Collection *(Proposed)*
+
 Alternative data collection approach using button-grid Android app for more controlled, precise labeling.
 
 📄 **`docs/BUTTON_DATA_COLLECTION_PROTOCOL.md`** - Complete implementation specification
+
 - Press-and-hold interaction model with exact timestamps
 - 2x3 button grid layout with real-time count display
 - Dual classifier architecture (walk/idle vs. actions)
@@ -244,6 +286,7 @@ Alternative data collection approach using button-grid Android app for more cont
 - MVP implementation guide and testing protocol
 
 📄 **`docs/ALTERNATIVE_DATA_COLLECTION_BRAINSTORM.md`** - Design thinking and expert analysis
+
 - Analysis of current data quality issues
 - Expert panel discussion (Ng, Li, Jordan, Norman, Ries)
 - Trade-offs: organic vs. controlled data collection
@@ -252,11 +295,13 @@ Alternative data collection approach using button-grid Android app for more cont
 ## 💾 Current Data Status
 
 **Collected Sessions**: 5 voice-labeled gameplay sessions (archived in `src/data/archive/`)
+
 - Session duration: 5-10 minutes each
 - Gestures: walk, punch, jump, turn, idle
 - Format: CSV sensor data + audio recordings + WhisperX transcriptions
 
 **Known Issues**:
+
 - Labels are noisy (voice-motion coordination challenges)
 - Walk vs. non-walk classification has unclear boundaries
 - Action transitions are difficult to isolate cleanly
@@ -276,23 +321,27 @@ Alternative data collection approach using button-grid Android app for more cont
 
 ## 🔧 Development Notes
 
-**Android App**: 
+**Android App**:
+
 - Package: `com.cvk.silksongcontroller`
 - Main code: `Android/app/src/main/java/com/cvk/silksongcontroller/MainActivity.kt`
 - Streams sensor data over UDP with NSD discovery
 
 **Python Controller**:
+
 - Entry point: `src/udp_listener.py` (Phase IV multi-threaded architecture)
 - Data collection: `src/continuous_data_collector.py` (Phase V voice labeling)
 - Feature extraction: `src/feature_extractor.py` (~60 engineered features)
 
 **Training**:
+
 - Local SVM: `notebooks/archive/CS156_Silksong_Watch.ipynb`
 - Colab CNN-LSTM: `notebooks/watson_Colab_CNN_LSTM_Training.ipynb`
 
 ## 🎓 Academic Context
 
 This project is part of CS156 Machine Learning coursework, demonstrating:
+
 - Complete ML pipeline implementation
 - Design thinking and iteration (documented in brainstorming doc)
 - Trade-off analysis (data quality vs. collection methodology)
@@ -307,6 +356,7 @@ MIT License - see LICENSE file for details
 ## 🙏 Acknowledgments
 
 Built on [V2 SilksongController](https://github.com/CarlKho-Minerva/v2_SilksongController_25TPE) with significant enhancements:
+
 - Pixel Watch integration with NSD discovery
 - ML-powered gesture recognition (SVM and CNN-LSTM)
 - Voice-labeled data collection pipeline
