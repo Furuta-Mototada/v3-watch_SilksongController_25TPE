@@ -23,6 +23,8 @@ import numpy as np
 from pathlib import Path
 import argparse
 import sys
+import json
+import shutil
 
 def merge_sensors_by_timestamp(df):
     """
@@ -165,6 +167,15 @@ def process_directory_tree(input_dir, output_dir):
             success_count += 1
 
     print(f"\n✅ Successfully processed {success_count}/{len(csv_files)} files")
+
+    # Copy metadata.json if it exists
+    metadata_src = input_path / "metadata.json"
+    if metadata_src.exists():
+        metadata_dst = output_path / "metadata.json"
+        shutil.copy2(metadata_src, metadata_dst)
+        print(f"📄 Copied metadata.json")
+    else:
+        print(f"\n⚠️  No metadata.json found in source directory")
 
 
 def process_single_folder(input_dir, output_dir):
