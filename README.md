@@ -14,7 +14,37 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
 
 ---
 
-## 🆕 NEW: Button Data Collection with Dashboard
+## 🆕 NEW: Two-Stage Classification Training Pipeline
+
+**Ready to train gesture recognition models?** We've added a complete training pipeline with organized data and two-stage classification:
+
+📊 **[Data Organization Guide](docs/DATA_ORGANIZATION_GUIDE.md)** - Complete workflow from data collection to training
+
+🎯 **[Training Results Summary](docs/TRAINING_RESULTS_SUMMARY.md)** - Current model performance and recommendations
+
+🧪 **[SVM Local Training](notebooks/SVM_Local_Training.ipynb)** - Fast local training (5-15 min, no GPU needed)
+
+☁️ **[Colab Training](notebooks/Silksong_Complete_Training_Colab.ipynb)** - Deep learning training with CNN-LSTM
+
+### Two-Stage Architecture
+1. **Binary Classifier**: Walking vs Not-Walking (94% accuracy ✅)
+2. **Multi-class Classifier**: Jump, Punch, Turn, Idle (57% accuracy - needs more data)
+
+### Quick Start Training
+```bash
+# 1. Organize your collected data
+python src/organize_training_data.py --input data/button_collected --output data/organized_training
+
+# 2. Train models locally (SVM)
+python notebooks/SVM_Local_Training.py
+
+# 3. Models saved to models/ directory
+ls models/gesture_classifier_*.pkl
+```
+
+---
+
+## 🆕 Button Data Collection with Dashboard
 
 **Having trouble collecting data?** We've added a comprehensive data collection system with real-time verification:
 
@@ -27,25 +57,29 @@ Building on top of [V2](https://github.com/CarlKho-Minerva/v2_SilksongController
 ### Quick Commands
 
 ```bash
-# Start the real-time dashboard (RECOMMENDED)
-cd src/phase_ii_manual_collection
+# 1. COLLECT DATA - Start the real-time dashboard (RECOMMENDED)
+cd src/phase_vi_button_collection
 python data_collection_dashboard.py
 
-# Collect gesture data with button UI
-cd src/phase_ii_manual_collection
-python button_data_collector.py
+# 2. ORGANIZE DATA - Prepare for training
+cd src
+python organize_training_data.py --input ../data/button_collected --output ../data/organized_training
 
-# Verify data quality after collection
+# 3. TRAIN MODELS - Local SVM training (5-15 min)
+python notebooks/SVM_Local_Training.py
+# OR use Colab for CNN-LSTM: notebooks/Silksong_Complete_Training_Colab.ipynb
+
+# 4. VERIFY DATA - Check quality after collection
 cd src/shared_utils
-python inspect_csv_data.py ../../data/phase_ii_button_collected/*.csv
+python inspect_csv_data.py ../../data/button_collected/*.csv
 
-# Test watch connection separately
-cd src/shared_utils
-python test_connection.py
-
-# Run ML controller (after training models)
+# 5. RUN CONTROLLER - Use trained models
 cd src/phase_iv_ml_controller
 python udp_listener.py
+
+# Optional: Augment minority classes
+cd src
+python data_augmentation.py --input ../data/organized_training/multiclass_classification --target-samples 50
 ```
 
 **Key Features**:
