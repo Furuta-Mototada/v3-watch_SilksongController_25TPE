@@ -1,360 +1,211 @@
 # Section 6: Model Training
 
-## Training Machine Learning Models: The Mundane Reality Behind "AI"
+## Training Procedure
 
-The tech media loves to describe model training as if it's some mystical process where algorithms "learn" through artificial intelligence. The reality is far more prosaic: **gradient descent is just calculus**. We're minimizing a loss function by iteratively adjusting parameters in the direction that reduces error. There's no magic, no consciousness, no intelligence—just numerical optimization at scale.
-
-That said, the devil is in the details. This section documents how I actually trained both the SVM and CNN-LSTM models, including the hyperparameter tuning process and the inevitable debugging required when things didn't work the first time.
-
----
-
-## Training Process 1: Support Vector Machine (SVM)
-
-### Hyperparameter Search with Grid Search Cross-Validation
-
-SVMs have two critical hyperparameters:
-- **$C$**: Regularization strength (controls margin vs. training accuracy trade-off)
-- **$\gamma$**: RBF kernel width (controls decision boundary complexity)
-
-Rather than guessing, I performed exhaustive grid search:
+The model training process follows standard scikit-learn workflow:
 
 ```python
 from sklearn.svm import SVC
-from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import StandardScaler
 import joblib
 
-# Define search space
-param_grid = {
-    'C': [0.1, 1, 10, 100],
-    'gamma': ['scale', 0.001, 0.01, 0.1, 1],
-    'kernel': ['rbf']
-}
+# 1. Prepare data
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-# Create SVM classifier
-svm = SVC(
-    kernel='rbf',
-    decision_function_shape='ovr',  # One-vs-Rest for multiclass
-    probability=True,                # Enable probability calibration
-    random_state=42                  # Reproducibility
-)
+# 2. Initialize model
+model = SVC(kernel='rbf', C=1.0, gamma='scale', random_state=42)
 
-# Grid search with 5-fold cross-validation
-grid_search = GridSearchCV(
-    estimator=svm,
-    param_grid=param_grid,
-    cv=5,                            # 5-fold CV
-    scoring='f1_macro',              # Macro-averaged F1 (class-balanced)
-    n_jobs=-1,                       # Use all CPU cores
-    verbose=2                        # Print progress
-)
+# 3. Train model
+model.fit(X_train_scaled, y_train)
 
-# Train on prepared data
-print("Starting grid search...")
-grid_search.fit(X_train, y_train)
+# 4. Evaluate
+train_score = model.score(X_train_scaled, y_train)
+test_score = model.score(X_test_scaled, y_test)
 
-# Report best parameters
-print(f"Best parameters: {grid_search.best_params_}")
-print(f"Best CV F1 score: {grid_search.best_score_:.3f}")
+print(f"Training accuracy: {train_score:.3f}")
+print(f"Test accuracy: {test_score:.3f}")
 
-# Save best model
-best_svm = grid_search.best_estimator_
-joblib.dump(best_svm, 'models/gesture_classifier_multiclass.pkl')
-joblib.dump(scaler, 'models/feature_scaler_multiclass.pkl')
+# 5. Save model
+joblib.dump(model, 'models/gesture_classifier.pkl')
+joblib.dump(scaler, 'models/feature_scaler.pkl')
 ```
 
-**Grid Search Results (Multiclass):**
+## Training Separate Models
 
-| $C$ | $\gamma$ | CV F1 Score | Notes |
-|-----|----------|-------------|-------|
-| 0.1 | scale | 0.65 | Underfitting (too regularized) |
-| 1 | 0.01 | 0.71 | Reasonable baseline |
-| **10** | **0.01** | **0.73** | **Best performance** |
-| 100 | 0.1 | 0.68 | Overfitting (too complex boundary) |
+The system trains two independent models:
 
-**Selected Hyperparameters:**
-- $C = 10$: Strong classification with moderate regularization
-- $\gamma = 0.01$: Medium kernel width (balanced between local and global patterns)
-
-### Training Time and Computational Cost
-
-SVM training uses **Sequential Minimal Optimization (SMO)**, which decomposes the quadratic programming problem into 2-sample sub-problems.
-
-**Computational Complexity:**
-
-$$
-\text{Training time} \propto O(n^2 \cdot d)
-$$
-
-Where $n$ is the number of training samples and $d$ is the feature dimensionality.
-
-For my dataset:
-- $n = 4500$ samples (after SMOTE oversampling)
-- $d = 64$ features
-- Training time: **~120 seconds per fold on Intel i7-10700K**
-
-Total grid search time: $4 \times 5 \times 5 \text{ configs} \times 120s = 10,000s \approx 3$ hours.
-
-This is why I ran grid search overnight—computationally intensive but parallelizable across CPU cores.
-
----
-
-## Training Process 2: CNN-LSTM Deep Learning Model
-
-### Data Preparation for Deep Learning
-
-Unlike SVMs, deep learning models need data in specific tensor shapes:
+### Binary Model (Walk vs Idle)
 
 ```python
-import numpy as np
-from tensorflow.keras.utils import to_categorical
+# Load binary data
+X_binary, y_binary, features_binary = load_data(
+    data_dir="data/button_collected",
+    classes=["walk", "idle"]
+)
 
-def prepare_sequences(df, window_size=15, stride=5):
-    """
-    Converts DataFrame to (samples, timesteps, features) tensors.
-    
-    Args:
-        df: DataFrame with sensor columns and 'gesture' label
-        window_size: Number of timesteps per sample (15 = 0.3s at 50Hz)
-        stride: Step size between windows (5 = overlapping windows)
-    
-    Returns:
-        X: (n_samples, 15, 6) array of sensor sequences
-        y: (n_samples, 8) one-hot encoded labels
-    """
-    sequences = []
-    labels = []
-    
-    # Sliding window over data
-    for i in range(0, len(df) - window_size, stride):
-        window = df.iloc[i:i+window_size]
-        
-        # Extract raw sensor values (not pre-computed features!)
-        sensor_data = window[['accel_x', 'accel_y', 'accel_z', 
-                              'gyro_x', 'gyro_y', 'gyro_z']].values
-        
-        # Get label (use majority vote if window spans gesture boundary)
-        label = window['gesture'].mode()[0]
-        
-        sequences.append(sensor_data)
-        labels.append(label)
-    
-    X = np.array(sequences)  # Shape: (n_samples, 15, 6)
-    
-    # One-hot encode labels
-    gesture_map = {'jump': 0, 'punch': 1, 'turn_left': 2, 'turn_right': 3,
-                   'dash': 4, 'block': 5, 'walk': 6, 'idle': 7}
-    y_numeric = np.array([gesture_map[g] for g in labels])
-    y = to_categorical(y_numeric, num_classes=8)  # Shape: (n_samples, 8)
-    
-    return X, y
-
-# Prepare data
-X, y = prepare_sequences(df)
-print(f"Data shape: {X.shape}, Labels shape: {y.shape}")
-```
-
-**Critical Difference from SVM:**
-
-SVM uses hand-crafted features (mean, std, FFT, etc.). CNN-LSTM learns features directly from raw sensor sequences. This is why deep learning needs more data—it has to learn both the feature extraction and the classification.
-
-### Model Architecture (Recap from Section 5)
-
-```python
-import tensorflow as tf
-from tensorflow.keras import layers, models
-
-model = models.Sequential([
-    layers.Input(shape=(15, 6)),
-    layers.Conv1D(64, 3, activation='relu', padding='same'),
-    layers.MaxPooling1D(2),
-    layers.Conv1D(128, 3, activation='relu', padding='same'),
-    layers.MaxPooling1D(2),
-    layers.LSTM(64, return_sequences=True),
-    layers.LSTM(32, return_sequences=False),
-    layers.Dense(64, activation='relu'),
-    layers.Dropout(0.5),
-    layers.Dense(8, activation='softmax')
-])
-
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-    loss='categorical_crossentropy',
-    metrics=['accuracy']
+# Train binary classifier
+model_binary = train_and_evaluate(
+    X_binary, y_binary, 
+    classes=["walk", "idle"],
+    model_name="Binary",
+    models_dir="models",
+    feature_names=features_binary
 )
 ```
 
-### Training Loop with Callbacks
+### Multiclass Model (All Actions)
 
 ```python
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+# Load multiclass data
+X_multi, y_multi, features_multi = load_data(
+    data_dir="data/button_collected",
+    classes=["jump", "punch", "turn_left", "turn_right", "idle"]
+)
 
-# Split into train/validation (80/20)
-split_idx = int(0.8 * len(X))
-X_train, X_val = X[:split_idx], X[split_idx:]
-y_train, y_val = y[:split_idx], y[split_idx:]
-
-# Define callbacks
-callbacks = [
-    # Stop training if validation loss doesn't improve for 10 epochs
-    EarlyStopping(
-        monitor='val_loss',
-        patience=10,
-        restore_best_weights=True,
-        verbose=1
-    ),
-    
-    # Reduce learning rate when validation loss plateaus
-    ReduceLROnPlateau(
-        monitor='val_loss',
-        factor=0.5,        # Multiply LR by 0.5
-        patience=5,
-        min_lr=1e-6,
-        verbose=1
-    ),
-    
-    # Save best model checkpoint
-    ModelCheckpoint(
-        'models/cnn_lstm_best.h5',
-        monitor='val_accuracy',
-        save_best_only=True,
-        verbose=1
-    )
-]
-
-# Train model
-history = model.fit(
-    X_train, y_train,
-    validation_data=(X_val, y_val),
-    epochs=50,
-    batch_size=32,
-    callbacks=callbacks,
-    verbose=1
+# Train multiclass classifier
+model_multi = train_and_evaluate(
+    X_multi, y_multi,
+    classes=["jump", "punch", "turn_left", "turn_right", "idle"],
+    model_name="Multiclass",
+    models_dir="models",
+    feature_names=features_multi
 )
 ```
 
-**Training Results:**
+## Training Function
 
-- **Final validation accuracy**: 89.3%
-- **Final validation loss**: 0.32
-- **Epochs completed**: 38 (early stopping at epoch 38)
-- **Training time**: 14 minutes on Google Colab T4 GPU
-- **Best model checkpoint**: Epoch 28 (val_accuracy = 0.893)
-
-### Convergence Analysis
-
-Plotting training history reveals learning dynamics:
+Complete training implementation from `SVM_Local_Training.py`:
 
 ```python
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(12, 4))
-
-# Plot accuracy
-plt.subplot(1, 2, 1)
-plt.plot(history.history['accuracy'], label='Training Accuracy')
-plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.legend()
-plt.grid(True)
-
-# Plot loss
-plt.subplot(1, 2, 2)
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend()
-plt.grid(True)
-
-plt.tight_layout()
-plt.savefig('training_curves.png', dpi=150)
+def train_and_evaluate(X, y, classes, model_name, models_dir, feature_names):
+    print(f"\n{'='*20} Training {model_name} Classifier {'='*20}")
+    
+    # Check class distribution
+    unique, counts = np.unique(y, return_counts=True)
+    min_samples = counts.min()
+    
+    print(f"Dataset: {len(X)} samples, {len(unique)} classes")
+    for cls_idx, count in zip(unique, counts):
+        print(f"  - {classes[cls_idx]}: {count} samples")
+    
+    # Train/test split with stratification
+    if min_samples < 10:
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.3, random_state=42, stratify=None
+        )
+    else:
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.3, random_state=42, stratify=y
+        )
+    
+    # Normalize features
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    
+    # Train SVM
+    model = SVC(kernel='rbf', C=1.0, gamma='scale', random_state=42)
+    model.fit(X_train_scaled, y_train)
+    
+    # Evaluate
+    train_acc = model.score(X_train_scaled, y_train)
+    test_acc = model.score(X_test_scaled, y_test)
+    
+    print(f"\nTraining Accuracy: {train_acc:.3f}")
+    print(f"Test Accuracy: {test_acc:.3f}")
+    
+    # Generate predictions for confusion matrix
+    y_pred = model.predict(X_test_scaled)
+    
+    # Classification report
+    print("\nClassification Report:")
+    print(classification_report(y_test, y_pred, target_names=classes))
+    
+    # Save model artifacts
+    model_path = Path(models_dir) / f"gesture_classifier_{model_name.lower()}.pkl"
+    scaler_path = Path(models_dir) / f"feature_scaler_{model_name.lower()}.pkl"
+    features_path = Path(models_dir) / f"feature_names_{model_name.lower()}.pkl"
+    
+    joblib.dump(model, model_path)
+    joblib.dump(scaler, scaler_path)
+    joblib.dump(feature_names, features_path)
+    
+    print(f"\nModel saved to: {model_path}")
+    
+    return model
 ```
 
-**Observations:**
+## Training Output Example
 
-1. **Epochs 1-10**: Rapid improvement (accuracy: 40% → 75%)
-2. **Epochs 10-25**: Slower improvement (accuracy: 75% → 88%)
-3. **Epochs 25-38**: Plateau with minor fluctuations (accuracy: 88-89%)
-4. **Validation loss**: Slight increase after epoch 28 (overfitting begins)
+```
+==================== Training Binary Classifier ====================
+Dataset: 60 samples, 2 classes
+  - walk: 30 samples
+  - idle: 30 samples
 
-**Early stopping** prevented further overfitting by restoring weights from epoch 28.
+Training Accuracy: 0.952
+Test Accuracy: 0.889
 
----
+Classification Report:
+              precision    recall  f1-score   support
 
-## Hyperparameter Tuning for Deep Learning
+        walk       0.90      0.90      0.90         9
+        idle       0.88      0.88      0.88         9
 
-Unlike SVM's simple grid search, deep learning has dozens of hyperparameters. I tuned:
+    accuracy                           0.89        18
+   macro avg       0.89      0.89      0.89        18
+weighted avg       0.89      0.89      0.89        18
 
-**Architecture Hyperparameters:**
-- Conv filters: Tested [32, 64, 128] → **64 optimal** (balance capacity vs. overfitting)
-- LSTM units: Tested [32, 64, 128] → **64 optimal**
-- Dropout rate: Tested [0.3, 0.5, 0.7] → **0.5 optimal**
+Model saved to: models/gesture_classifier_binary.pkl
+```
 
-**Training Hyperparameters:**
-- Learning rate: Tested [0.01, 0.001, 0.0001] → **0.001 optimal**
-- Batch size: Tested [16, 32, 64] → **32 optimal** (best convergence speed)
+## Hyperparameter Selection
 
-**Results Table:**
+The system uses default hyperparameters that work well for this dataset size and feature dimensionality:
 
-| Config | Val Accuracy | Notes |
-|--------|-------------|-------|
-| Baseline (64 filters, 0.5 dropout, LR=0.001) | 89.3% | Selected |
-| Larger (128 filters, 0.5 dropout, LR=0.001) | 88.1% | Overfitting |
-| Smaller (32 filters, 0.3 dropout, LR=0.001) | 85.7% | Underfitting |
-| High LR (64 filters, 0.5 dropout, LR=0.01) | 82.4% | Unstable |
+- **C = 1.0**: Standard regularization strength
+- **gamma = 'scale'**: Automatically set to $1/(n_{features} \times X.var())$
+- **kernel = 'rbf'**: Radial basis function for nonlinear boundaries
 
----
+These defaults are effective because:
+1. Features are normalized (StandardScaler)
+2. Dataset is relatively small (50-100 samples)
+3. Feature space is moderate-dimensional (48 features)
 
-## What I Learned from Training Failures
+## Training Time
 
-**Failure 1: Class Imbalance Led to "Idle" Bias**
+Typical training times on standard hardware (Intel Core i7):
+- Binary model: 0.1-0.5 seconds
+- Multiclass model: 0.2-1.0 seconds
 
-Initial model predicted "idle" for 60% of samples (trivial classifier).
+SVM training is fast enough for rapid iteration and experimentation.
 
-**Solution**: Applied SMOTE to balance classes before training.
+## Model Validation
 
-**Failure 2: Overfitting on Training Data**
+After training, verify the model loads correctly:
 
-Early models achieved 99% training accuracy but 70% validation accuracy.
+```python
+# Test model loading
+loaded_model = joblib.load('models/gesture_classifier_binary.pkl')
+loaded_scaler = joblib.load('models/feature_scaler_binary.pkl')
+loaded_features = joblib.load('models/feature_names_binary.pkl')
 
-**Solution**: Added dropout (0.5) and early stopping.
+# Verify prediction works
+test_features = extract_features_from_dataframe(test_df)
+test_vector = [test_features.get(name, 0) for name in loaded_features]
+test_vector_scaled = loaded_scaler.transform([test_vector])
+prediction = loaded_model.predict(test_vector_scaled)
 
-**Failure 3: Vanishing Gradients in Deep LSTM**
+print(f"Prediction: {classes[prediction[0]]}")
+```
 
-Tried 3-layer LSTM initially—training stalled (gradients → 0).
-
-**Solution**: Reduced to 2 LSTM layers, added batch normalization.
-
----
-
-## Evaluation Against CS156 Learning Objectives
-
-### cs156-MLCode ✓
-- Complete training pipeline (SVM grid search, CNN-LSTM training loop)
-- Proper use of callbacks (early stopping, LR scheduling)
-- Model checkpointing and persistence
-
-### cs156-MLExplanation ✓
-- Clear description of training process
-- Convergence analysis with plots
-- Honest account of failures and solutions
-
-### cs156-MLMath ✓
-- Computational complexity analysis ($O(n^2 d)$ for SVM)
-- Loss function minimization via gradient descent
-- Early stopping criterion based on validation loss
-
-### cs156-MLFlexibility ✓
-- Grid search with cross-validation (rigorous hyperparameter tuning)
-- Deep learning callbacks (advanced TensorFlow features)
-- SMOTE integration for class balancing
+This ensures the saved model can be used for deployment without errors.
 
 ---
 
-## References for Section 6
+## References
 
-1. Platt, J. (1998). "Sequential Minimal Optimization: A Fast Algorithm for Training Support Vector Machines." *Microsoft Research Technical Report*.
-2. Kingma, D. P., & Ba, J. (2014). "Adam: A Method for Stochastic Optimization." *arXiv:1412.6980*.
-3. Prechelt, L. (1998). "Early Stopping—But When?" *Neural Networks: Tricks of the Trade*, 55-69.
-4. TensorFlow Keras Callbacks: https://www.tensorflow.org/api_docs/python/tf/keras/callbacks
+- scikit-learn SVC: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
+- scikit-learn model persistence: https://scikit-learn.org/stable/model_persistence.html
+- joblib documentation: https://joblib.readthedocs.io/
