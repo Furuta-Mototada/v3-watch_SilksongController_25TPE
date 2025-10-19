@@ -646,16 +646,28 @@ class DataCollectionDashboard:
         )
         selected_action = random.sample(action_segments, min(30, len(action_segments)))
 
-        # Save
+        # Save with unique timestamps
+        base_timestamp = int(time.time() * 1000)  # Milliseconds for uniqueness
+
         for i, segment in enumerate(selected_locomotion, 1):
-            filename = self.output_dir / f"noise_locomotion_seg_{i:03d}.csv"
+            # Add small offset to ensure uniqueness even in rapid succession
+            unique_ts = base_timestamp + i
+            filename = (
+                self.output_dir / f"noise_locomotion_{unique_ts}_seg_{i:03d}.csv"
+            )
             self._save_csv(filename, segment)
 
         for i, segment in enumerate(selected_action, 1):
-            filename = self.output_dir / f"noise_action_seg_{i:03d}.csv"
+            # Continue offset from locomotion count
+            unique_ts = base_timestamp + len(selected_locomotion) + i
+            filename = (
+                self.output_dir / f"noise_action_{unique_ts}_seg_{i:03d}.csv"
+            )
             self._save_csv(filename, segment)
 
-        self.action_counts["noise"] = len(selected_locomotion) + len(selected_action)
+        self.action_counts["noise"] = len(selected_locomotion) + len(
+            selected_action
+        )
 
     def _segment_noise(self, noise_data, duration_sec, samples_per_sec):
         """Segment noise data into fixed-duration chunks"""
