@@ -139,15 +139,28 @@ def extract_features_from_dataframe(df):
     - Frequency domain: FFT max, dominant frequency
     - Magnitude features: accel magnitude, gyro magnitude
     
+    Supports both:
+    - Unmerged data (with 'sensor' column - filters by sensor type)
+    - Merged data (without 'sensor' column - all data already organized)
+    
     Returns:
         dict of features
     """
     features = {}
     
-    # Separate by sensor type
-    accel_data = df[df['sensor'] == 'linear_acceleration']
-    gyro_data = df[df['sensor'] == 'gyroscope']
-    rot_data = df[df['sensor'] == 'rotation_vector']
+    # Check if data is merged (no 'sensor' column) or unmerged (has 'sensor' column)
+    has_sensor_column = 'sensor' in df.columns
+    
+    if has_sensor_column:
+        # UNMERGED DATA: Separate by sensor type
+        accel_data = df[df['sensor'] == 'linear_acceleration']
+        gyro_data = df[df['sensor'] == 'gyroscope']
+        rot_data = df[df['sensor'] == 'rotation_vector']
+    else:
+        # MERGED DATA: All sensors in same rows, use entire dataframe
+        accel_data = df
+        gyro_data = df
+        rot_data = df
     
     def time_features(series, prefix):
         """Extract time-domain features."""
@@ -180,23 +193,26 @@ def extract_features_from_dataframe(df):
         col = f'accel_{axis}'
         if col in accel_data.columns and len(accel_data) > 0:
             series = accel_data[col].dropna()
-            features.update(time_features(series, f'accel_{axis}'))
-            features.update(freq_features(series, f'accel_{axis}'))
+            if len(series) > 0:  # Only extract if we have data
+                features.update(time_features(series, f'accel_{axis}'))
+                features.update(freq_features(series, f'accel_{axis}'))
     
     # Gyroscope features
     for axis in ['x', 'y', 'z']:
         col = f'gyro_{axis}'
         if col in gyro_data.columns and len(gyro_data) > 0:
             series = gyro_data[col].dropna()
-            features.update(time_features(series, f'gyro_{axis}'))
-            features.update(freq_features(series, f'gyro_{axis}'))
+            if len(series) > 0:  # Only extract if we have data
+                features.update(time_features(series, f'gyro_{axis}'))
+                features.update(freq_features(series, f'gyro_{axis}'))
     
     # Rotation features (quaternion)
     for axis in ['w', 'x', 'y', 'z']:
         col = f'rot_{axis}'
         if col in rot_data.columns and len(rot_data) > 0:
             series = rot_data[col].dropna()
-            features.update(time_features(series, f'rot_{axis}'))
+            if len(series) > 0:  # Only extract if we have data
+                features.update(time_features(series, f'rot_{axis}'))
     
     # Magnitude features
     if len(accel_data) > 0 and all(f'accel_{ax}' in accel_data.columns for ax in ['x', 'y', 'z']):
@@ -205,7 +221,9 @@ def extract_features_from_dataframe(df):
             accel_data['accel_y']**2 + 
             accel_data['accel_z']**2
         )
-        features.update(time_features(accel_mag, 'accel_mag'))
+        accel_mag = accel_mag.dropna()
+        if len(accel_mag) > 0:
+            features.update(time_features(accel_mag, 'accel_mag'))
     
     if len(gyro_data) > 0 and all(f'gyro_{ax}' in gyro_data.columns for ax in ['x', 'y', 'z']):
         gyro_mag = np.sqrt(
@@ -213,7 +231,9 @@ def extract_features_from_dataframe(df):
             gyro_data['gyro_y']**2 + 
             gyro_data['gyro_z']**2
         )
-        features.update(time_features(gyro_mag, 'gyro_mag'))
+        gyro_mag = gyro_mag.dropna()
+        if len(gyro_mag) > 0:
+            features.update(time_features(gyro_mag, 'gyro_mag'))
     
     return features
 
