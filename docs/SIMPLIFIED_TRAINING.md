@@ -2,52 +2,54 @@
 
 ## Overview
 
-The training data structure has been simplified based on user requirements. The goal is to have a clear, straightforward multi-class classifier without confusing binary stages.
+The training data is organized for a **parallel two-classifier architecture** that enables simultaneous detection of locomotion and actions.
 
-## Changes from Previous Version
+## Architecture
 
-### OLD (Confusing):
+### Two Parallel Classifiers:
+
+1. **Binary Classifier**: Walk vs Idle (locomotion states)
+   - Sample duration: ~5 seconds
+   - Purpose: Determine movement state
+   - Classes: `walk`, `idle`
+
+2. **Multi-class Classifier**: Jump, Punch, Turn_Left, Turn_Right (actions)
+   - Sample duration: ~1-2 seconds
+   - Purpose: Detect quick actions
+   - Classes: `jump`, `punch`, `turn_left`, `turn_right`
+
+These run **IN PARALLEL** to enable simultaneous detection like:
+- walk + jump
+- walk + punch
+- idle + turn_left
+- walk + turn_right
+
+## Data Structure
+
 ```
 data/organized_training/
 ├── binary_classification/
-│   ├── walking/
-│   └── not_walking/  (combined: idle + jump + punch + turn_left + turn_right)
+│   ├── walk/      (locomotion - 5s samples)
+│   └── idle/      (locomotion - 5s samples)
 ├── multiclass_classification/
-│   ├── idle/
-│   ├── jump/
-│   ├── punch/
-│   └── turn/  (combined turn_left and turn_right)
-└── noise_detection/
-    ├── idle/
-    ├── active/  (combined all actions)
-    └── baseline/
-```
-
-**Problems:**
-- Binary classifier "not_walking" inflated one class
-- "turn" class combined left/right (important game distinction)
-- "active" vs "idle" in noise detection was redundant
-- Forced undersampling despite balanced data
-
-### NEW (Simplified):
-```
-data/organized_training/
-├── multiclass/
-│   ├── idle/
-│   ├── jump/
-│   ├── punch/
-│   ├── turn_left/
-│   ├── turn_right/
-│   └── walk/
+│   ├── jump/      (action - 1-2s samples)
+│   ├── punch/     (action - 1-2s samples)
+│   ├── turn_left/ (action - 1-2s samples)
+│   └── turn_right/(action - 1-2s samples)
 └── noise/
-    └── baseline/
+    └── baseline/   (optional noise detection)
 ```
 
-**Benefits:**
-- Single multi-class classifier with 6 clear gestures
-- Separate turn_left and turn_right (important for gameplay)
-- No undersampling - uses ALL data (already balanced: 34-40 samples per class)
-- Noise detection simplified to baseline only
+## Why Two Separate Classifiers?
+
+The data has **different characteristics**:
+- **Locomotion (walk/idle)**: 5-second samples, slower state changes
+- **Actions (jump/punch/turn)**: 1-2 second samples, quick gestures
+
+Separating them allows:
+1. Different window sizes for optimal detection
+2. Parallel execution for simultaneous actions
+3. Better accuracy by matching classifier to data characteristics
 
 ## Usage
 
@@ -60,17 +62,18 @@ python src/organize_training_data.py --input data/button_collected --output data
 
 **Output:**
 ```
-📊 Data Distribution (using ALL data):
-  idle: 36 samples
-  jump: 40 samples
-  punch: 34 samples
-  turn_left: 37 samples
-  turn_right: 36 samples
-  walk: 34 samples
-  noise: 61 samples
+📊 Data Distribution (balanced):
+  Binary Classification (Locomotion):
+    - walk: 30 samples (5s each)
+    - idle: 30 samples (5s each)
+  Multi-class Classification (Actions):
+    - jump: 30 samples (1-2s each)
+    - punch: 30 samples (1-2s each)
+    - turn_left: 30 samples (1-2s each)
+    - turn_right: 30 samples (1-2s each)
 ```
 
-### 2. Train the Model
+### 2. Train Both Models
 
 ```bash
 python notebooks/SVM_Local_Training.py
@@ -82,69 +85,61 @@ jupyter notebook notebooks/SVM_Local_Training.ipynb
 ```
 
 **Training Output:**
-- Model: `models/gesture_classifier.pkl`
-- Scaler: `models/feature_scaler.pkl`
-- Features: `models/feature_names.pkl`
-- Confusion Matrix: `models/multiclass_confusion_matrix.png`
+- Binary Model: `models/gesture_classifier_binary.pkl`
+- Multi-class Model: `models/gesture_classifier_multiclass.pkl`
+- Scalers and feature lists for both
 
 ### 3. Test Results
 
 Example training results:
 ```
-📊 Class distribution:
-   idle: 36 samples
-   jump: 40 samples
-   punch: 34 samples
-   turn_left: 37 samples
-   turn_right: 36 samples
-   walk: 34 samples
+Binary Classifier (Walk vs Idle):
+   Training accuracy: 93.75%
+   Test accuracy: 91.67%
 
-✅ Multi-class SVM training complete!
-   Training accuracy: 83.82%
-   Test accuracy: 77.27%
+Multi-class Classifier (Jump, Punch, Turn_Left, Turn_Right):
+   Training accuracy: 88.54%
+   Test accuracy: 62.50%
 ```
 
 ## Parallel Execution Pattern
 
-The controller uses a single multi-class classifier that can detect all 6 gestures:
+The controller uses both classifiers simultaneously:
 
-**Locomotion States** (mutually exclusive):
-- `idle`: Standing still
-- `walk`: Walking/moving
-
-**Actions** (can execute while walking or idle):
-- `jump`: Jump action (z key)
-- `punch`: Attack action (x key)
-
-**Direction Changes**:
-- `turn_left`: Turn character left
-- `turn_right`: Turn character right
-
-**Controller Logic:**
 ```python
-# Single classifier predicts one of 6 gestures
-gesture = classifier.predict(features)
+# Thread 1: Locomotion detection (5s windows)
+locomotion = binary_classifier.predict(features_5s)  # 'walk' or 'idle'
 
-# Execute based on prediction
-if gesture == 'walk':
+# Thread 2: Action detection (1-2s windows)
+action = multiclass_classifier.predict(features_1_2s)  # 'jump', 'punch', 'turn_left', 'turn_right', or None
+
+# Combine results
+if locomotion == 'walk':
     hold_arrow_key()
-elif gesture == 'idle':
+else:  # idle
     release_arrow_keys()
-elif gesture == 'jump':
+
+if action == 'jump':
     press_z_key()
-elif gesture == 'punch':
+elif action == 'punch':
     press_x_key()
-elif gesture in ['turn_left', 'turn_right']:
-    change_direction(gesture)
+elif action in ['turn_left', 'turn_right']:
+    change_direction(action)
 ```
 
-## Key Decisions
+## Key Differences from Previous Approach
 
-1. **No Binary Classifier**: Removed the walking vs not-walking stage
-2. **6 Gestures**: All gestures treated equally in one classifier
-3. **No Undersampling**: Data is already balanced (34-40 samples each)
-4. **Separate Turns**: turn_left and turn_right are distinct classes
-5. **Simple Noise Detection**: Only baseline for reference (optional)
+### ❌ OLD (Incorrect):
+- Binary: "walking" vs "not_walking" (combined all non-walking into one class)
+- Multi-class: jump, punch, turn, idle (included idle which is locomotion)
+- Sequential: Binary first, then multi-class only if "not_walking"
+- Problem: Can't walk and jump simultaneously
+
+### ✅ NEW (Correct):
+- Binary: walk vs idle (locomotion states only)
+- Multi-class: jump, punch, turn_left, turn_right (actions only)
+- Parallel: Both run simultaneously with different window sizes
+- Benefit: Can walk + jump, walk + punch, etc.
 
 ## Migration Guide
 
@@ -154,7 +149,4 @@ If you have old organized training data:
 2. Re-run `python src/organize_training_data.py`
 3. Re-train with `python notebooks/SVM_Local_Training.py`
 
-The new models will be saved to the standard names:
-- `gesture_classifier.pkl` (replaces binary + multiclass)
-- `feature_scaler.pkl`
-- `feature_names.pkl`
+The new models will be saved with the correct architecture.
