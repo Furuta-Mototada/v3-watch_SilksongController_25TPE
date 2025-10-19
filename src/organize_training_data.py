@@ -24,30 +24,79 @@ import json
 def analyze_data_distribution(input_dir):
     """
     Analyze the distribution of gesture classes.
-    
+
     Returns:
         dict: Gesture counts
     """
     gesture_counts = {}
-    
+
     for filename in os.listdir(input_dir):
         if not filename.endswith('.csv'):
             continue
-        
+
         # Extract gesture from filename (format: gesture_timestamp.csv)
         gesture = filename.split('_')[0]
         gesture_counts[gesture] = gesture_counts.get(gesture, 0) + 1
-    
+
     return gesture_counts
+
+
+def segment_baseline_noise(input_dir, output_dir, samples_per_sec=50, segment_duration=5.0):
+    """
+    Segment the baseline noise CSV into multiple samples for training.
+
+    Args:
+        input_dir: Directory containing baseline_noise CSV
+        output_dir: Directory to save segmented baseline samples
+        samples_per_sec: Sensor data rate (default 50Hz)
+        segment_duration: Duration of each segment in seconds (default 5.0s)
+
+    Returns:
+        list: Filenames of segmented baseline samples
+    """
+    baseline_files = [f for f in os.listdir(input_dir) if f.startswith('baseline_noise') and f.endswith('.csv')]
+
+    if not baseline_files:
+        print("⚠️  No baseline_noise file found")
+        return []
+
+    baseline_file = Path(input_dir) / baseline_files[0]
+    print(f"\n📊 Segmenting baseline noise: {baseline_file.name}")
+
+    # Read the baseline CSV
+    df = pd.read_csv(baseline_file)
+    total_samples = len(df)
+    segment_size = int(segment_duration * samples_per_sec)
+
+    print(f"   Total samples: {total_samples}")
+    print(f"   Segment size: {segment_size} samples ({segment_duration}s at {samples_per_sec}Hz)")
+
+    # Create segments
+    segmented_files = []
+    segment_count = 0
+
+    for i in range(0, total_samples - segment_size + 1, segment_size):
+        segment = df.iloc[i:i + segment_size]
+
+        if len(segment) == segment_size:
+            segment_count += 1
+            filename = f"baseline_segment_{segment_count:03d}.csv"
+            filepath = Path(output_dir) / filename
+            segment.to_csv(filepath, index=False)
+            segmented_files.append(filename)
+
+    print(f"   ✅ Created {segment_count} baseline segments")
+
+    return segmented_files
 
 
 def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
     """
     Copy data files to organized structure with class balancing.
-    
+
     For majority classes: Randomly select target_samples_per_class
     For minority classes: Copy all available samples
-    
+
     Args:
         input_dir: Source directory with all CSV files
         output_dir: Target directory for organized data
@@ -57,45 +106,68 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
     binary_dir = Path(output_dir) / "binary_classification"
     multiclass_dir = Path(output_dir) / "multiclass_classification"
     noise_dir = Path(output_dir) / "noise_detection"
-    
+
     for directory in [binary_dir, multiclass_dir, noise_dir]:
         directory.mkdir(parents=True, exist_ok=True)
-    
+
+    # Segment baseline noise first (creates temporary files)
+    temp_baseline_dir = Path(output_dir) / "temp_baseline"
+    temp_baseline_dir.mkdir(exist_ok=True)
+    baseline_segments = segment_baseline_noise(input_dir, temp_baseline_dir)
+
     # Binary classification: walking vs not_walking
     (binary_dir / "walking").mkdir(exist_ok=True)
     (binary_dir / "not_walking").mkdir(exist_ok=True)
-    
-    # Multi-class: jump, punch, turn, idle
-    for gesture in ['jump', 'punch', 'turn', 'idle']:
+
+    # Multi-class: jump, punch, turn_left, turn_right, idle
+    for gesture in ['jump', 'punch', 'turn_left', 'turn_right', 'idle']:
         (multiclass_dir / gesture).mkdir(exist_ok=True)
-    
+
     # Noise detection: idle vs active
     (noise_dir / "idle").mkdir(exist_ok=True)
     (noise_dir / "active").mkdir(exist_ok=True)
-    
+    (noise_dir / "baseline").mkdir(exist_ok=True)
+
     # Collect files by gesture
     gesture_files = {
         'jump': [],
         'punch': [],
-        'turn': [],
+        'turn_left': [],
+        'turn_right': [],
         'walk': [],
         'idle': [],
-        'baseline': []
+        'baseline': baseline_segments,  # Use segmented baseline files
+        'noise': []
     }
-    
+
     for filename in os.listdir(input_dir):
         if not filename.endswith('.csv'):
             continue
-        
-        gesture = filename.split('_')[0]
+
+        # Skip the original baseline_noise file (we're using segments)
+        if filename.startswith('baseline_noise'):
+            continue
+
+        # Extract gesture from filename
+        # Format can be: gesture_timestamp.csv OR gesture_type_timestamp.csv
+        parts = filename.split('_')
+
+        # Handle compound names like "turn_left" and "turn_right"
+        if parts[0] == 'turn' and len(parts) > 1 and parts[1] in ['left', 'right']:
+            gesture = f"{parts[0]}_{parts[1]}"
+        elif parts[0] in ['noise', 'locomotion', 'action']:
+            gesture = 'noise'  # Group all noise-related files
+        else:
+            gesture = parts[0]
+
         if gesture in gesture_files:
             gesture_files[gesture].append(filename)
-    
+
     # Print initial distribution
     print("\n📊 Initial Data Distribution:")
     for gesture, files in gesture_files.items():
         print(f"  {gesture}: {len(files)} samples")
-    
+
     # Balance classes by undersampling majority
     balanced_files = {}
     for gesture, files in gesture_files.items():
@@ -109,42 +181,59 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
             balanced_files[gesture] = files
             if len(files) < target_samples_per_class:
                 print(f"  ⚠️  {gesture}: Only {len(files)} samples (need more data or augmentation)")
-    
+
     # Copy files to organized structure
     print("\n📁 Organizing files...")
-    
+
     # Binary classification
     for filename in balanced_files['walk']:
         src = Path(input_dir) / filename
         dst = binary_dir / "walking" / filename
         shutil.copy2(src, dst)
-    
-    for gesture in ['jump', 'punch', 'turn', 'idle']:
+
+    for gesture in ['jump', 'punch', 'turn_left', 'turn_right', 'idle']:
         for filename in balanced_files[gesture]:
             src = Path(input_dir) / filename
             dst = binary_dir / "not_walking" / filename
             shutil.copy2(src, dst)
-    
+
     # Multi-class classification (for "not walking" samples)
-    for gesture in ['jump', 'punch', 'turn', 'idle']:
+    for gesture in ['jump', 'punch', 'turn_left', 'turn_right', 'idle']:
         for filename in balanced_files[gesture]:
             src = Path(input_dir) / filename
             dst = multiclass_dir / gesture / filename
             shutil.copy2(src, dst)
-    
+
     # Noise detection
     for filename in balanced_files['idle']:
         src = Path(input_dir) / filename
         dst = noise_dir / "idle" / filename
         shutil.copy2(src, dst)
-    
-    for gesture in ['jump', 'punch', 'turn', 'walk']:
+
+    # Copy noise/baseline files (from temp directory)
+    for filename in balanced_files.get('noise', []):
+        src = Path(input_dir) / filename
+        dst = noise_dir / "baseline" / filename
+        shutil.copy2(src, dst)
+
+    for filename in balanced_files.get('baseline', []):
+        src = temp_baseline_dir / filename  # Baseline segments are in temp directory
+        dst = noise_dir / "baseline" / filename
+        shutil.copy2(src, dst)
+
+    for gesture in ['jump', 'punch', 'turn_left', 'turn_right', 'walk']:
         for filename in balanced_files[gesture]:
             src = Path(input_dir) / filename
             dst = noise_dir / "active" / filename
             shutil.copy2(src, dst)
-    
+
+    # Clean up temp directory
+    shutil.rmtree(temp_baseline_dir)
+
     # Create metadata file
+    not_walking_gestures = ['jump', 'punch', 'turn_left', 'turn_right', 'idle']
+    active_gestures = ['jump', 'punch', 'turn_left', 'turn_right', 'walk']
+
     metadata = {
         "source_directory": str(input_dir),
         "target_samples_per_class": target_samples_per_class,
@@ -153,20 +242,21 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
         "total_files_organized": sum(len(v) for v in balanced_files.values()),
         "binary_classification": {
             "walking": len(balanced_files['walk']),
-            "not_walking": sum(len(balanced_files[g]) for g in ['jump', 'punch', 'turn', 'idle'])
+            "not_walking": sum(len(balanced_files[g]) for g in not_walking_gestures)
         },
         "multiclass_classification": {
-            gesture: len(balanced_files[gesture]) for gesture in ['jump', 'punch', 'turn', 'idle']
+            gesture: len(balanced_files[gesture]) for gesture in not_walking_gestures
         },
         "noise_detection": {
             "idle": len(balanced_files['idle']),
-            "active": sum(len(balanced_files[g]) for g in ['jump', 'punch', 'turn', 'walk'])
+            "baseline": len(balanced_files.get('noise', [])) + len(balanced_files.get('baseline', [])),
+            "active": sum(len(balanced_files[g]) for g in active_gestures)
         }
     }
-    
+
     with open(Path(output_dir) / "metadata.json", 'w') as f:
         json.dump(metadata, f, indent=2)
-    
+
     print("\n✅ Data organization complete!")
     print(f"\n📊 Final Distribution:")
     print(f"  Binary Classification:")
@@ -178,44 +268,44 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
     print(f"  Noise Detection:")
     print(f"    - Idle: {metadata['noise_detection']['idle']}")
     print(f"    - Active: {metadata['noise_detection']['active']}")
-    
+
     return metadata
 
 
 def verify_csv_format(input_dir):
     """
     Verify that CSV files have the correct format.
-    
+
     Expected columns: accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z,
                      rot_w, rot_x, rot_y, rot_z, sensor, timestamp
     """
     print("\n🔍 Verifying CSV format...")
-    
+
     expected_columns = {'accel_x', 'accel_y', 'accel_z', 'gyro_x', 'gyro_y', 'gyro_z',
                        'rot_w', 'rot_x', 'rot_y', 'rot_z', 'sensor', 'timestamp'}
-    
+
     issues = []
     sample_count = 0
-    
+
     for filename in os.listdir(input_dir):
         if not filename.endswith('.csv'):
             continue
-        
+
         try:
             df = pd.read_csv(Path(input_dir) / filename)
             columns = set(df.columns)
-            
+
             if not expected_columns.issubset(columns):
                 missing = expected_columns - columns
                 issues.append(f"  ❌ {filename}: Missing columns {missing}")
-            
+
             sample_count += 1
             if sample_count >= 5:  # Check first 5 files
                 break
-                
+
         except Exception as e:
             issues.append(f"  ❌ {filename}: Error reading file - {e}")
-    
+
     if issues:
         print("⚠️  Found issues in some files:")
         for issue in issues:
@@ -249,29 +339,29 @@ def main():
         action='store_true',
         help='Only verify CSV format without organizing'
     )
-    
+
     args = parser.parse_args()
-    
+
     input_dir = Path(args.input)
     output_dir = Path(args.output)
-    
+
     if not input_dir.exists():
         print(f"❌ Error: Input directory not found: {input_dir}")
         return 1
-    
+
     # Verify CSV format
     verify_csv_format(input_dir)
-    
+
     if args.verify_only:
         return 0
-    
+
     # Analyze distribution
     print(f"\n📂 Input directory: {input_dir}")
     print(f"📂 Output directory: {output_dir}")
-    
+
     # Organize data
     metadata = copy_and_balance_data(input_dir, output_dir, args.target_samples)
-    
+
     print(f"\n📄 Metadata saved to: {output_dir / 'metadata.json'}")
     print(f"\n✨ Ready for training!")
     print(f"\n📚 Training Structure:")
@@ -281,7 +371,7 @@ def main():
     print(f"     - Train on: {output_dir / 'multiclass_classification'}/")
     print(f"  3. Noise Detector (Idle vs Active):")
     print(f"     - Train on: {output_dir / 'noise_detection'}/")
-    
+
     return 0
 
 
