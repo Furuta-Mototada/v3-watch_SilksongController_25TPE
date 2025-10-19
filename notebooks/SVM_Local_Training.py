@@ -1,4 +1,21 @@
 #!/usr/bin/env python3
+# ---
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.18.0
+#   kernelspec:
+#     display_name: .venv
+#     language: python
+#     name: python3
+# ---
+
+# %%
 """
 SVM Local Training Notebook
 Optimized for local training on your machine (no Colab required)
@@ -14,20 +31,20 @@ Usage:
 
 # %% [markdown]
 # # SVM Local Training - Silksong Gesture Recognition
-# 
+#
 # **Fast Local Training with Support Vector Machines**
-# 
+#
 # This notebook trains an SVM model for gesture recognition on your local machine.
 # No GPU required, training takes 5-15 minutes.
-# 
+#
 # ## Setup Requirements:
 # 1. ✅ Organized data in `data/organized_training/`
 # 2. ✅ Python packages: scikit-learn, pandas, numpy, joblib
-# 
+#
 # ## Simplified Architecture:
 # - **Single Multi-Class Classifier**: 6 gestures (idle, jump, punch, turn_left, turn_right, walk)
 # - Parallel execution: Can run jump/punch while walking/idle
-# 
+#
 # ---
 
 # %% [markdown]
