@@ -1,0 +1,90 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    TRAINING DATA STRUCTURE COMPARISON                          ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────┬─────────────────────────────────────┐
+│           BEFORE (Confusing)        │          AFTER (Simplified)         │
+├─────────────────────────────────────┼─────────────────────────────────────┤
+│                                     │                                     │
+│  organized_training/                │  organized_training/                │
+│  ├── binary_classification/         │  ├── multiclass/                    │
+│  │   ├── walking/                   │  │   ├── idle/      (36 samples)   │
+│  │   │   └── [30 samples] ⚠️        │  │   ├── jump/      (40 samples)   │
+│  │   └── not_walking/               │  │   ├── punch/     (34 samples)   │
+│  │       └── [150 samples] ⚠️       │  │   ├── turn_left/ (37 samples)   │
+│  │           (idle+jump+punch+turn) │  │   ├── turn_right/(36 samples)   │
+│  │                                  │  │   └── walk/      (34 samples)   │
+│  ├── multiclass_classification/     │  └── noise/                         │
+│  │   ├── idle/      [30 samples]    │      └── baseline/  (61 samples)   │
+│  │   ├── jump/      [30 samples]    │                                     │
+│  │   ├── punch/     [30 samples]    │  TOTAL: 217 samples                │
+│  │   └── turn/ ❌ MISSING!          │         (6 classes)                 │
+│  │       (should be turn_left +     │                                     │
+│  │        turn_right)                │                                     │
+│  └── noise_detection/               │                                     │
+│      ├── idle/                      │                                     │
+│      ├── active/                    │                                     │
+│      └── baseline/                  │                                     │
+│                                     │                                     │
+│  TOTAL: 180 samples (undersampled)  │                                     │
+│                                     │                                     │
+├─────────────────────────────────────┼─────────────────────────────────────┤
+│  Training Approach:                 │  Training Approach:                 │
+│                                     │                                     │
+│  1. Binary SVM (2 classes)          │  1. Multi-class SVM (6 classes)     │
+│     - walking vs not_walking        │     - All gestures in one model     │
+│  2. Multi-class SVM (4 classes)     │                                     │
+│     - jump, punch, turn, idle       │  Models saved:                      │
+│                                     │  - gesture_classifier.pkl           │
+│  Models saved:                      │  - feature_scaler.pkl               │
+│  - gesture_classifier_binary.pkl    │  - feature_names.pkl                │
+│  - gesture_classifier_multiclass.pkl│                                     │
+│  - feature_scaler_binary.pkl        │  Test accuracy: 77.27%              │
+│  - feature_scaler_multiclass.pkl    │                                     │
+│                                     │                                     │
+├─────────────────────────────────────┼─────────────────────────────────────┤
+│  Problems:                          │  Benefits:                          │
+│                                     │                                     │
+│  ❌ "not_walking" inflated (5→1)    │  ✅ Each gesture is separate        │
+│  ❌ "turn" missing (turn_left/right)│  ✅ turn_left ≠ turn_right          │
+│  ❌ Data loss (undersampling)       │  ✅ All data preserved              │
+│  ❌ Confusing 3-folder structure    │  ✅ Simple 2-folder structure       │
+│  ❌ Two models to manage            │  ✅ Single model to manage          │
+│  ❌ ValueError: class count mismatch│  ✅ No errors - counts match        │
+│                                     │                                     │
+└─────────────────────────────────────┴─────────────────────────────────────┘
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                           CLASSIFICATION FLOW                                  ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+BEFORE (Two-Stage):                    AFTER (Single-Stage):
+                                      
+┌──────────────┐                      ┌──────────────┐
+│ Sensor Data  │                      │ Sensor Data  │
+└──────┬───────┘                      └──────┬───────┘
+       │                                     │
+       ▼                                     ▼
+┌──────────────────┐                  ┌─────────────────────┐
+│  Binary SVM      │                  │  Multi-class SVM    │
+│  (Stage 1)       │                  │  (Single Stage)     │
+└──────┬───────────┘                  └──────┬──────────────┘
+       │                                     │
+   ┌───┴───┐                                 │
+   ▼       ▼                                 ▼
+Walking  Not-Walking                  ┌─────┴─────┐
+           │                          │  6 Gestures│
+           ▼                          ├───────────┤
+    ┌─────────────┐                  │ idle      │
+    │Multi-class  │                  │ jump      │
+    │SVM (Stage 2)│                  │ punch     │
+    └─────┬───────┘                  │turn_left  │
+          │                          │turn_right │
+     ┌────┴───┐                      │ walk      │
+     ▼        ▼                      └───────────┘
+  Jump/Punch  Turn/Idle
+
+⚠️  Confusing!                        ✅ Simple & Clear!
+⚠️  "turn" undefined                  ✅ All gestures defined
+⚠️  Two models                        ✅ One model
+
