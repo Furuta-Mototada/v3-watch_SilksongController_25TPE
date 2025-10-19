@@ -3,9 +3,11 @@
 SVM Local Training Notebook
 Optimized for local training on your machine (no Colab required)
 
-Two-Stage Classification:
-1. Binary: Walking vs Not-Walking
-2. Multi-class: Jump, Punch, Turn, Idle
+Parallel Two-Classifier Architecture:
+1. Binary: Walk vs Idle (locomotion states - 5s samples)
+2. Multi-class: Jump, Punch, Turn_Left, Turn_Right (actions - 1-2s samples)
+
+These run in PARALLEL for simultaneous detection (e.g., walk + jump).
 
 Usage:
     1. Organize your data first: python src/organize_training_data.py
@@ -25,9 +27,10 @@ Usage:
 # 1. ✅ Organized data in `data/organized_training/`
 # 2. ✅ Python packages: scikit-learn, pandas, numpy, joblib
 # 
-# ## Two-Stage Architecture:
-# - **Stage 1**: Binary classifier (Walking vs Not-Walking)
-# - **Stage 2**: Multi-class classifier (Jump, Punch, Turn, Idle)
+# ## Parallel Two-Classifier Architecture:
+# - **Binary Classifier**: Walk vs Idle (locomotion - 5 second samples)
+# - **Multi-class Classifier**: Jump, Punch, Turn_Left, Turn_Right (actions - 1-2 second samples)
+# - **Run in parallel**: Enables walk + jump, walk + punch, etc.
 # 
 # ---
 
@@ -217,17 +220,17 @@ def extract_features_from_dataframe(df):
 print("✅ Feature extraction function defined")
 
 # %% [markdown]
-# ## 4. Train Binary Classifier (Walking vs Not-Walking)
+# ## 4. Train Binary Classifier (Walk vs Idle - Locomotion)
 
 # %%
 if TRAINING_MODE in ['BINARY', 'BOTH']:
     print("\n" + "="*60)
-    print("STAGE 1: BINARY CLASSIFIER (Walking vs Not-Walking)")
+    print("BINARY CLASSIFIER: Walk vs Idle (Locomotion)")
     print("="*60 + "\n")
     
     # Load binary data
     binary_path = DATA_DIR / "binary_classification"
-    binary_gestures = ['walking', 'not_walking']
+    binary_gestures = ['walk', 'idle']
     
     print("Loading binary classification data...")
     binary_data = load_gesture_data(binary_path, binary_gestures)
@@ -334,17 +337,17 @@ if TRAINING_MODE in ['BINARY', 'BOTH']:
     print(f"   - feature_names_binary.pkl")
 
 # %% [markdown]
-# ## 5. Train Multi-class Classifier (Jump, Punch, Turn, Idle)
+# ## 5. Train Multi-class Classifier (Jump, Punch, Turn_Left, Turn_Right - Actions)
 
 # %%
 if TRAINING_MODE in ['MULTICLASS', 'BOTH']:
     print("\n" + "="*60)
-    print("STAGE 2: MULTI-CLASS CLASSIFIER (Jump, Punch, Turn, Idle)")
+    print("MULTI-CLASS CLASSIFIER: Actions (Jump, Punch, Turn_Left, Turn_Right)")
     print("="*60 + "\n")
     
     # Load multiclass data
     multiclass_path = DATA_DIR / "multiclass_classification"
-    multiclass_gestures = ['jump', 'punch', 'turn', 'idle']
+    multiclass_gestures = ['jump', 'punch', 'turn_left', 'turn_right']
     
     print("Loading multi-class data...")
     multiclass_data = load_gesture_data(multiclass_path, multiclass_gestures)
@@ -466,23 +469,24 @@ print("🎉 TRAINING COMPLETE!")
 print("="*60)
 
 if TRAINING_MODE in ['BINARY', 'BOTH']:
-    print(f"\n📊 Binary Classifier (Walking vs Not-Walking):")
+    print(f"\n📊 Binary Classifier (Walk vs Idle - Locomotion):")
     print(f"   Test Accuracy: {test_acc_b:.2%}")
     print(f"   Model: models/gesture_classifier_binary.pkl")
 
 if TRAINING_MODE in ['MULTICLASS', 'BOTH']:
-    print(f"\n📊 Multi-class Classifier (Jump, Punch, Turn, Idle):")
+    print(f"\n📊 Multi-class Classifier (Jump, Punch, Turn_Left, Turn_Right - Actions):")
     print(f"   Test Accuracy: {test_acc_m:.2%}")
     print(f"   Model: models/gesture_classifier_multiclass.pkl")
 
 print(f"\n✨ Next Steps:")
 print(f"   1. Test models with: python src/udp_listener.py")
 print(f"   2. Models are in: {MODEL_OUTPUT_DIR}/")
-print(f"   3. Update controller to use two-stage classification")
+print(f"   3. Update controller to use parallel classification")
 
-print(f"\n💡 Two-Stage Controller Logic:")
-print(f"   Step 1: Run binary classifier")
-print(f"   Step 2: If 'not_walking', run multi-class classifier")
-print(f"   Step 3: Execute action based on prediction")
+print(f"\n💡 Parallel Controller Logic:")
+print(f"   Thread 1: Run binary classifier (walk vs idle)")
+print(f"   Thread 2: Run multi-class classifier (jump/punch/turn_left/turn_right)")
+print(f"   Combine: Execute locomotion + action simultaneously")
+print(f"   Examples: walk + jump, idle + punch, walk + turn_left")
 
 # %%

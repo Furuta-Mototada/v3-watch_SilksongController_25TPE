@@ -3,9 +3,11 @@
 Data Organization Script for Silksong Gesture Training
 
 This script organizes collected gesture data into a structured format for training:
-1. Binary classification: Walking vs Not-Walking
-2. Multi-class classification: Jump, Punch, Turn, Idle
+1. Binary classification: Walk vs Idle (locomotion states - 5 second samples)
+2. Multi-class classification: Jump, Punch, Turn_Left, Turn_Right (actions - 1-2 second samples)
 3. Noise/Baseline detection
+
+These two classifiers run IN PARALLEL for simultaneous detection (e.g., walk + jump).
 
 Usage:
     python organize_training_data.py --input ../data/button_collected --output ../data/organized_training
@@ -115,12 +117,12 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
     temp_baseline_dir.mkdir(exist_ok=True)
     baseline_segments = segment_baseline_noise(input_dir, temp_baseline_dir)
 
-    # Binary classification: walking vs not_walking
-    (binary_dir / "walking").mkdir(exist_ok=True)
-    (binary_dir / "not_walking").mkdir(exist_ok=True)
+    # Binary classification: walk vs idle (locomotion states)
+    (binary_dir / "walk").mkdir(exist_ok=True)
+    (binary_dir / "idle").mkdir(exist_ok=True)
 
-    # Multi-class: jump, punch, turn_left, turn_right, idle
-    for gesture in ['jump', 'punch', 'turn_left', 'turn_right', 'idle']:
+    # Multi-class: jump, punch, turn_left, turn_right (actions only)
+    for gesture in ['jump', 'punch', 'turn_left', 'turn_right']:
         (multiclass_dir / gesture).mkdir(exist_ok=True)
 
     # Noise detection: idle vs active
@@ -185,20 +187,19 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
     # Copy files to organized structure
     print("\n📁 Organizing files...")
 
-    # Binary classification
+    # Binary classification: walk vs idle
     for filename in balanced_files['walk']:
         src = Path(input_dir) / filename
-        dst = binary_dir / "walking" / filename
+        dst = binary_dir / "walk" / filename
         shutil.copy2(src, dst)
 
-    for gesture in ['jump', 'punch', 'turn_left', 'turn_right', 'idle']:
-        for filename in balanced_files[gesture]:
-            src = Path(input_dir) / filename
-            dst = binary_dir / "not_walking" / filename
-            shutil.copy2(src, dst)
+    for filename in balanced_files['idle']:
+        src = Path(input_dir) / filename
+        dst = binary_dir / "idle" / filename
+        shutil.copy2(src, dst)
 
-    # Multi-class classification (for "not walking" samples)
-    for gesture in ['jump', 'punch', 'turn_left', 'turn_right', 'idle']:
+    # Multi-class classification: actions only (jump, punch, turn_left, turn_right)
+    for gesture in ['jump', 'punch', 'turn_left', 'turn_right']:
         for filename in balanced_files[gesture]:
             src = Path(input_dir) / filename
             dst = multiclass_dir / gesture / filename
@@ -231,7 +232,7 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
     shutil.rmtree(temp_baseline_dir)
 
     # Create metadata file
-    not_walking_gestures = ['jump', 'punch', 'turn_left', 'turn_right', 'idle']
+    action_gestures = ['jump', 'punch', 'turn_left', 'turn_right']
     active_gestures = ['jump', 'punch', 'turn_left', 'turn_right', 'walk']
 
     metadata = {
@@ -241,11 +242,13 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
         "balanced_distribution": {k: len(v) for k, v in balanced_files.items()},
         "total_files_organized": sum(len(v) for v in balanced_files.values()),
         "binary_classification": {
-            "walking": len(balanced_files['walk']),
-            "not_walking": sum(len(balanced_files[g]) for g in not_walking_gestures)
+            "description": "Locomotion states (5s samples) - run in parallel with actions",
+            "walk": len(balanced_files['walk']),
+            "idle": len(balanced_files['idle'])
         },
         "multiclass_classification": {
-            gesture: len(balanced_files[gesture]) for gesture in not_walking_gestures
+            "description": "Action gestures (1-2s samples) - run in parallel with locomotion",
+            **{gesture: len(balanced_files[gesture]) for gesture in action_gestures}
         },
         "noise_detection": {
             "idle": len(balanced_files['idle']),
@@ -259,12 +262,13 @@ def copy_and_balance_data(input_dir, output_dir, target_samples_per_class=30):
 
     print("\n✅ Data organization complete!")
     print(f"\n📊 Final Distribution:")
-    print(f"  Binary Classification:")
-    print(f"    - Walking: {metadata['binary_classification']['walking']}")
-    print(f"    - Not Walking: {metadata['binary_classification']['not_walking']}")
-    print(f"  Multi-class Classification:")
+    print(f"  Binary Classification (Locomotion - walk vs idle):")
+    print(f"    - walk: {metadata['binary_classification']['walk']}")
+    print(f"    - idle: {metadata['binary_classification']['idle']}")
+    print(f"  Multi-class Classification (Actions - jump/punch/turn):")
     for gesture, count in metadata['multiclass_classification'].items():
-        print(f"    - {gesture}: {count}")
+        if gesture != "description":
+            print(f"    - {gesture}: {count}")
     print(f"  Noise Detection:")
     print(f"    - Idle: {metadata['noise_detection']['idle']}")
     print(f"    - Active: {metadata['noise_detection']['active']}")
@@ -364,13 +368,14 @@ def main():
 
     print(f"\n📄 Metadata saved to: {output_dir / 'metadata.json'}")
     print(f"\n✨ Ready for training!")
-    print(f"\n📚 Training Structure:")
-    print(f"  1. Binary Classifier (Walking vs Not-Walking):")
+    print(f"\n📚 Training Structure (TWO PARALLEL CLASSIFIERS):")
+    print(f"  1. Binary Classifier (Locomotion: Walk vs Idle - 5s samples):")
     print(f"     - Train on: {output_dir / 'binary_classification'}/")
-    print(f"  2. Multi-class Classifier (Jump/Punch/Turn/Idle):")
+    print(f"  2. Multi-class Classifier (Actions: Jump/Punch/Turn_Left/Turn_Right - 1-2s samples):")
     print(f"     - Train on: {output_dir / 'multiclass_classification'}/")
-    print(f"  3. Noise Detector (Idle vs Active):")
+    print(f"  3. Noise Detector (optional):")
     print(f"     - Train on: {output_dir / 'noise_detection'}/")
+    print(f"\n💡 Note: Binary and multi-class run in parallel for simultaneous detection (e.g., walk + jump)")
 
     return 0
 
