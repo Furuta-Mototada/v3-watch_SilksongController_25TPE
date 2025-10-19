@@ -1,0 +1,9 @@
+pandas
+numpy
+joblib
+scikit-learn
+matplotlib
+seaborn
+scipy
+pynput
+zeroconf

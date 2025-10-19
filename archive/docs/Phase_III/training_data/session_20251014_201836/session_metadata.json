@@ -1,0 +1,37 @@
+{
+  "session_id": "20251014_201836",
+  "date": "2025-10-14T20:49:43.640234",
+  "recording_duration_sec": 2.5,
+  "samples_per_gesture": 40,
+  "sensors_collected": [
+    "rotation_vector",
+    "linear_acceleration",
+    "gyroscope"
+  ],
+  "gestures_completed": [
+    "punch",
+    "jump",
+    "noise",
+    "turn",
+    "walk"
+  ],
+  "config": {
+    "network": {
+      "listen_ip": "192.168.1.113",
+      "listen_port": 12345
+    },
+    "thresholds": {
+      "fuel_added_per_step_sec": 0.4,
+      "max_fuel_sec": 1.0,
+      "punch_threshold_xy_accel": 35.06112504247542,
+      "jump_threshold_z_accel": 33.64638131280011,
+      "turn_threshold_degrees": 123.6716623416228
+    },
+    "keyboard_mappings": {
+      "left": "Key.left",
+      "right": "Key.right",
+      "jump": "z",
+      "attack": "x"
+    }
+  }
+}
