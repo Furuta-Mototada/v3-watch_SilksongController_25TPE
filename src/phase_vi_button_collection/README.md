@@ -1,4 +1,4 @@
-# Phase II: Manual Data Collection
+# Phase VI: Button Data Collection
 
 **Manual gesture data collection using button-press UI**
 
